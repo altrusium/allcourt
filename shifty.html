@@ -1,0 +1,65 @@
+<head>
+  <title>Shifty: A Volunteer Shift Manager</title>
+</head>
+
+<body>
+  <h1>Volunteer Shift Management</h1>
+  {{> tabs}}
+  {{> page}}
+</body>
+
+<template name="page">
+	{{#if create_selected}}
+	  {{> create}}
+	{{/if}}
+	{{#if find_selected}}
+	  {{> find}}
+	{{/if}}
+	{{#if list_selected}}
+	  {{> list}}
+	{{/if}}
+</template>
+
+<template name="tabs">
+	<div class="tabs">
+	  <a href="#" data-tab="create" class="{{create_selected}}">Create</a>
+	  <a href="#" data-tab="find" class="{{find_selected}}">Find</a>
+	  <a href="#" data-tab="list" class="{{list_selected}}">List</a>
+	</div>
+</template>
+
+<template name="create">
+	<div class="create">
+		<input type="text" name="firstname" placeholder="First name" />
+		<input type="text" name="lastname" placeholder="Last name" />
+		<input type="text" name="address" placeholder="Address" />
+		<input type="text" name="suburb" placeholder="Suburb" />
+		<input type="text" name="postalcode" placeholder="Postal code" />
+		<input type="text" name="email" placeholder="Email" />
+		<input type="text" name="homephone" placeholder="Home phone" />
+		<input type="text" name="workphone" placeholder="Work phone" />
+		<input type="text" name="mobilephone" placeholder="Mobile phone" />
+		<input type="text" name="birthdate" placeholder="Birth date" />
+		<textarea name="notes" placeholder="Notes" />
+		<input type="text" name="asbshirtsize" placeholder="ASB shirt size" />
+		<input type="text" name="heinekenshirtsize" placeholder="Heineken shirt size" />
+		<input type="file" />
+		<p><input type="button" value="Save" /></p>
+	</div>
+</template>
+
+<template name="find">
+  <input type="text" name="name" placeholder="Volunteer name" />
+  <input type="button" name="find" value="Find" />
+</template>
+
+<template name="list">
+	{{#each volunteers}}
+		<p>
+			<img src="http://s3-ap-southeast-2.amazonaws.com/shifty-photos/{{photo}}"><br>
+			First name: {{firstname}}
+		</p>
+	{{/each}}
+</template>
+
+
