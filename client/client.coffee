@@ -5,13 +5,13 @@ tabIsSelected = (tab) ->
 
 # The Tabs Template
 Template.tabs.create_selected = ->
-  return if tabIsSelected 'create' then 'selected' else ''
+  return if tabIsSelected 'create' then 'active' else ''
 
 Template.tabs.find_selected = ->
-  return if tabIsSelected 'find' then 'selected' else ''
+  return if tabIsSelected 'find' then 'active' else ''
 
 Template.tabs.list_selected = ->
-  return if tabIsSelected 'list' then 'selected' else ''
+  return if tabIsSelected 'list' then 'active' else ''
 
 Template.tabs.events
   'click a': (event, template) ->
@@ -54,15 +54,6 @@ Template.create.events
     else
       Meteor.call 'saveVolunteer', options
 
-
-# The Find Template
-Template.find.events
-  'change input[type=text]': (event) ->
-    if typeof console isnt 'undefined'
-      console.log event.currentTarget.value 
-  'click input[type=button]': ->
-    if typeof console isnt 'undefined'
-      console.log 'button clicked'
 
 # The List Template
 Template.list.volunteers = ->
