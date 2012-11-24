@@ -24,12 +24,12 @@
 				</a>
 				<div class="tabs nav-collapse collapse">
 					<ul class="nav">
-						<li class="{{tabSelected 'volunteers'}}"><a href="/volunteers">Volunteers</a></li>
 						<li class="{{tabSelected 'shifts'}}"><a href="/shifts">Shifts</a></li>
+						<li class="{{tabSelected 'volunteers'}}"><a href="/volunteers">Volunteers</a></li>
 						<li class="{{tabSelected 'setup'}}"><a href="/setup">Setup</a></li>
 					</ul>
-					<form class="navbar-search pull-left">
-						<input type="text" class="search-query" placeholder="Find" data-provide="typeahead">
+					<form class="navbar-search pull-right">
+						<input type="text" class="search-query" placeholder="Find volunteers, shifts and roles" data-provide="typeahead">
 					</form>
 				</div>
 			</div>
@@ -39,6 +39,20 @@
 
 <template name="home">
   {{setTab 'home'}}
+  <div class="row">
+	  <div class="span8">
+		  <h2><small>Setup</small></h2>
+		  <p>The setup tab above is the area where you define the parameters of the tournament, the volunteer roles at the tournament, and the necessary shifts throughout the day for those roles. This is the first thing to do when setting up a new tournament. Everything else builds off of what is defined in setup.</p>
+		  <p>Typically, this is only done once. Beyond a little tweaking prior to the tournament, you won't use this during normal operations.</p>
+		  <h2><small>Volunteers</small></h2>
+		  <p>The Volunteers tab is where to view lists and details of volunteers. You can also edit their details here. Currently someone needs to enter all of the volunteer data. In the future, the volunteer will do this themselves.</p> 
+		  <h2><small>Shifts</small></h2>
+		  <p>Once the days and shifts have been been defined in setup and the volunteers have been entered, the Shifts tab is used to assign volunteers to shifts. This is also the best place to view all of the volunteers in a shift or a specific day.</p>
+		</div>
+	  <div class="span3 offset1">
+	  	<img src="/img/ta-logo.png" alt="Tennis Auckland Logo">
+	  </div>
+	</div>
 </template>
 
 <template name="volunteers">
