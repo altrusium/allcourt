@@ -24,7 +24,7 @@ Template.tabs.tabSelected = (tab) ->
 
 
 # The Create Template
-Template.create.events
+Template.volunteersCreate.events
   'click input[type=button]': (event, template) ->
     fileinput = template.find('[type=file]') 
     options = 
@@ -51,5 +51,5 @@ Template.create.events
 
 
 # The List Template
-Template.list.volunteers = ->
+Template.volunteersList.volunteers = ->
   return Volunteers.find() 
