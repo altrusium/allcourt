@@ -9,21 +9,9 @@
 	  	<h1>Shifty <small>Volunteer Shift Management</small></h1>
 	  </div>
 	  {{> tabs}}
-	  {{> page}}
+	  {{renderPage}}
 	</div>
 </body>
-
-<template name="page">
-	{{#if create_selected}}
-	  {{> create}}
-	{{/if}}
-	{{#if find_selected}}
-	  {{> find}}
-	{{/if}}
-	{{#if list_selected}}
-	  {{> list}}
-	{{/if}}
-</template>
 
 <template name="tabs">
 	<div class="navbar">
@@ -36,11 +24,12 @@
 				</a>
 				<div class="tabs nav-collapse collapse">
 					<ul class="nav">
-						<li class="{{create_selected}}"><a href="#" data-tab="create">Create</a></li>
-						<li class="{{list_selected}}"><a href="#" data-tab="list">List</a></li>
+						<li class="{{tabSelected 'volunteers'}}"><a href="/volunteers">Volunteers</a></li>
+						<li class="{{tabSelected 'shifts'}}"><a href="/shifts">Shifts</a></li>
+						<li class="{{tabSelected 'setup'}}"><a href="/setup">Setup</a></li>
 					</ul>
 					<form class="navbar-search pull-left">
-						<input type="text" class="search-query" placeholder="Find Volunteer" data-provide="typeahead">
+						<input type="text" class="search-query" placeholder="Find" data-provide="typeahead">
 					</form>
 				</div>
 			</div>
@@ -48,7 +37,24 @@
 	</div>
 </template>
 
-<template name="create">
+<template name="home">
+  {{setTab 'home'}}
+</template>
+
+<template name="volunteers">
+	{{setTab 'volunteers'}}
+	<ul class="breadcrumb">
+		<li><a href="/volunteers/create">Create</a> <span class="divider">|</span></li>
+		<li><a href="/volunteers/list">List</a>
+	</ul>
+</template>
+
+<template name="volunteersCreate">
+	{{setTab 'volunteers'}}
+	<ul class="breadcrumb">
+		<li><a href="/volunteers">Volunteers</a> <span class="divider">/</span></li>
+		<li class="active">Create</li>
+	</ul>
 	<div class="create">
 		<input type="text" name="firstname" placeholder="First name" />
 		<input type="text" name="lastname" placeholder="Last name" />
@@ -68,10 +74,15 @@
 	</div>
 </template>
 
-<template name="results">
+<template name="find">
 </template>
 
-<template name="list">
+<template name="volunteersList">
+	{{setTab 'volunteers'}}
+	<ul class="breadcrumb">
+		<li><a href="/volunteers">Volunteers</a> <span class="divider">/</span></li>
+		<li class="active">List</li>
+	</ul>
 	{{#each volunteers}}
 		<p>
 			<img src="http://s3-ap-southeast-2.amazonaws.com/shifty-photos/{{photo}}"><br>
@@ -79,5 +90,45 @@
 		</p>
 	{{/each}}
 </template>
+
+<template name="shifts">
+	{{setTab 'shifts'}}
+	<p>Shifts</p>
+</template>
+
+<template name="setup">
+	{{setTab 'setup'}}
+	<ul class="breadcrumb">
+		<li><a href="/setup/tournament">Tournament</a> <span class="divider">|</span></li>
+		<li><a href="/setup/roles">Roles</a> <span class="divider">|</span></li>
+		<li><a href="/setup/shifts">Shifts</a>
+	</ul>
+</template>
+
+<template name="setupTournament">
+	{{setTab 'setup'}}
+	<ul class="breadcrumb">
+		<li><a href="/setup">Setup</a> <span class="divider">/</span></li>
+		<li class="active">Tournament</li>
+	</ul>
+</template>
+
+<template name="setupRoles">
+	{{setTab 'setup'}}
+	<ul class="breadcrumb">
+		<li><a href="/setup">Setup</a> <span class="divider">/</span></li>
+		<li class="active">Roles</li>
+	</ul>
+</template>
+
+<template name="setupShifts">
+	{{setTab 'setup'}}
+	<ul class="breadcrumb">
+		<li><a href="/setup">Setup</a> <span class="divider">/</span></li>
+		<li class="active">Shifts</li>
+	</ul>
+</template>
+
+
 
 
