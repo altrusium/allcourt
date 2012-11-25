@@ -6,7 +6,7 @@
 <body>
 	<div class="container">
 	  <div class="page-header">
-	  	<h1>Shifty <small>Volunteer Shift Management</small></h1>
+	  	<h2>Volunteer Shift Management</h2>
 	  </div>
 	  {{> tabs}}
 	  {{renderPage}}
@@ -41,12 +41,16 @@
   {{setTab 'home'}}
   <div class="row">
 	  <div class="span8">
-		  <h2><small>Setup</small></h2>
+	  	<p class="lead">Welcome. If you have any questions, comments, or suggestions, please don't hesitate to <a href="mailto:locksmithdon@gmail.com">flick me a message</a>. I hope this tool helps make your life easier and your event more successful. Cheers!</p>
+
+		  <h2><small><a href="/setup">Setup</a></small></h2>
 		  <p>The setup tab above is the area where you define the parameters of the tournament, the volunteer roles at the tournament, and the necessary shifts throughout the day for those roles. This is the first thing to do when setting up a new tournament. Everything else builds off of what is defined in setup.</p>
 		  <p>Typically, this is only done once. Beyond a little tweaking prior to the tournament, you won't use this during normal operations.</p>
-		  <h2><small>Volunteers</small></h2>
+
+		  <h2><small><a href="/volunteers">Volunteers</a></small></h2>
 		  <p>The Volunteers tab is where to view lists and details of volunteers. You can also edit their details here. Currently someone needs to enter all of the volunteer data. In the future, the volunteer will do this themselves.</p> 
-		  <h2><small>Shifts</small></h2>
+
+		  <h2><small><a href="/shifts">Shifts</a></small></h2>
 		  <p>Once the days and shifts have been been defined in setup and the volunteers have been entered, the Shifts tab is used to assign volunteers to shifts. This is also the best place to view all of the volunteers in a shift or a specific day.</p>
 		</div>
 	  <div class="span3 offset1">
@@ -54,95 +58,4 @@
 	  </div>
 	</div>
 </template>
-
-<template name="volunteers">
-	{{setTab 'volunteers'}}
-	<ul class="breadcrumb">
-		<li><a href="/volunteers/create">Create</a> <span class="divider">|</span></li>
-		<li><a href="/volunteers/list">List</a>
-	</ul>
-</template>
-
-<template name="volunteersCreate">
-	{{setTab 'volunteers'}}
-	<ul class="breadcrumb">
-		<li><a href="/volunteers">Volunteers</a> <span class="divider">/</span></li>
-		<li class="active">Create</li>
-	</ul>
-	<div class="create">
-		<input type="text" name="firstname" placeholder="First name" />
-		<input type="text" name="lastname" placeholder="Last name" />
-		<input type="text" name="address" placeholder="Address" />
-		<input type="text" name="suburb" placeholder="Suburb" />
-		<input type="text" name="postalcode" placeholder="Postal code" />
-		<input type="text" name="email" placeholder="Email" />
-		<input type="text" name="homephone" placeholder="Home phone" />
-		<input type="text" name="workphone" placeholder="Work phone" />
-		<input type="text" name="mobilephone" placeholder="Mobile phone" />
-		<input type="text" name="birthdate" placeholder="Birth date" />
-		<textarea name="notes" placeholder="Notes" />
-		<input type="text" name="asbshirtsize" placeholder="ASB shirt size" />
-		<input type="text" name="heinekenshirtsize" placeholder="Heineken shirt size" />
-		<input type="file" />
-		<p><input type="button" value="Save" class="btn" /></p>
-	</div>
-</template>
-
-<template name="find">
-</template>
-
-<template name="volunteersList">
-	{{setTab 'volunteers'}}
-	<ul class="breadcrumb">
-		<li><a href="/volunteers">Volunteers</a> <span class="divider">/</span></li>
-		<li class="active">List</li>
-	</ul>
-	{{#each volunteers}}
-		<p>
-			<img src="http://s3-ap-southeast-2.amazonaws.com/shifty-photos/{{photo}}"><br>
-			First name: {{firstname}}
-		</p>
-	{{/each}}
-</template>
-
-<template name="shifts">
-	{{setTab 'shifts'}}
-	<p>Shifts</p>
-</template>
-
-<template name="setup">
-	{{setTab 'setup'}}
-	<ul class="breadcrumb">
-		<li><a href="/setup/tournament">Tournament</a> <span class="divider">|</span></li>
-		<li><a href="/setup/roles">Roles</a> <span class="divider">|</span></li>
-		<li><a href="/setup/shifts">Shifts</a>
-	</ul>
-</template>
-
-<template name="setupTournament">
-	{{setTab 'setup'}}
-	<ul class="breadcrumb">
-		<li><a href="/setup">Setup</a> <span class="divider">/</span></li>
-		<li class="active">Tournament</li>
-	</ul>
-</template>
-
-<template name="setupRoles">
-	{{setTab 'setup'}}
-	<ul class="breadcrumb">
-		<li><a href="/setup">Setup</a> <span class="divider">/</span></li>
-		<li class="active">Roles</li>
-	</ul>
-</template>
-
-<template name="setupShifts">
-	{{setTab 'setup'}}
-	<ul class="breadcrumb">
-		<li><a href="/setup">Setup</a> <span class="divider">/</span></li>
-		<li class="active">Shifts</li>
-	</ul>
-</template>
-
-
-
 

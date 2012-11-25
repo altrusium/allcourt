@@ -23,6 +23,21 @@ Template.tabs.tabSelected = (tab) ->
   return if tabIsSelected tab then 'active' else ''
 
 
+# The Shifts Template
+Template.setupShifts.rendered = ->
+  $('#setupShiftsDate').datepicker({
+    'startDate': Template.setupShifts.startDate(),
+    'endDate': moment().add('days', 3).toDate()
+  })
+  $('#dateButton').click ->
+    $('#setupShiftsDate').datepicker 'show'
+
+  $('.timepicker-default').timepicker({'minuteStep': 30})
+
+Template.setupShifts.startDate = ->
+  return moment().subtract('days', 10).toDate()
+
+
 # The Create Template
 Template.volunteersCreate.events
   'click input[type=button]': (event, template) ->

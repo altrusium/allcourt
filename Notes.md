@@ -10,3 +10,21 @@ Currently using this approach: http://stackoverflow.com/questions/11790191/meteo
 TODO: Move the base URL for the photos out of the shifty.html file
 
 
+## Page navigation
+
+Using Meteor Router from: https://github.com/tmeasday/meteor-router
+Which uses Page.js: http://visionmedia.github.com/page.js/
+
+
+## Date picker
+
+Using Datepicker for Bootstrap from: https://github.com/eternicode/bootstrap-datepicker
+Really like how I'm initialising the datepicker in the Template.templateName.rendered event
+
+
+## Time picker
+
+Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicker/
+
+
+

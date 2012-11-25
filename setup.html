@@ -1,0 +1,353 @@
+<template name="setup">
+	{{setTab 'setup'}}
+	<ul class="breadcrumb">
+		<li><a href="/setup/tournament">Tournament</a> <span class="divider">|</span></li>
+		<li><a href="/setup/roles">Roles</a> <span class="divider">|</span></li>
+		<li><a href="/setup/shifts">Shifts</a>
+	</ul>
+  <div class="row">
+	  <div class="span8">
+	  	<p class="lead">Setup tournament parameters here. Typically, you'll only need to do this once per tournament as you're setting things up.</p>
+
+		  <h2><small><a href="/setup/tournament">Tournament</a></small></h2>
+		  <p>Add a new tournament, edit future and currently running tournaments, or view past tournaments.</p>
+
+		  <h2><small><a href="/setup/roles">Roles</a></small></h2>
+		  <p>Define all of the roles for a particular tournament (drivers, ball kids, marshalls, runners, etc).</p> 
+
+		  <h2><small><a href="/setup/shifts">Shifts</a></small></h2>
+		  <p>Define the shifts for each role on every day of the tournament.</p>
+		</div>
+	  <div class="span3 offset1">
+	  	<img src="/img/ta-logo.png" alt="Tennis Auckland Logo">
+	  </div>
+	</div>
+</template>
+
+<template name="setupTournament">
+	{{setTab 'setup'}}
+	<ul class="breadcrumb">
+		<li><a href="/setup">Setup</a> <span class="divider">/</span></li>
+		<li class="active">Tournament</li>
+	</ul>
+	<div class="row">
+		<div class="span5">
+			<h2><small>New Tournament</small></h2>
+			<form class="form-vertical">
+				<div class="control-group">
+					<label class="control-label" for="tournamentName">Name</label>
+					<div class="controls">
+						<input type="text" id="tournamentName" placeholder="Heineken Open 2013">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="firstDay">First day</label>
+					<div class="controls">
+						<input type="text" id="firstDay"> 
+						<i class="icon-info-sign" title="The first day volunteers will work"></i>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="lastDay">Last day</label>
+					<div class="controls">
+						<input type="text" id="lastDay"> 
+						<i class="icon-info-sign" title="The last day volunteers will work"></i>
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="controls">
+						<button type="submit" class="btn btn-primary">Save Tournament</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="span5">
+			<h2><small>Existing Tournaments</small></h2>
+			<table class="table table-hover table-striped">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><a href="/tournament/3">ASB Class 2013</a></td>
+						<td>
+							<a href="/tournament/3/edit"><i class="icon-edit"></i></a>
+							<a href="/tournament/3/delete"><i class="icon-remove"></i></a>
+						</td>
+					</tr>
+					<tr>
+						<td><a href="/tournament/2">Heineken Open 2012</a></td>
+						<td><i class="icon-lock"></i></td>
+					</tr>
+					<tr>
+						<td><a href="/tournament/1">ASB Class 2012</td>
+						<td><i class="icon-lock"></i></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</template>
+
+<template name="setupRoles">
+	{{setTab 'setup'}}
+	<ul class="breadcrumb">
+		<li><a href="/setup">Setup</a> <span class="divider">/</span></li>
+		<li class="active">Roles</li>
+	</ul>
+	<div class="row">
+		<div class="span5">
+			<h2><small>Manage roles by tournament</small></h2>
+			<form class="form-vertical">
+				<div class="control-group">
+					<label for="tournament" class="control-label">Tournament</label>
+					<div class="controls">
+						<select id="tournament">
+							<option selected="selected">ASB Classic 2013</option>
+						</select>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="copyRoles" class="control-label">Copy roles from</label>
+					<div class="controls">
+						<select id="copyFrom">
+							<option selected="selected">ASB Classic 2012</option>
+							<option>Heineken Open 2012</option>
+						</select>
+						<button class="btn btn-primary">Copy</button>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="roleName" class="control-label">Role name</label>
+					<div class="controls">
+						<input type="text" id="roleName" placeholder="Drivers">
+						<button type="submit" class="btn btn-primary">Add</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="span6">
+			<h2><small>Roles for the ASB Classic 2013</small></h2>
+			<table class="table table-hover table-striped">
+				<thead>
+					<tr>
+						<th>Role name</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Spectator Services</td>
+						<td>
+							<a href="#"><i class="icon-edit"></i></a>
+							<a href="#"><i class="icon-remove"></i></a>
+						</td>
+					</tr>
+					<tr>
+						<td>Court Services</td>
+						<td>
+							<a href="#"><i class="icon-edit"></i></a>
+							<a href="#"><i class="icon-remove"></i></a>
+						</td>
+					</tr>
+					<tr>
+						<td>Marshalls</td>
+						<td>
+							<a href="#"><i class="icon-edit"></i></a>
+							<a href="#"><i class="icon-remove"></i></a>
+						</td>
+					</tr>
+					<tr>
+						<td>Drivers</td>
+						<td>
+							<a href="#"><i class="icon-edit"></i></a>
+							<a href="#"><i class="icon-remove"></i></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</template>
+
+<template name="setupShifts">
+	{{setTab 'setup'}}
+	<ul class="breadcrumb">
+		<li><a href="/setup">Setup</a> <span class="divider">/</span></li>
+		<li class="active">Shifts</li>
+	</ul>
+	<div class="row">
+		<div class="span6">
+			<h2><small>Manage shifts by role</small></h2>
+			<p class="span5">Adding the shift specified below will add the shift to every day of the tournament. If a shift isn't needed on a particular day, simply remove it after it has been added.</p>
+			<div class="row"><div class="span6"></div></div>
+			<form class="form-vertical">
+				<div class="control-group">
+					<label for="tournament" class="control-label">Tournament</label>
+					<div class="controls">
+						<select id="tournament" class="span3">
+							<option selected="selected">ASB Classic 2013</option>
+						</select>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="role" class="control-label">Role</label>
+					<div class="controls">
+						<select id="role" class="span3">
+							<option selected="selected">Drivers</option>
+							<option>Marshalls></option>
+							<option>Ball kids</option>
+						</select>
+					</div>
+				</div>
+<!-- 				<div class="control-group">
+					<label for="setupShiftsDate" class="control-label">Shift date</label>
+					<div class="controls">
+						<div class="input-append">
+							<input type="text" class="span2" id="setupShiftsDate" data-date-format="dd/mm/yyyy">
+							<span class="add-on" id="dateButton"><i class="icon-calendar"></i></span>
+						</div>
+					</div>
+				</div>
+ -->				<div class="control-group">
+					<label for="setupShiftsStartTime" class="control-label">Start time</label>
+					<div class="controls">
+						<div class="input-append bootstrap-timepicker-component">
+							<input type="text" class="span2 timepicker-default" id="setupShiftsStartTime">
+							<span class="add-on"><i class="icon-time"></i></span>
+						</div>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="setupShiftsEndTime" class="control-label">End time</label>
+					<div class="controls">
+						<div class="input-append bootstrap-timepicker-component">
+							<input type="text" class="span2 timepicker-default" id="setupShiftsEndTime">
+							<span class="add-on"><i class="icon-time"></i></span>
+						</div>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="shiftName" class="control-label">Name</label>
+					<div class="controls">
+						<input type="text" class="span2" id="shiftName" placeholder="AM1, PM1, etc.">
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="controls">
+						<button type="submit" class="btn btn-primary">Add Shift</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="span6">
+			<h2><small>ASB Classic 2013: Drivers</small></h2>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>
+							Date<br>
+							&amp; Shift
+						</th>
+						<th>
+							AM1 <i class="icon-edit"></i><br>
+							5:00 am<br>
+							9:00 am
+						</th>
+						<th>
+							AM2 <i class="icon-edit"></i><br>
+							9:00 am<br>
+							1:00 pm
+						</th>
+						<th>
+							PM1 <i class="icon-edit"></i><br>
+							1:00 pm<br>
+							6:00 pm
+						</th>
+						<th>
+							PM2 <i class="icon-edit"></i><br>
+							6:00 pm<br>
+							12:00 am
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Wed<br>26th</td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>Thu<br>27th</td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>Fri<br>28th</td>
+						<td></td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+					</tr>
+					<tr>
+						<td>Sat<br>29th</td>
+						<td></td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+					</tr>
+					<tr>
+						<td>Sun<br>30th</td>
+						<td></td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+					</tr>
+					<tr>
+						<td>Mon<br>31st</td>
+						<td></td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+					</tr>
+					<tr>
+						<td>Tue<br>1st</td>
+						<td></td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+					</tr>
+					<tr>
+						<td>Wed<br>2nd</td>
+						<td></td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+					</tr>
+					<tr>
+						<td>Thu<br>3rd</td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>Fri<br>4th</td>
+						<td><i class="icon-remove"></i></td>
+						<td><i class="icon-remove"></i></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</template>
+

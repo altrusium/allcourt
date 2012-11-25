@@ -3,7 +3,6 @@ Volunteers = new Meteor.Collection 'volunteers'
 Meteor.startup ->
   if Meteor.isClient
     filepicker.setKey 'AOu8DnUQ3Tm6caoisKdpnz'
-    Volunteers.remove()
 
 Meteor.methods {
   saveVolunteer: (options) ->

@@ -1,0 +1,47 @@
+<template name="volunteers">
+	{{setTab 'volunteers'}}
+	<ul class="breadcrumb">
+		<li><a href="/volunteers/create">Create</a> <span class="divider">|</span></li>
+		<li><a href="/volunteers/list">List</a>
+	</ul>
+</template>
+
+<template name="volunteersCreate">
+	{{setTab 'volunteers'}}
+	<ul class="breadcrumb">
+		<li><a href="/volunteers">Volunteers</a> <span class="divider">/</span></li>
+		<li class="active">Create</li>
+	</ul>
+	<div class="create">
+		<input type="text" name="firstname" placeholder="First name" />
+		<input type="text" name="lastname" placeholder="Last name" />
+		<input type="text" name="address" placeholder="Address" />
+		<input type="text" name="suburb" placeholder="Suburb" />
+		<input type="text" name="postalcode" placeholder="Postal code" />
+		<input type="text" name="email" placeholder="Email" />
+		<input type="text" name="homephone" placeholder="Home phone" />
+		<input type="text" name="workphone" placeholder="Work phone" />
+		<input type="text" name="mobilephone" placeholder="Mobile phone" />
+		<input type="text" name="birthdate" placeholder="Birth date" />
+		<textarea name="notes" placeholder="Notes" />
+		<input type="text" name="asbshirtsize" placeholder="ASB shirt size" />
+		<input type="text" name="heinekenshirtsize" placeholder="Heineken shirt size" />
+		<input type="file" />
+		<p><input type="button" value="Save" class="btn" /></p>
+	</div>
+</template>
+
+<template name="volunteersList">
+	{{setTab 'volunteers'}}
+	<ul class="breadcrumb">
+		<li><a href="/volunteers">Volunteers</a> <span class="divider">/</span></li>
+		<li class="active">List</li>
+	</ul>
+	{{#each volunteers}}
+		<p>
+			<img src="http://s3-ap-southeast-2.amazonaws.com/shifty-photos/{{photo}}"><br>
+			First name: {{firstname}}
+		</p>
+	{{/each}}
+</template>
+
