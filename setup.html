@@ -103,6 +103,9 @@
 		<li><a href="/setup">Setup</a> <span class="divider">/</span></li>
 		<li class="active">Roles</li>
 	</ul>
+	{{#if noTournamentsYet}}
+		<p>You must first setup at least one tournament <a href="/setup/tournament">here</a>.</p>
+	{{else}}
 	<div class="row">
 		<div class="span5">
 			<h2><small>Manage roles by tournament</small></h2>
@@ -111,31 +114,35 @@
 					<label for="tournament" class="control-label">Tournament</label>
 					<div class="controls">
 						<select id="tournament">
-							<option selected="selected">ASB Classic 2013</option>
+							{{#each tournaments}}
+							<option value="{{_id}}" {{markSelected}}>{{tournamentName}}</option>
+							{{/each}}
 						</select>
 					</div>
 				</div>
 				<div class="control-group">
-					<label for="copyRoles" class="control-label">Copy roles from</label>
+					<label for="copyRoles" class="control-label">Optionally copy roles from</label>
 					<div class="controls">
 						<select id="copyFrom">
-							<option selected="selected">ASB Classic 2012</option>
-							<option>Heineken Open 2012</option>
+							{{#each copyableTournaments}}
+							<option value="{{_id}}">{{tournamentName}}</option>
+							{{/each}}
 						</select>
-						<button class="btn btn-primary">Copy</button>
+						<button type="button" id="copyRoles" class="btn btn-primary">Copy</button>
 					</div>
 				</div>
 				<div class="control-group">
 					<label for="roleName" class="control-label">Role name</label>
 					<div class="controls">
 						<input type="text" id="roleName" placeholder="Drivers">
-						<button type="submit" class="btn btn-primary">Add</button>
+						<button type="button" id="addRole" class="btn btn-primary">Add</button>
 					</div>
 				</div>
 			</form>
 		</div>
 		<div class="span6">
-			<h2><small>Roles for the ASB Classic 2013</small></h2>
+			{{#if rolesExist}}
+			<h2><small>Roles for the {{activeTournamentName}}</small></h2>
 			<table class="table table-hover table-striped">
 				<thead>
 					<tr>
@@ -144,38 +151,21 @@
 					</tr>
 				</thead>
 				<tbody>
+					{{#each roles}}
 					<tr>
-						<td>Spectator Services</td>
+						<td>{{this}}</td>
 						<td>
-							<a href="#"><i class="icon-edit"></i></a>
-							<a href="#"><i class="icon-remove"></i></a>
+							<!-- <a href="#"><i class="icon-edit"></i></a> -->
+							<a href="#" data-action="delete" data-role="{{this}}"><i class="icon-remove"></i></a>
 						</td>
 					</tr>
-					<tr>
-						<td>Court Services</td>
-						<td>
-							<a href="#"><i class="icon-edit"></i></a>
-							<a href="#"><i class="icon-remove"></i></a>
-						</td>
-					</tr>
-					<tr>
-						<td>Marshalls</td>
-						<td>
-							<a href="#"><i class="icon-edit"></i></a>
-							<a href="#"><i class="icon-remove"></i></a>
-						</td>
-					</tr>
-					<tr>
-						<td>Drivers</td>
-						<td>
-							<a href="#"><i class="icon-edit"></i></a>
-							<a href="#"><i class="icon-remove"></i></a>
-						</td>
-					</tr>
+					{{/each}}
 				</tbody>
 			</table>
+			{{/if}}
 		</div>
 	</div>
+	{{/if}}
 </template>
 
 <template name="setupShifts">

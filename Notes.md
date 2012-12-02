@@ -36,26 +36,28 @@ Tournament
 - tournamentName
 - firstDay
 - lastDay
-- days: day[]
-- roles: role[]
+- days: Day[]
+- roles: Role[]
 
 Day
 - date
-- shifts[]
+- Shifts[]
 
-Roles
-- tournamentId
+Role
 - roleName
 
 Shift
 - roleId
-- tournamentId
 - shiftName
 - startTime
 - endTime
 
 Volunteers Collection
-- volunteers: volunteer[]
+- volunteers: Volunteer[]
+
+Volunteer
+- vounteerName
+- ...
 
 
 
