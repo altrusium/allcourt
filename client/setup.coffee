@@ -43,6 +43,12 @@ Template.setupTournament.events
 
 
 
+Template.setupRoles.setActiveTournament = ->
+    id = $('#tournament option:selected').val()
+    name = $('#tournament option:selected').text()
+    Session.set 'active-tournament-id', id
+    Session.set 'active-tournament-name', name
+
 Template.setupRoles.noTournamentsYet = ->
   Tournaments.find().count() == 0
 
@@ -66,7 +72,7 @@ Template.setupRoles.activeTournament = ->
 
 Template.setupRoles.markSelected = ->
   if this._id is Session.get 'active-tournament-id'
-    return 'selected="selected"'
+    return 'selected=selected'
 
 Template.setupRoles.rolesExist = ->
   id = Session.get 'active-tournament-id'
@@ -84,12 +90,6 @@ Template.setupRoles.roles = ->
 
 Template.setupRoles.activeTournamentName = ->
   return Session.get 'active-tournament-name'
-
-Template.setupRoles.setActiveTournament = ->
-    id = $('#tournament option:selected').val()
-    name = $('#tournament option:selected').text()
-    Session.set 'active-tournament-id', id
-    Session.set 'active-tournament-name', name
 
 Template.setupRoles.events
   'change #tournament': (evnt, template) ->
@@ -121,12 +121,49 @@ Template.setupRoles.rendered = ->
 
 
 
+Template.setupShifts.setActiveTournament = ->
+    id = $('#tournament option:selected').val()
+    name = $('#tournament option:selected').text()
+    Session.set 'active-tournament-id', id
+    Session.set 'active-tournament-name', name
+
+Template.setupShifts.setActiveRole = ->
+    Session.set 'active-role', $('#role option:selected').val()
+
+Template.setupShifts.markSelectedTournament = ->
+  if this._id is Session.get 'active-tournament-id'
+    return 'selected=selected'
+
+Template.setupShifts.markSelectedRole = ->
+  if this.toString() is Session.get 'active-role'
+    return 'selected=selected'
 
 Template.setupShifts.rendered = ->
   $('.timepicker-default').timepicker({'minuteStep': 30})
 
-Template.setupShifts.startDate = ->
-  return moment().add('months', 6).toDate()
+Template.setupShifts.tournaments = ->
+  Tournaments.find {},
+    sort: firstDay: -1
+    fields: tournamentName: 1
 
-Template.setupShifts.endDate = ->
-  return moment().add('months', 6).add('weeks', 1).toDate()
+Template.setupShifts.roles = ->
+  id = Session.get 'active-tournament-id'
+  if id
+    tournament = Tournaments.findOne(id, fields: roles: 1)
+    return tournament && tournament.roles
+ 
+Template.setupShifts.activeTournamentName = ->
+  return Session.get 'active-tournament-name'
+
+Template.setupShifts.activeRole = ->
+  return Session.get 'active-role'
+
+Template.setupShifts.events
+  'change #tournament': (evnt, template) ->
+    Template.setupShifts.setActiveTournament()
+  'change #role': (evnt, template) ->
+    Template.setupShifts.setActiveRole()
+
+Template.setupShifts.rendered = ->
+  Template.setupShifts.setActiveTournament()
+  Template.setupShifts.setActiveRole()
