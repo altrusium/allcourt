@@ -17,10 +17,16 @@ Template.setupTournament.events
   'click #saveTournament': (evnt, template) ->
     # unless saveTournamentIsValid template
     #   return
+    firstDay = moment(template.find('#firstDate').value, 'DD MMM YYYY')
+    lastDay = moment(template.find('#lastDate').value, 'DD MMM YYYY')
+    length = lastDay.diff(firstDay, 'days') 
     options = 
       tournamentName: template.find('#tournamentName').value
-      firstDay: moment(template.find('#firstDate').value, 'DD MMM YYYY').toDate()
-      lastDay: moment(template.find('#lastDate').value, 'DD MMM YYYY').toDate()
+      firstDay: firstDay.toDate()
+      lastDay: lastDay.toDate()
+      days: for count in [1..length + 1]
+        date: moment(firstDay).add('days', count - 1).toDate(), shifts: []
+
     Meteor.call 'saveTournament', options, (err, id) ->
       unless err
         # show sucess alert
@@ -29,7 +35,6 @@ Template.setupTournament.events
         # show error alert
   'click [data-action=delete]': (evnt, template) ->
     id = $(evnt.currentTarget).data 'tournament-id'
-    console.log "id is " + id
     Tournaments.remove id
 
 # savetournamentisvalid = (tmp) ->
