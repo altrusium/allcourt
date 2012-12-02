@@ -153,10 +153,10 @@
 				<tbody>
 					{{#each roles}}
 					<tr>
-						<td>{{this}}</td>
+						<td>{{roleName}}</td>
 						<td>
 							<!-- <a href="#"><i class="icon-edit"></i></a> -->
-							<a href="#" data-action="delete" data-role="{{this}}"><i class="icon-remove"></i></a>
+							<a href="#" data-action="delete" data-role="{{roleName}}"><i class="icon-remove"></i></a>
 						</td>
 					</tr>
 					{{/each}}
@@ -195,7 +195,7 @@
 					<div class="controls">
 						<select id="role" class="span3">
 							{{#each roles}}
-							<option {{markSelectedRole}}>{{this}}</option>
+							<option {{markSelectedRole}}>{{roleName}}</option>
 							{{/each}}
 						</select>
 					</div>

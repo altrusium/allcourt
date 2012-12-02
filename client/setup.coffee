@@ -25,7 +25,7 @@ Template.setupTournament.events
       firstDay: firstDay.toDate()
       lastDay: lastDay.toDate()
       days: for count in [1..length + 1]
-        date: moment(firstDay).add('days', count - 1).toDate(), shifts: []
+        date: moment(firstDay).add('days', count - 1).toDate(), dayShifts: []
 
     Meteor.call 'saveTournament', options, (err, id) ->
       unless err
@@ -83,14 +83,14 @@ Template.setupRoles.rolesExist = ->
   id = Session.get 'active-tournament-id'
   unless id
     return false
-  tournament = Tournaments.findOne id, fields: tournamentName: 1
+  tournament = Tournaments.findOne id, fields: roles: 1
   return tournament.roles.length > 0
 
 Template.setupRoles.roles = ->
   id = Session.get 'active-tournament-id'
   unless id
     return
-  tournament = Tournaments.findOne id, fields: tournamentName: 1
+  tournament = Tournaments.findOne id, fields: roles: 1
   return tournament.roles
 
 Template.setupRoles.activeTournamentName = ->
@@ -102,8 +102,8 @@ Template.setupRoles.events
 
   'click #addRole': (evnt, template) ->
     id = Session.get 'active-tournament-id'
-    role = template.find('#roleName').value
-    Tournaments.update(id, $push: roles: role)
+    name = template.find('#roleName').value
+    Tournaments.update(id, $push: roles: roleName: name, roleShifts: [])
 
   'click #copyRoles': (evnt, template) ->
     fromId = $('#copyFrom option:selected').val()
@@ -112,14 +112,14 @@ Template.setupRoles.events
     Tournaments.update toId, $set: roles: fromRoles
 
   'click [data-action=delete]': (evnt, template) ->
-    newRoles = []
+    keepingRoles = []
     id = Session.get 'active-tournament-id'
     roleToDelete = $(evnt.currentTarget).data 'role'
     roles = Template.setupRoles.roles()
-    roles.forEach (role) ->
-      unless role is roleToDelete
-        newRoles.push role
-    Tournaments.update id, $set: roles: newRoles
+    roles.forEach (roleObject) ->
+      unless roleObject.roleName is roleToDelete
+        keepingRoles.push roleName: roleObject.roleName, roleShifts: roleObject.roleShifts
+    Tournaments.update id, $set: roles: keepingRoles
 
 Template.setupRoles.rendered = ->
   Template.setupRoles.setActiveTournament()
@@ -140,7 +140,7 @@ Template.setupShifts.markSelectedTournament = ->
     return 'selected=selected'
 
 Template.setupShifts.markSelectedRole = ->
-  if this.toString() is Session.get 'active-role'
+  if this.roleName is Session.get 'active-role'
     return 'selected=selected'
 
 Template.setupShifts.rendered = ->
