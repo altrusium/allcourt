@@ -27,4 +27,39 @@ Really like how I'm initialising the datepicker in the Template.templateName.ren
 Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicker/
 
 
+## Data model
+
+Tournaments Collection
+- tournaments: tournament[]
+
+Tournament
+- tournamentName
+- firstDay
+- lastDay
+- days: day[]
+- roles: role[]
+
+Day
+- date
+- shifts[]
+
+Roles
+- tournamentId
+- roleName
+
+Shift
+- roleId
+- tournamentId
+- shiftName
+- startTime
+- endTime
+
+Volunteers Collection
+- volunteers: volunteer[]
+
+
+
+
+
+
 

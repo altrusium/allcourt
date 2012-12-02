@@ -33,7 +33,7 @@
 	<div class="row">
 		<div class="span5">
 			<h2><small>New Tournament</small></h2>
-			<form class="form-vertical">
+			<form>
 				<div class="control-group">
 					<label class="control-label" for="tournamentName">Name</label>
 					<div class="controls">
@@ -41,27 +41,37 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label" for="firstDay">First day</label>
+					<label for="firstDate" class="control-label">First day</label>
 					<div class="controls">
-						<input type="text" id="firstDay"> 
-						<i class="icon-info-sign" title="The first day volunteers will work"></i>
+						<div class="input-append">
+							<input type="text" class="tournamentDatepicker span2" id="firstDate" data-date-format="dd/mm/yyyy">
+							<span class="add-on" id="firstDateIcon"><i class="icon-calendar"></i></span>
+						</div>
+						<span class="help-block">Not a valid date</span>
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label" for="lastDay">Last day</label>
+					<label for="lastDate" class="control-label">Last day</label>
 					<div class="controls">
-						<input type="text" id="lastDay"> 
-						<i class="icon-info-sign" title="The last day volunteers will work"></i>
+						<div class="input-append">
+							<input type="text" class="tournamentDatepicker span2" id="lastDate" data-date-format="dd/mm/yyyy">
+							<span class="add-on" id="lastDateIcon"><i class="icon-calendar"></i></span>
+						</div>
+						<span class="help-block">Not a valid date</span>
 					</div>
 				</div>
 				<div class="control-group">
+					<span class="help-block" id="dateOrderError">Last day must be after first day</span>
+				</div>
+				<div class="control-group">
 					<div class="controls">
-						<button type="submit" class="btn btn-primary">Save Tournament</button>
+						<button type="button" id="saveTournament" class="btn btn-primary">Save Tournament</button>
 					</div>
 				</div>
 			</form>
 		</div>
 		<div class="span5">
+			{{#if tournamentsExist}}
 			<h2><small>Existing Tournaments</small></h2>
 			<table class="table table-hover table-striped">
 				<thead>
@@ -71,23 +81,18 @@
 					</tr>
 				</thead>
 				<tbody>
+					{{#each tournaments}}
 					<tr>
-						<td><a href="/tournament/3">ASB Class 2013</a></td>
+						<td><a href="/tournament/{{_id}}">{{tournamentName}}</a></td>
 						<td>
-							<a href="/tournament/3/edit"><i class="icon-edit"></i></a>
-							<a href="/tournament/3/delete"><i class="icon-remove"></i></a>
+							<!-- <a href="#"><i class="icon-edit"></i></a> -->
+							<a href="#" data-tournament-id="{{_id}}" data-action="delete"><i class="icon-remove"></i></a>
 						</td>
 					</tr>
-					<tr>
-						<td><a href="/tournament/2">Heineken Open 2012</a></td>
-						<td><i class="icon-lock"></i></td>
-					</tr>
-					<tr>
-						<td><a href="/tournament/1">ASB Class 2012</td>
-						<td><i class="icon-lock"></i></td>
-					</tr>
+					{{/each}}
 				</tbody>
 			</table>
+			{{/if}}
 		</div>
 	</div>
 </template>
@@ -203,16 +208,7 @@
 						</select>
 					</div>
 				</div>
-<!-- 				<div class="control-group">
-					<label for="setupShiftsDate" class="control-label">Shift date</label>
-					<div class="controls">
-						<div class="input-append">
-							<input type="text" class="span2" id="setupShiftsDate" data-date-format="dd/mm/yyyy">
-							<span class="add-on" id="dateButton"><i class="icon-calendar"></i></span>
-						</div>
-					</div>
-				</div>
- -->				<div class="control-group">
+				<div class="control-group">
 					<label for="setupShiftsStartTime" class="control-label">Start time</label>
 					<div class="controls">
 						<div class="input-append bootstrap-timepicker-component">
@@ -244,8 +240,8 @@
 			</form>
 		</div>
 		<div class="span6">
-			<h2><small>ASB Classic 2013: Drivers</small></h2>
-			<table class="table table-striped">
+			<h2><small>Drivers for the ASB Classic 2013</small></h2>
+			<table class="table table-striped table-condensed">
 				<thead>
 					<tr>
 						<th>

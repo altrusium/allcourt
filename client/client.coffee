@@ -1,4 +1,5 @@
 Meteor.subscribe 'volunteers'
+Meteor.subscribe 'tournaments'
 
 Meteor.Router.add
   '/': 'home',
@@ -17,54 +18,8 @@ Handlebars.registerHelper 'setTab', (tabName, options) ->
 tabIsSelected = (tab) ->
   return tab is Session.get 'selected_tab'
 
-
 # The Tabs Template
 Template.tabs.tabSelected = (tab) ->
   return if tabIsSelected tab then 'active' else ''
 
 
-# The Shifts Template
-Template.setupShifts.rendered = ->
-  $('#setupShiftsDate').datepicker({
-    'startDate': Template.setupShifts.startDate(),
-    'endDate': moment().add('days', 3).toDate()
-  })
-  $('#dateButton').click ->
-    $('#setupShiftsDate').datepicker 'show'
-
-  $('.timepicker-default').timepicker({'minuteStep': 30})
-
-Template.setupShifts.startDate = ->
-  return moment().subtract('days', 10).toDate()
-
-
-# The Create Template
-Template.volunteersCreate.events
-  'click input[type=button]': (event, template) ->
-    fileinput = template.find('[type=file]') 
-    options = 
-      firstname: template.find('[name=firstname]').value
-      lastname: template.find('[name=lastname]').value
-      address: template.find('[name=address]').value
-      suburb: template.find('[name=suburb]').value
-      postalcode: template.find('[name=postalcode]').value
-      email: template.find('[name=email]').value
-      homephone: template.find('[name=homephone]').value
-      workphone: template.find('[name=workphone]').value
-      mobilephone: template.find('[name=mobilephone]').value
-      birthdate: template.find('[name=birthdate]').value
-      notes: template.find('[name=notes]').value
-      asbshirtsize: template.find('[name=asbshirtsize]').value
-      heinekenshirtsize: template.find('[name=heinekenshirtsize]').value 
-
-    if fileinput.value
-      filepicker.store fileinput, (file) ->
-        options['photo'] = file.key
-        Meteor.call 'saveVolunteer', options
-    else
-      Meteor.call 'saveVolunteer', options
-
-
-# The List Template
-Template.volunteersList.volunteers = ->
-  return Volunteers.find() 

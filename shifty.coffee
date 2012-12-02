@@ -1,4 +1,5 @@
 Volunteers = new Meteor.Collection 'volunteers'
+Tournaments = new Meteor.Collection 'tournaments'
 
 Meteor.startup ->
   if Meteor.isClient
@@ -22,4 +23,12 @@ Meteor.methods {
       heinekenshirtsize: options.heinekenshirtsize,
       photo: options.photo
     }
+  saveTournament: (options, callback) ->
+    return Tournaments.insert {
+      tournamentName: options.tournamentName,
+      firstDay: options.firstDay,
+      lastDay: options.lastDay,
+      days: options.days || [],
+      roles: options.roles || []
+    }, callback
 }
