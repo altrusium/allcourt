@@ -143,9 +143,6 @@ Template.setupShifts.markSelectedRole = ->
   if this.roleName is Session.get 'active-role'
     return 'selected=selected'
 
-Template.setupShifts.rendered = ->
-  $('.timepicker-default').timepicker({'minuteStep': 30})
-
 Template.setupShifts.tournaments = ->
   Tournaments.find {},
     sort: firstDay: -1
@@ -170,5 +167,6 @@ Template.setupShifts.events
     Template.setupShifts.setActiveRole()
 
 Template.setupShifts.rendered = ->
+  $('.timepicker-default').timepicker({'minuteStep': 30})
   Template.setupShifts.setActiveTournament()
   Template.setupShifts.setActiveRole()

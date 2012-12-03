@@ -74,6 +74,12 @@ Volunteer
   		"roleName": "Drivers",
   		"roleShifts":
   		[
+  					// Note: When a roleShift is deleted, the associated index in the
+  					// activeShift, and the volunteerShift must also be deleted.
+  					// When a roleShift is added, rather than being 'pushed', it must
+  					// be added to a roleShifts array so it can be sorted before being
+  					// added wholesale to the roleShifts property. This will keep every-
+  					// thing internally aligned.
   			{
 		  		"shiftName": "AM1",
 		  		"startTime": "5:00 AM",
@@ -128,6 +134,8 @@ Volunteer
 	  			"roleName": "Drivers",
 	  			"activeShifts": 
 	  			[
+	  								// When an activeShift is deactivated, the associated
+	  								// volunteerShift must be removed to maintain consistency
 	  				true,
 	  				true,
 	  				false,
