@@ -167,6 +167,10 @@ Template.setupShifts.events
     Template.setupShifts.setActiveRole()
 
 Template.setupShifts.rendered = ->
-  $('.timepicker-default').timepicker minuteStep: 30
   Template.setupShifts.setActiveTournament()
   Template.setupShifts.setActiveRole()
+  # This is a terrible hack, but it works until I can figure out
+  # why subsequent renders are preventing this control from showing
+  $('.timepicker-default').each ->
+    $(this).data 'timepicker', null
+  $('.timepicker-default').timepicker minuteStep: 30, showInputs: false
