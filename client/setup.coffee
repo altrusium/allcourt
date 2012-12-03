@@ -167,6 +167,6 @@ Template.setupShifts.events
     Template.setupShifts.setActiveRole()
 
 Template.setupShifts.rendered = ->
-  $('.timepicker-default').timepicker({'minuteStep': 30})
+  $('.timepicker-default').timepicker minuteStep: 30
   Template.setupShifts.setActiveTournament()
   Template.setupShifts.setActiveRole()
