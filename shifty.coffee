@@ -31,4 +31,18 @@ Meteor.methods {
       days: options.days || [],
       roles: options.roles || []
     }, callback
+  addShift: (options, callback) ->
+    tournament = Tournaments.findOne options.tournamentId
+    savedRole = role for role in tournament.roles when role.roleName is options.roleName
+    roleShifts = savedRole.roleShifts
+    roleShifts.push 
+      shiftName: options.shiftName
+      startTime: options.startTime
+      endTime: options.endTime
+    roleShifts.sort (shift1, shift2) ->
+      time1 = moment(shift1.startTime)
+      time2 = moment(shift2.startTime)
+      return if time1.diff(time2) < 0 then -1 else 1
+    Tournaments.update {_id: options.tournamentId, 'roles.roleName': options.roleName},
+      $set: 'roles.$.roleShifts': roleShifts
 }

@@ -95,6 +95,7 @@
 			{{/if}}
 		</div>
 	</div>
+	<p>Next: <a href="/setup/roles">setup roles</a></p>
 </template>
 
 <template name="setupRoles">
@@ -165,6 +166,7 @@
 			{{/if}}
 		</div>
 	</div>
+	<p>Next: <a href="/setup/shifts">setup shifts</a></p>
 	{{/if}}
 </template>
 
@@ -226,10 +228,11 @@
 				</div>
 				<div class="control-group">
 					<div class="controls">
-						<button type="submit" class="btn btn-primary">Add Shift</button>
+						<button type="button" id="addShift" class="btn btn-primary">Add Shift</button>
 					</div>
 				</div>
 			</form>
+			<p>Next: <a href="">add volunteers</a> or <a href="">assign them shifts</a></p>
 		</div>
 		<div class="span6">
 			<h2><small>{{activeRole}} at the {{activeTournamentName}}</small></h2>
@@ -241,22 +244,22 @@
 							&amp; Shift
 						</th>
 						<th>
-							AM1 <i class="icon-edit"></i><br>
+							AM1 <i class="icon-remove"></i><br>
 							5:00 am<br>
 							9:00 am
 						</th>
 						<th>
-							AM2 <i class="icon-edit"></i><br>
+							AM2 <i class="icon-remove"></i><br>
 							9:00 am<br>
 							1:00 pm
 						</th>
 						<th>
-							PM1 <i class="icon-edit"></i><br>
+							PM1 <i class="icon-remove"></i><br>
 							1:00 pm<br>
 							6:00 pm
 						</th>
 						<th>
-							PM2 <i class="icon-edit"></i><br>
+							PM2 <i class="icon-remove"></i><br>
 							6:00 pm<br>
 							12:00 am
 						</th>

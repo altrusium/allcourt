@@ -165,6 +165,14 @@ Template.setupShifts.events
     Template.setupShifts.setActiveTournament()
   'change #role': (evnt, template) ->
     Template.setupShifts.setActiveRole()
+  'click #addShift': (evnt, template) ->
+    options = 
+      tournamentId: $('#tournament option:selected').val()
+      roleName: $('#role option:selected').val()
+      startTime: moment($('#setupShiftsStartTime').val(), 'h:m a').toDate()
+      endTime: moment($('#setupShiftsEndTime').val(), 'h:m a').toDate()
+      shiftName: $('#shiftName').val()
+    Meteor.call 'addShift', options
 
 Template.setupShifts.rendered = ->
   Template.setupShifts.setActiveTournament()
