@@ -29,6 +29,8 @@ Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicke
 
 ## Data model
 
+4 Dec 2012: Learned MongoDB doesn't really like (only nested?) arrays. It's better to created a data model that doesn't nest objects and arrays because the positional operators can only go one level deep [http://docs.mongodb.org/manual/applications/update/] (search for it). Also, Meteor's minimongo doesn't support it yet [https://github.com/meteor/meteor/issues/153]. The alternative (what I'm off to confirm) is to next objects. The new data model doesn't make use of arrays.
+
 Tournaments Collection
 - tournaments: Tournament
 
@@ -39,6 +41,7 @@ Tournament
 - firstDay
 - lastDay
 - days: Day[]
+- roles: Role[]
 Day
 - date: Date
 - dayShifts: DayShifts[]
@@ -56,21 +59,20 @@ DayShifts
 NEW:
 
 Tournament
-- 'tournamentName': String
-- 'firstDay': Date
-- 'lastDay': Date
-- 'days':
-  * ordinal: Number
-	  - date: Date
-    - 'dayShifts':
-      * roleName: String
-        - active: Boolean
-- 'roles':
-  * roleName: String
-    - 'roleShifts':
-      * shiftName: String
-        - 'startDate': Date
-        - 'endDate': Date
+- tournamentName: String
+- days: Array
+  - date: Date
+- roles: Array
+  - roleId: UUID
+  - roleName: String
+- shifts: Array
+  - shiftId: UUID
+  - day: Date
+  - roleId: UUID
+  - shiftName: String
+  - startDate: Date
+  - endDate: Date
+  - active: Boolean
 
 
 
@@ -78,8 +80,20 @@ Volunteers Collection
 - volunteers: Volunteer[]
 
 Volunteer
-- vounteerName
-- ...
+- firstname
+- lastname
+- address
+- suburb
+- postalcode
+- email
+- homephone
+- workphone
+- mobilephone
+- birthdate
+- notes
+- asbshirtsize
+- heinekenshirtsize
+- photo
 
 OLD:
 

@@ -25,7 +25,7 @@ Template.setupTournament.events
       firstDay: firstDay.toDate()
       lastDay: lastDay.toDate()
       days: for count in [1..length + 1]
-        date: moment(firstDay).add('days', count - 1).toDate(), dayShifts: []
+        moment(firstDay).add('days', count).toDate()
 
     Meteor.call 'saveTournament', options, (err, id) ->
       unless err
@@ -65,16 +65,6 @@ Template.setupRoles.tournaments = ->
 Template.setupRoles.copyableTournaments = ->
   Tournaments.find _id: $ne: Session.get 'active-tournament-id'
 
-Template.setupRoles.activeTournament = ->
-  if Template.setupRoles.noTournamentsYet()
-    return
-  active = Session.get 'active-tournament'
-  unless active
-    recent = Tournaments.findOne {}, sort: firstDay: -1
-    active = id: recent._id, name: recent.tournamentName
-    Session.set 'active-tournament', active
-  return active
-
 Template.setupRoles.markSelected = ->
   if this._id is Session.get 'active-tournament-id'
     return 'selected=selected'
@@ -84,7 +74,7 @@ Template.setupRoles.rolesExist = ->
   unless id
     return false
   tournament = Tournaments.findOne id, fields: roles: 1
-  return tournament.roles.length > 0
+  return Object.keys(tournament.roles).length > 0
 
 Template.setupRoles.roles = ->
   id = Session.get 'active-tournament-id'
@@ -103,7 +93,9 @@ Template.setupRoles.events
   'click #addRole': (evnt, template) ->
     id = Session.get 'active-tournament-id'
     name = template.find('#roleName').value
-    Tournaments.update(id, $push: roles: roleName: name, roleShifts: [])
+    newRole = roleId: Meteor.uuid(), roleName: name
+    Tournaments.update(id, $push: roles: newRole)
+    $('#roleName').val('').focus()
 
   'click #copyRoles': (evnt, template) ->
     fromId = $('#copyFrom option:selected').val()
@@ -116,9 +108,7 @@ Template.setupRoles.events
     id = Session.get 'active-tournament-id'
     roleToDelete = $(evnt.currentTarget).data 'role'
     roles = Template.setupRoles.roles()
-    roles.forEach (roleObject) ->
-      unless roleObject.roleName is roleToDelete
-        keepingRoles.push roleName: roleObject.roleName, roleShifts: roleObject.roleShifts
+    keepingRoles = (role for role in roles when role.roleName isnt roleToDelete)
     Tournaments.update id, $set: roles: keepingRoles
 
 Template.setupRoles.rendered = ->

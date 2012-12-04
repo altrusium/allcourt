@@ -26,10 +26,9 @@ Meteor.methods {
   saveTournament: (options, callback) ->
     return Tournaments.insert {
       tournamentName: options.tournamentName,
-      firstDay: options.firstDay,
-      lastDay: options.lastDay,
-      days: options.days || [],
-      roles: options.roles || []
+      days: options.days,
+      roles: [],
+      shifts: []
     }, callback
   addShift: (options, callback) ->
     tournament = Tournaments.findOne options.tournamentId
