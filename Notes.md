@@ -29,7 +29,7 @@ Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicke
 
 ## Data model
 
-4 Dec 2012: Learned MongoDB doesn't really like (only nested?) arrays. It's better to created a data model that doesn't nest objects and arrays because the positional operators can only go one level deep [http://docs.mongodb.org/manual/applications/update/] (search for it). Also, Meteor's minimongo doesn't support it yet [https://github.com/meteor/meteor/issues/153]. The alternative (what I'm off to confirm) is to next objects. The new data model doesn't make use of arrays.
+4 Dec 2012: Learned MongoDB doesn't really like arrays of objects that don't have a unique property. The alternative is to use the positional operator, which can only go one level deep [http://docs.mongodb.org/manual/reference/operators/#update-operators-array]. Also, Meteor's minimongo doesn't support it yet [https://github.com/meteor/meteor/issues/153]. 
 
 Tournaments Collection
 - tournaments: Tournament
@@ -68,11 +68,14 @@ Tournament
 - shifts: Array
   - shiftId: UUID
   - day: Date
+  - active: Boolean
+- shiftDefs: Array
+  - shiftID: UUID
   - roleId: UUID
   - shiftName: String
   - startDate: Date
   - endDate: Date
-  - active: Boolean
+
 
 
 
