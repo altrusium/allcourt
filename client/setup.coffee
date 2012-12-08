@@ -121,6 +121,9 @@ Template.setupShifts.setActiveRole = ->
 Template.setupShifts.activeRoleName = ->
   return Session.get 'active-role-name'
 
+Template.setupShifts.shiftsToShow = ->
+  return Session.get('active-tournament-id') && Session.get('active-role-id')
+  
 Template.setupShifts.markSelectedTournament = ->
   if this._id is Session.get 'active-tournament-id'
     return 'selected=selected'

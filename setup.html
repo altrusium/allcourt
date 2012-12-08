@@ -235,6 +235,7 @@
 			<p>Next: <a href="">Add volunteers</a> or <a href="">assign them shifts</a></p>
 		</div>
 		<div class="span6">
+			{{#if shiftsToShow}}
 			<h2><small>{{activeRoleName}} at the {{activeTournamentName}}</small></h2>
 			<table class="table table-striped table-condensed">
 				<thead>
@@ -268,6 +269,7 @@
 					{{/each}}
 				</tbody>
 			</table>
+			{{/if}}
 		</div>
 	</div>
 </template>
