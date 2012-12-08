@@ -66,11 +66,11 @@ Tournament
   - roleId: UUID
   - roleName: String
 - shifts: Array
-  - shiftId: UUID
+  - shiftDefId: UUID
   - day: Date
   - active: Boolean
 - shiftDefs: Array
-  - shiftID: UUID
+  - shiftDefId: UUID
   - roleId: UUID
   - shiftName: String
   - startDate: Date

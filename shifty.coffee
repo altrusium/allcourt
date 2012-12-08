@@ -34,7 +34,7 @@ Meteor.methods {
   addShift: (options, callback) ->
     tournament = Tournaments.findOne options.tournamentId
     newShiftDef = 
-      shiftId: Meteor.uuid()
+      shiftDefId: Meteor.uuid()
       roleId: options.roleId
       shiftName: options.shiftName
       startTime: options.startTime
@@ -44,6 +44,10 @@ Meteor.methods {
       newShift = 
         day: day
         active: true
-        shiftId: newShiftDef.shiftId
+        shiftId: Meteor.uuid()
+        roleId: newShiftDef.roleId
+        endTime: newShiftDef.endTime
+        startTime: newShiftDef.startTime
+        shiftDefId: newShiftDef.shiftDefId
       Tournaments.update options.tournamentId, $push: shifts: newShift
 }

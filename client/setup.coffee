@@ -144,7 +144,9 @@ Template.setupShifts.shiftDefs = ->
   tId = Session.get 'active-tournament-id'
   rId = Session.get 'active-role-id'
   if tId
-    tournament = Tournaments.findOne tId, fields: shiftDefs: 1
+    tournament = Tournaments.findOne tId, {fields: {shiftDefs: 1}, sort: {shiftDefs: startTime: 1}}
+    # sortedShiftDefs = tournament.shiftDefs.sort (timeA, timeB) ->
+    #   moment(timeA.startTime).diff(moment(timeB.startTime), 'hours') > 0
     shiftDefs = for def in tournament.shiftDefs when def.roleId is rId
       def.startTime = moment(def.startTime).format('h:mm a')
       def.endTime = moment(def.endTime).format('h:mm a')
@@ -153,13 +155,43 @@ Template.setupShifts.shiftDefs = ->
 Template.setupShifts.shifts = ->
   tId = Session.get 'active-tournament-id'
   rId = Session.get 'active-role-id'
-  if tId
-    tournament = Tournaments.findOne(tId, {fields: shifts: 1, days: 1})
-    shiftData = for day in tournament.days
-      dayShifts = 
-        dayOfWeek: moment(day).format('ddd')
-        dayOfMonth: moment(day).format('Do')
-        activeShifts: (shift for shift in tournament.shifts when shift.day is day)
+  unless tId
+    return
+  tournament = Tournaments.findOne tId, {fields: shiftDefs: 1, shifts: 1, days: 1}
+  # sortAllShiftDefinitions
+  sortedShiftDefs = tournament.shiftDefs.sort (def1, def2) ->
+    date1 = new Date(def1.startTime)
+    date2 = new Date(def2.startTime)
+    if date1 > date2 then return 1
+    if date1 < date2 then return -1
+    return 0
+  # formatShiftDefinitionTimes
+  shiftDefs = for def in sortedShiftDefs when def.roleId is rId
+    def.startTime = moment(def.startTime).format('h:mm a')
+    def.endTime = moment(def.endTime).format('h:mm a')
+    def
+  # getShiftsForRole
+  roleShifts = (shift for shift in tournament.shifts when shift.roleId is rId)
+  # sortShifts
+  sortedShifts = roleShifts.sort (shift1, shift2) ->
+    date1 = new Date(shift1.startTime)
+    date2 = new Date(shift2.startTime)
+    if date1 > date2 then return 1
+    if date1 < date2 then return -1
+    return 0
+  # sortTournamentDays
+  sortedDays = tournament.days.sort (date1, date2) ->
+    return date1 - date2
+  # getDaysWithShifts
+  shiftDays = for day in sortedDays
+    dayShifts = 
+      dayOfWeek: moment(day).format('ddd')
+      dayOfMonth: moment(day).format('Do')
+      activeShifts: (shift for shift in sortedShifts when shift.day is day)
+  # return the result
+  result = 
+    defs: shiftDefs
+    days: shiftDays
 
 Template.setupShifts.events
   'change #tournament': (evnt, template) ->
@@ -174,18 +206,19 @@ Template.setupShifts.events
       endTime: moment($('#setupShiftsEndTime').val(), 'h:m a').toDate()
       shiftName: $('#shiftName').val()
     Meteor.call 'addShift', options
-  # 'click [data-delete-shiftdef-id]': (evnt, template) ->
-  'click [data-delete-shift-id]': (evnt, template) ->
+  'click th [data-delete-shiftdef-id]': (evnt, template) ->
     id = Session.get 'active-tournament-id'
-    target = $(evnt.currentTarget)
-    shiftId = target.data 'delete-shift-id'
-    date = target.data 'date'
-    newShift = 
-      day: date
-      active: false
-      shiftId: shiftId 
-    Tournaments.update id, $pull: shifts: shiftId: shiftId, day: date
-    Tournaments.update id, $push: shifts: newShift
+    shiftDefId = $(evnt.currentTarget).data 'delete-shiftdef-id'
+    Tournaments.update id, $pull: shifts: shiftDefId: shiftDefId
+    Tournaments.update id, $pull: shiftDefs: shiftDefId: shiftDefId
+  'click td [data-delete-shift-id]': (evnt, template) ->
+    id = Session.get 'active-tournament-id'
+    shiftId = $(evnt.currentTarget).data 'delete-shift-id'
+    tournament = Tournaments.findOne id, fields: shifts: 1
+    targetShift = (shift for shift in tournament.shifts when shift.shiftId is shiftId)[0]
+    targetShift.active = false
+    Tournaments.update id, $pull: shifts: shiftId: shiftId
+    Tournaments.update id, $push: shifts: targetShift
 
 Template.setupShifts.rendered = ->
   Template.setupShifts.setActiveTournament()

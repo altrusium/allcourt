@@ -241,11 +241,12 @@
 					<tr>
 						<th>
 							Date<br>
-							&amp; Shift
+							and<br>
+							Shift
 						</th>
-						{{#each shiftDefs}}
+						{{#each shifts.defs}}
 						<th>
-							{{shiftName}} <i class="icon-remove" data-delete-shiftdef-id="{{shiftId}}"></i><br>
+							{{shiftName}} <i class="icon-remove" data-delete-shiftdef-id="{{shiftDefId}}"></i><br>
 							{{startTime}}<br>
 							{{endTime}}
 						</th>
@@ -253,13 +254,13 @@
 					</tr>
 				</thead>
 				<tbody>
-					{{#each shifts}}
+					{{#each shifts.days}}
 					<tr>
 						<td>{{dayOfWeek}}<br>{{dayOfMonth}}</td>
 						{{#each activeShifts}}
 						<td>
 							{{#if active}}
-							<i class="icon-remove" data-delete-shift-id="{{shiftId}}" data-date="{{day}}"></i>
+							<i class="icon-remove" data-delete-shift-id="{{shiftId}}"></i>
 							{{/if}}
 						</td>
 						{{/each}}
