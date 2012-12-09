@@ -1,3 +1,28 @@
 i[data-delete-shift-id], i[data-delete-shiftdef-id] {
 	cursor: pointer;
 }
+
+.photo-placeholder {
+	width: 200px;
+	height: 200px;
+	margin: 0 auto 20px auto;
+	position: relative;
+}
+.photo-placeholder.empty {
+	border: 2px dashed silver;
+}
+.photo-placeholder.male {
+	background: url(/img/no-male-photo.jpg) no-repeat;
+}
+.photo-placeholder.female {
+	background: url(/img/no-female-photo.jpg) no-repeat;
+}
+.photo-placeholder h4 {
+	text-align: center;
+}
+.photo-placeholder p {
+	position: absolute;
+	text-align: center;
+	margin: 5px;
+	bottom: 5px;
+}

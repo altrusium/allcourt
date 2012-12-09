@@ -169,6 +169,7 @@ Template.setupShifts.shiftDefs = ->
       def
 
 Template.setupShifts.shifts = ->
+  # TODO: This needs refactoring
   tId = Session.get 'active-tournament-id'
   rId = Session.get 'active-role-id'
   unless tId

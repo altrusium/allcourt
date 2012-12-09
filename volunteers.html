@@ -12,7 +12,142 @@
 		<li><a href="/volunteers">Volunteers</a> <span class="divider">/</span></li>
 		<li class="active">Create</li>
 	</ul>
-	<div class="create">
+	<div class="row">
+		<div class="span5">
+			<form class="form-horizontal">
+				<div id="photoPlaceholder" class="empty female photo-placeholder">
+					<img src="" id="photoImg">
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="photo">Photo</label>
+					<div class="controls">
+						<button id="pickPhoto" type="button" class="btn input-medium">Select File</button>
+						<input type="hidden" id="photoFilename">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="firstName">First Name</label>
+					<div class="controls">
+						<input type="text" id="firstName" class="input-medium" required>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="lastName">Last Name</label>
+					<div class="controls">
+						<input type="text" id="lastName" class="input-medium" required>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="birthdate" class="control-label">Birthdate</label>
+					<div class="controls">
+						<div class="input-append">
+							<input type="text" class="birthDatepicker input-small" id="birthdate" data-date-format="dd/mm/yyyy" required>
+							<span class="add-on" id="birthdateIcon"><i class="icon-calendar"></i></span>
+						</div>
+						<span class="help-block">Not a valid date</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="gender">Gender</label>
+					<div class="controls">
+						<label class="radio inline">
+							<input type="radio" id="maleGender" name="gender" value="male"> male
+						</label>
+						<label class="radio inline">
+							<input type="radio" id="femaleGender" name="gender" value="female" checked="checked"> female
+						</label>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="shirtSize">Shirt Size</label>
+					<div class="controls">
+						<select id="shirtSize" class="input-small">
+							<option value="3xs">3XS</option>
+							<option value="2xs">2XS</option>
+							<option value="xs">XS</option>
+							<option value="s">S</option>
+							<option value="m" selected="selected">M</option>
+							<option value="l">L</option>
+							<option value="xl">XL</option>
+							<option value="2xl">2XL</option>
+							<option value="3xl">3XL</option>
+							<option value="4xl">4XL</option>
+						</select>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="span5">
+			<form class="form-horizontal">
+				<div class="control-group">
+					<label class="control-label" for="primaryEmail">Primary Email</label>
+					<div class="controls">
+						<input type="text" id="primaryEmail" required>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="secondaryEmail">SecondaryEmail</label>
+					<div class="controls">
+						<input type="text" id="secondaryEmail">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="homePhone">Home Phone</label>
+					<div class="controls">
+						<input type="text" id="homePhone">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="workPhone">Work Phone</label>
+					<div class="controls">
+						<input type="text" id="workPhone">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="mobilePhone">Mobile Phone</label>
+					<div class="controls">
+						<input type="text" id="mobilePhone">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="firstName">Address</label>
+					<div class="controls">
+						<input type="text" id="address">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="lastName">City</label>
+					<div class="controls">
+						<input type="text" id="city">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="suburb">Suburb</label>
+					<div class="controls">
+						<input type="text" id="suburb">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="postalCode">Postal Code</label>
+					<div class="controls">
+						<input type="text" id="postalCode" class="input-small">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="notes">Notes</label>
+					<div class="controls">
+						<textarea id="notes" class="input-large"></textarea>
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="controls">
+						<button type="button" id="saveProfile" class="btn btn-primary">Save Profile</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+<!-- 	<div class="create">
 		<input type="text" name="firstname" placeholder="First name" />
 		<input type="text" name="lastname" placeholder="Last name" />
 		<input type="text" name="address" placeholder="Address" />
@@ -29,7 +164,7 @@
 		<input type="file" />
 		<p><input type="button" value="Save" class="btn" /></p>
 	</div>
-</template>
+ --></template>
 
 <template name="volunteersList">
 	{{setTab 'volunteers'}}
@@ -39,9 +174,23 @@
 	</ul>
 	{{#each volunteers}}
 		<p>
-			<img src="http://s3-ap-southeast-2.amazonaws.com/shifty-photos/{{photo}}"><br>
-			First name: {{firstname}}
+			<img src="{{photoRoot}}{{photoFilename}}"><br>
+			<a href="/volunteer/{{_id}}">{{firstName}} {{lastName}}</a>
 		</p>
 	{{/each}}
 </template>
+
+<template name="volunteerDetails">
+	{{setTab 'volunteers'}}
+	<ul class="breadcrumb">
+		<li><a href="/volunteers">Volunteers</a> <span class="divider">/</span></li>
+		<li class="active">Details</li>
+	</ul>
+		<p>
+			<img src="{{photoRoot}}{{detail.photoFilename}}"><br>
+			{{detail.firstName}} {{detail.lastName}}<br>
+			<a href="mailto:{{detail.primaryEmail}}">{{detail.primaryEmail}}</a>
+		</p>
+</template>
+
 

@@ -6,6 +6,9 @@ Meteor.Router.add
   '/volunteers': 'volunteers',
   '/volunteers/create': 'volunteersCreate',
   '/volunteers/list': 'volunteersList',
+  '/volunteer/:id': (id) ->
+    Session.set 'active-volunteer-id', id
+    return 'volunteerDetails'
   '/shifts': 'shifts',
   '/setup': 'setup',
   '/setup/tournament': 'setupTournament',

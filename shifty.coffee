@@ -8,20 +8,22 @@ Meteor.startup ->
 Meteor.methods {
   saveVolunteer: (options) ->
     return Volunteers.insert {
-      firstname: options.firstname,
-      lastname: options.lastname,
-      address: options.address,
-      suburb: options.suburb,
-      postalcode: options.postalcode,
-      email: options.email,
-      homephone: options.homephone,
-      workphone: options.workphone,
-      mobilephone: options.mobilephone,
+      photoFilename: options.photoFilename
+      firstName: options.firstName,
+      lastName: options.lastName,
       birthdate: options.birthdate,
+      gender: options.gender,
+      shirtSize: options.shirtSize,
+      primaryEmail: options.primaryEmail,
+      secondaryEmail: options.secondaryEmail,
+      homePhone: options.homePhone,
+      workPhone: options.workPhone,
+      mobilePhone: options.mobilePhone,
+      address: options.address,
+      city: options.city,
+      suburb: options.suburb,
+      postalCode: options.postalCode,
       notes: options.notes,
-      asbshirtsize: options.asbshirtsize,
-      heinekenshirtsize: options.heinekenshirtsize,
-      photo: options.photo
     }
   saveTournament: (options, callback) ->
     return Tournaments.insert {
