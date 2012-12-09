@@ -1,3 +1,17 @@
+getSortedTournamentList = ->
+  tournaments = Tournaments.find {}, fields: tournamentName: 1, days: 1
+  list = tournaments.fetch()
+  list.sort (t1, t2) ->
+    date1 = new Date(t1.days[0])
+    date2 = new Date(t2.days[0])
+    if date1 > date2 then return -1
+    if date1 < date2 then return 1
+    return 0
+  return list
+
+
+
+
 Template.setupTournament.rendered = ->
   $('.tournamentDatepicker').datepicker format: 'dd M yyyy'
   $('#firstDateIcon').click ->
@@ -6,9 +20,7 @@ Template.setupTournament.rendered = ->
     $('#lastDate').datepicker 'show'
 
 Template.setupTournament.tournaments = ->
-  return Tournaments.find {}, 
-    'sort': 'firstDay': -1,
-    'fields': ['tournamentName': 1, 'lastDay': 1]
+  getSortedTournamentList()
 
 Template.setupTournament.tournamentsExist = ->
   return Tournaments.find().count() > 0
@@ -40,12 +52,10 @@ Template.setupRoles.setActiveTournament = ->
     Session.set 'active-tournament-name', name
 
 Template.setupRoles.noTournamentsYet = ->
-  Tournaments.find().count() == 0
+  Tournaments.find().count() is 0
 
 Template.setupRoles.tournaments = ->
-  Tournaments.find {},
-    sort: firstDay: -1
-    fields: tournamentName: 1
+  getSortedTournamentList()
 
 Template.setupRoles.copyableTournaments = ->
   Tournaments.find _id: $ne: Session.get 'active-tournament-id'
@@ -121,9 +131,14 @@ Template.setupShifts.setActiveRole = ->
 Template.setupShifts.activeRoleName = ->
   return Session.get 'active-role-name'
 
+Template.setupShifts.noRolesYet = ->
+  id = Session.get 'active-tournament-id'
+  tournament = Tournaments.findOne id, fields: roles: 1
+  return tournament && tournament.roles.length is 0
+
 Template.setupShifts.shiftsToShow = ->
   return Session.get('active-tournament-id') && Session.get('active-role-id')
-  
+
 Template.setupShifts.markSelectedTournament = ->
   if this._id is Session.get 'active-tournament-id'
     return 'selected=selected'
@@ -133,9 +148,7 @@ Template.setupShifts.markSelectedRole = ->
     return 'selected=selected'
 
 Template.setupShifts.tournaments = ->
-  Tournaments.find {},
-    sort: firstDay: -1
-    fields: tournamentName: 1
+  getSortedTournamentList()
 
 Template.setupShifts.roles = ->
   id = Session.get 'active-tournament-id'

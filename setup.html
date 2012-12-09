@@ -192,47 +192,51 @@
 						</select>
 					</div>
 				</div>
-				<div class="control-group">
-					<label for="role" class="control-label">Role</label>
-					<div class="controls">
-						<select id="role" class="span3">
-							{{#each roles}}
-							<option value="{{roleId}}" {{markSelectedRole}}>{{roleName}}</option>
-							{{/each}}
-						</select>
-					</div>
-				</div>
-				<div class="control-group">
-					<label for="setupShiftsStartTime" class="control-label">Start time</label>
-					<div class="controls">
-						<div class="input-append bootstrap-timepicker-component">
-							<input type="text" class="span2 timepicker-default" id="setupShiftsStartTime">
-							<span class="add-on"><i class="icon-time"></i></span>
+				{{#if noRolesYet}}
+					<p>You must first setup at least one role <a href="/setup/roles">here</a>.</p>
+				{{else}}
+					<div class="control-group">
+						<label for="role" class="control-label">Role</label>
+						<div class="controls">
+							<select id="role" class="span3">
+								{{#each roles}}
+								<option value="{{roleId}}" {{markSelectedRole}}>{{roleName}}</option>
+								{{/each}}
+							</select>
 						</div>
 					</div>
-				</div>
-				<div class="control-group">
-					<label for="setupShiftsEndTime" class="control-label">End time</label>
-					<div class="controls">
-						<div class="input-append bootstrap-timepicker-component">
-							<input type="text" class="span2 timepicker-default" id="setupShiftsEndTime">
-							<span class="add-on"><i class="icon-time"></i></span>
+					<div class="control-group">
+						<label for="setupShiftsStartTime" class="control-label">Start time</label>
+						<div class="controls">
+							<div class="input-append bootstrap-timepicker-component">
+								<input type="text" class="span2 timepicker-default" id="setupShiftsStartTime">
+								<span class="add-on"><i class="icon-time"></i></span>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="control-group">
-					<label for="shiftName" class="control-label">Name</label>
-					<div class="controls">
-						<input type="text" class="span2" id="shiftName" placeholder="AM1, PM1, etc.">
+					<div class="control-group">
+						<label for="setupShiftsEndTime" class="control-label">End time</label>
+						<div class="controls">
+							<div class="input-append bootstrap-timepicker-component">
+								<input type="text" class="span2 timepicker-default" id="setupShiftsEndTime">
+								<span class="add-on"><i class="icon-time"></i></span>
+							</div>
+						</div>
 					</div>
-				</div>
-				<div class="control-group">
-					<div class="controls">
-						<button type="button" id="addShift" class="btn btn-primary">Add Shift</button>
+					<div class="control-group">
+						<label for="shiftName" class="control-label">Name</label>
+						<div class="controls">
+							<input type="text" class="span2" id="shiftName" placeholder="AM1, PM1, etc.">
+						</div>
 					</div>
-				</div>
+					<div class="control-group">
+						<div class="controls">
+							<button type="button" id="addShift" class="btn btn-primary">Add Shift</button>
+						</div>
+					</div>
+					<p>Next: <a href="">Add volunteers</a> or <a href="">assign them shifts</a></p>
+				{{/if}}
 			</form>
-			<p>Next: <a href="">Add volunteers</a> or <a href="">assign them shifts</a></p>
 		</div>
 		<div class="span6">
 			{{#if shiftsToShow}}
