@@ -1,3 +1,41 @@
+/* 
+ * Bootstrap Overrides 
+ *****************************/
+
+.page-header {
+	margin-bottom: 0;
+	border-bottom-width: 0;
+}
+.navbar {
+	margin-bottom: 0;
+}
+.breadcrumb {
+	margin-bottom: 0;
+}
+
+/* only show the close button when the alert message is being show*/
+button[data-dismiss] {
+	display: none;
+}
+.alert button[data-dismiss] {
+	display: block;
+}
+
+h2.column-header {
+	margin-top: 0;
+	line-height: normal;
+}
+
+
+
+/*
+ * Custom styles
+ *****************************/
+
+.message-placeholder {
+	height: 30px;
+}
+
 i[data-delete-shift-id], i[data-delete-shiftdef-id] {
 	cursor: pointer;
 }

@@ -7,7 +7,26 @@ For uploading photos to the server, rather than to Amazon S3 via Filepicker.io, 
 
 Currently using this approach: http://stackoverflow.com/questions/11790191/meteor-file-uploads
 
-TODO: Move the base URL for the photos out of the shifty.html file
+
+## CSS Bootstrap Overrides
+
+.page-header
+ - margin-bottom from 30px to 0
+ - border-bottom-width from 1px to 0
+.navbar
+ - margin-bottom from 20px to 0
+
+
+## Session objects
+
+'active-tournament'
+ - id: uuid()
+ - name: String
+
+'user-message'
+ - type: 'alert && alert-error || alert-info || alert-success'
+ - title: String
+ - message: String
 
 
 ## Page navigation

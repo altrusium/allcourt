@@ -10,10 +10,10 @@ Meteor.Router.add
     Session.set 'active-volunteer-id', id
     return 'volunteerDetails'
   '/shifts': 'shifts',
-  '/setup': 'setup',
-  '/setup/tournament': 'setupTournament',
-  '/setup/roles': 'setupRoles',
-  '/setup/shifts': 'setupShifts'
+  '/tournaments': 'tournaments',
+  '/tournament/create': 'setupTournament',
+  '/tournament/roles': 'setupRoles',
+  '/tournament/shifts': 'setupShifts'
 
 Handlebars.registerHelper 'setTab', (tabName, options) ->
   Session.set 'selected_tab', tabName 
@@ -21,8 +21,18 @@ Handlebars.registerHelper 'setTab', (tabName, options) ->
 tabIsSelected = (tab) ->
   return tab is Session.get 'selected_tab'
 
-# The Tabs Template
 Template.tabs.tabSelected = (tab) ->
   return if tabIsSelected tab then 'active' else ''
 
+Template.activeTournament.tournament = ->
+  tournament = Session.get 'active-tournament'
+  return tournament || id: '', name: ''
+
+Template.userMessages.message = ->
+  msg = Session.get 'user-message'
+  return msg || type: '', title: '', message: ''
+
+$('button[data-dismiss]').click ->
+  Session.set 'user-message',
+    type: '', title: '', message: ''
 

@@ -1,0 +1,282 @@
+<template name="tournaments">
+	{{setTab 'tournaments'}}
+	<ul class="breadcrumb">
+		<li><a href="/tournament/create">Create</a> <span class="divider">|</span></li>
+		<li><a href="/tournament/roles">Roles</a> <span class="divider">|</span></li>
+		<li><a href="/tournament/shifts">Shifts</a>
+	</ul>
+	{{> userMessages}}
+  <div class="row">
+	  <div class="span8">
+	  	<p class="lead">Setup tournament parameters here. Typically, you'll only need to do this once per tournament as you're setting things up.</p>
+
+		  <h2><small><a href="/tournament/create">Create</a></small></h2>
+		  <p>Add a new tournament, edit future and currently running tournaments, or view past tournaments.</p>
+
+		  <h2><small><a href="/tournament/roles">Roles</a></small></h2>
+		  <p>Define all of the roles for a particular tournament (drivers, ball kids, marshalls, runners, etc).</p> 
+
+		  <h2><small><a href="/tournament/shifts">Shifts</a></small></h2>
+		  <p>Define the shifts for each role on every day of the tournament.</p>
+		</div>
+	  <div class="span3 offset1">
+	  	<img src="/img/ta-logo.png" alt="Tennis Auckland Logo">
+	  </div>
+	</div>
+</template>
+
+<template name="setupTournament">
+	{{setTab 'tournaments'}}
+	<ul class="breadcrumb">
+		<li><a href="/tournaments">Tournaments</a> <span class="divider">/</span></li>
+		<li class="active">Create</li>
+	</ul>
+  {{> userMessages}}
+	<div class="row">
+		<div class="span5">
+			<h2 class="column-header"><small>New Tournament</small></h2>
+			<form>
+				<div class="control-group">
+					<label class="control-label" for="tournamentName">Name</label>
+					<div class="controls">
+						<input type="text" id="tournamentName" placeholder="Heineken Open 2013">
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="firstDate" class="control-label">First day</label>
+					<div class="controls">
+						<div class="input-append">
+							<input type="text" class="tournamentDatepicker span2" id="firstDate" data-date-format="dd/mm/yyyy">
+							<span class="add-on" id="firstDateIcon"><i class="icon-calendar"></i></span>
+						</div>
+						<span class="help-block">Not a valid date</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="lastDate" class="control-label">Last day</label>
+					<div class="controls">
+						<div class="input-append">
+							<input type="text" class="tournamentDatepicker span2" id="lastDate" data-date-format="dd/mm/yyyy">
+							<span class="add-on" id="lastDateIcon"><i class="icon-calendar"></i></span>
+						</div>
+						<span class="help-block">Not a valid date</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<span class="help-block" id="dateOrderError">Last day must be after first day</span>
+				</div>
+				<div class="control-group">
+					<div class="controls">
+						<button type="button" id="saveTournament" class="btn btn-primary">Save Tournament</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="span5">
+			{{#if tournamentsExist}}
+			<h2 class="column-header"><small>Existing Tournaments</small></h2>
+			<table class="table table-hover table-striped">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{#each tournaments}}
+					<tr>
+						<td><a href="/tournament/{{_id}}">{{tournamentName}}</a></td>
+						<td>
+							<a href="#" data-tournament-id="{{_id}}" data-action="delete"><i class="icon-remove"></i></a>
+						</td>
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+			{{/if}}
+		</div>
+	</div>
+	<p>Next: <a href="/tournament/roles">Setup roles</a></p>
+</template>
+
+<template name="setupRoles">
+	{{setTab 'tournaments'}}
+	<ul class="breadcrumb">
+		<li><a href="/tournaments">Tournaments</a> <span class="divider">/</span></li>
+		<li class="active">Roles</li>
+	</ul>
+  {{> userMessages}}
+	{{#if noTournamentsYet}}
+		<p>You must first setup at least one tournament <a href="/tournament/create">here</a>.</p>
+	{{else}}
+	<div class="row">
+		<div class="span5">
+			<h2 class="column-header"><small>Manage roles by tournament</small></h2>
+			<form class="form-vertical">
+				<div class="control-group">
+					<label for="tournament" class="control-label">Tournament</label>
+					<div class="controls">
+						<select id="tournament">
+							{{#each tournaments}}
+							<option value="{{_id}}" {{markSelected}}>{{tournamentName}}</option>
+							{{/each}}
+						</select>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="copyRoles" class="control-label">Optionally copy roles from</label>
+					<div class="controls">
+						<select id="copyFrom">
+							{{#each copyableTournaments}}
+							<option value="{{_id}}">{{tournamentName}}</option>
+							{{/each}}
+						</select>
+						<button type="button" id="copyRoles" class="btn btn-primary">Copy</button>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="roleName" class="control-label">Role name</label>
+					<div class="controls">
+						<input type="text" id="roleName" placeholder="Drivers">
+						<button type="button" id="addRole" class="btn btn-primary">Add</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="span6">
+			{{#if rolesExist}}
+			<h2 class="column-header"><small>Roles for the {{activeTournamentName}}</small></h2>
+			<table class="table table-hover table-striped">
+				<thead>
+					<tr>
+						<th>Role name</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{#each roles}}
+					<tr>
+						<td>{{roleName}}</td>
+						<td>
+							<a href="#" data-action="delete" data-role="{{roleName}}"><i class="icon-remove"></i></a>
+						</td>
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+			{{/if}}
+		</div>
+	</div>
+	<p>Next: <a href="/tournament/shifts">Setup shifts</a></p>
+	{{/if}}
+</template>
+
+<template name="setupShifts">
+	{{setTab 'tournaments'}}
+	<ul class="breadcrumb">
+		<li><a href="/tournaments">Tournaments</a> <span class="divider">/</span></li>
+		<li class="active">Shifts</li>
+	</ul>
+  {{> userMessages}}
+	<div class="row">
+		<div class="span6">
+			<h2 class="column-header"><small>Manage shifts by role</small></h2>
+			<p class="span5">Adding the shift specified below will add the shift to every day of the tournament. If a shift isn't needed on a particular day, simply remove it after it has been added.</p>
+			<div class="row"><div class="span6"></div></div>
+			<form class="form-vertical">
+				<div class="control-group">
+					<label for="tournament" class="control-label">Tournament</label>
+					<div class="controls">
+						<select id="tournament" class="span3">
+							{{#each tournaments}}
+							<option value="{{_id}}" {{markSelectedTournament}}>{{tournamentName}}</option>
+							{{/each}}
+						</select>
+					</div>
+				</div>
+				{{#if noRolesYet}}
+					<p>You must first setup at least one role <a href="/tournament/roles">here</a>.</p>
+				{{else}}
+					<div class="control-group">
+						<label for="role" class="control-label">Role</label>
+						<div class="controls">
+							<select id="role" class="span3">
+								{{#each roles}}
+								<option value="{{roleId}}" {{markSelectedRole}}>{{roleName}}</option>
+								{{/each}}
+							</select>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="setupShiftsStartTime" class="control-label">Start time</label>
+						<div class="controls">
+							<div class="input-append bootstrap-timepicker-component">
+								<input type="text" class="span2 timepicker-default" id="setupShiftsStartTime">
+								<span class="add-on"><i class="icon-time"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="setupShiftsEndTime" class="control-label">End time</label>
+						<div class="controls">
+							<div class="input-append bootstrap-timepicker-component">
+								<input type="text" class="span2 timepicker-default" id="setupShiftsEndTime">
+								<span class="add-on"><i class="icon-time"></i></span>
+							</div>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="shiftName" class="control-label">Name</label>
+						<div class="controls">
+							<input type="text" class="span2" id="shiftName" placeholder="AM1, PM1, etc.">
+						</div>
+					</div>
+					<div class="control-group">
+						<div class="controls">
+							<button type="button" id="addShift" class="btn btn-primary">Add Shift</button>
+						</div>
+					</div>
+					<p>Next: <a href="">Add volunteers</a> or <a href="">assign them shifts</a></p>
+				{{/if}}
+			</form>
+		</div>
+		<div class="span6">
+			{{#if shiftsToShow}}
+			<h2 class="column-header"><small>{{activeRoleName}} at the {{activeTournamentName}}</small></h2>
+			<table class="table table-striped table-condensed">
+				<thead>
+					<tr>
+						<th>
+							Date<br>
+							and<br>
+							Shift
+						</th>
+						{{#each shifts.defs}}
+						<th>
+							{{shiftName}} <i class="icon-remove" data-delete-shiftdef-id="{{shiftDefId}}"></i><br>
+							{{startTime}}<br>
+							{{endTime}}
+						</th>
+						{{/each}}
+					</tr>
+				</thead>
+				<tbody>
+					{{#each shifts.days}}
+					<tr>
+						<td>{{dayOfWeek}}<br>{{dayOfMonth}}</td>
+						{{#each activeShifts}}
+						<td>
+							{{#if active}}
+							<i class="icon-remove" data-delete-shift-id="{{shiftId}}"></i>
+							{{/if}}
+						</td>
+						{{/each}}
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+			{{/if}}
+		</div>
+	</div>
+</template>
+

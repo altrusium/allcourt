@@ -5,9 +5,9 @@ Meteor.startup ->
   if Meteor.isClient
     filepicker.setKey 'AOu8DnUQ3Tm6caoisKdpnz'
 
-Meteor.methods {
+Meteor.methods 
   saveVolunteer: (options) ->
-    return Volunteers.insert {
+    Volunteers.insert 
       photoFilename: options.photoFilename
       firstName: options.firstName,
       lastName: options.lastName,
@@ -23,16 +23,17 @@ Meteor.methods {
       city: options.city,
       suburb: options.suburb,
       postalCode: options.postalCode,
-      notes: options.notes,
-    }
+      notes: options.notes
+    
   saveTournament: (options, callback) ->
-    return Tournaments.insert {
+    Tournaments.insert {
       tournamentName: options.tournamentName,
       days: options.days,
       roles: [],
       shifts: [],
       shiftDefs: []
     }, callback
+
   addShift: (options, callback) ->
     tournament = Tournaments.findOne options.tournamentId
     newShiftDef = 
@@ -52,4 +53,4 @@ Meteor.methods {
         startTime: newShiftDef.startTime
         shiftDefId: newShiftDef.shiftDefId
       Tournaments.update options.tournamentId, $push: shifts: newShift
-}
+
