@@ -18,6 +18,11 @@ Meteor.Router.add
 Handlebars.registerHelper 'setTab', (tabName, options) ->
   Session.set 'selected_tab', tabName 
 
+Session.set 'active-tournament', {tournamentId: '', name: ''}
+
+Session.set 'user-message',
+  type: '', title: '', message: ''
+
 tabIsSelected = (tab) ->
   return tab is Session.get 'selected_tab'
 
@@ -26,7 +31,7 @@ Template.tabs.tabSelected = (tab) ->
 
 Template.activeTournament.tournament = ->
   tournament = Session.get 'active-tournament'
-  return tournament || id: '', name: ''
+  return tournament || tournamentId: '', name: ''
 
 Template.userMessages.message = ->
   msg = Session.get 'user-message'

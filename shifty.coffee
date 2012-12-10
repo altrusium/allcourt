@@ -46,7 +46,7 @@ Meteor.methods
     for day in tournament.days
       newShift = 
         day: day
-        active: true
+        count: options.count
         shiftId: Meteor.uuid()
         roleId: newShiftDef.roleId
         endTime: newShiftDef.endTime

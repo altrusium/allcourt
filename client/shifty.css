@@ -36,7 +36,21 @@ h2.column-header {
 	height: 30px;
 }
 
-i[data-delete-shift-id], i[data-delete-shiftdef-id] {
+.shift-count {
+	font-size: 16px;
+	font-weight: bold;
+	cursor: pointer;
+}
+.shift-count.zero {
+	color: silver;
+}
+.input-append .shift.span1 {
+	width: 20px;
+}
+
+i[data-activate-shift-id], 
+i[data-deactivate-shift-id], 
+i[data-deactivate-shiftdef-id] {
 	cursor: pointer;
 }
 
