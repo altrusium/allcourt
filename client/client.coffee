@@ -41,3 +41,8 @@ $('button[data-dismiss]').click ->
   Session.set 'user-message',
     type: '', title: '', message: ''
 
+
+# Session.set 'user-message',
+#   type: 'alert'
+#   title: 'Back again!'
+#   message: 'Don\'t worry. I\'m not staying long'

@@ -165,8 +165,6 @@ Template.setupShifts.shiftDefs = ->
   rId = Session.get 'active-role-id'
   if tId
     tournament = Tournaments.findOne tId, {fields: {shiftDefs: 1}, sort: {shiftDefs: startTime: 1}}
-    # sortedShiftDefs = tournament.shiftDefs.sort (timeA, timeB) ->
-    #   moment(timeA.startTime).diff(moment(timeB.startTime), 'hours') > 0
     shiftDefs = for def in tournament.shiftDefs when def.roleId is rId
       def.startTime = moment(def.startTime).format('h:mm a')
       def.endTime = moment(def.endTime).format('h:mm a')
