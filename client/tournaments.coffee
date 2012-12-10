@@ -272,3 +272,4 @@ Template.setupShifts.rendered = ->
     $(this).data 'timepicker', null
   $('.bootstrap-timepicker').remove()
   $('.timepicker-default').timepicker minuteStep: 30, showInputs: false
+  $('.icon-info-sign').popover()

@@ -40,6 +40,7 @@ h2.column-header {
 	font-size: 16px;
 	font-weight: bold;
 	cursor: pointer;
+	margin-left: 7px;
 }
 .shift-count.zero {
 	color: silver;
@@ -48,9 +49,13 @@ h2.column-header {
 	width: 20px;
 }
 
+.icon-info-sign {
+	cursor: pointer;
+}
+
 i[data-activate-shift-id], 
 i[data-deactivate-shift-id], 
-i[data-deactivate-shiftdef-id] {
+i[data-delete-shiftdef-id] {
 	cursor: pointer;
 }
 
