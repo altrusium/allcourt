@@ -172,11 +172,61 @@
 		<li><a href="/volunteers">Volunteers</a> <span class="divider">/</span></li>
 		<li class="active">Details</li>
 	</ul>
-		<p>
-			<img src="{{photoRoot}}{{detail.photoFilename}}"><br>
-			{{detail.firstName}} {{detail.lastName}}<br>
-			<a href="mailto:{{detail.primaryEmail}}">{{detail.primaryEmail}}</a>
-		</p>
+	{{> userMessages}}
+	<div class="row">
+		<div class="span3">
+				<img class="volunteer-photo" src="{{photoRoot}}{{detail.photoFilename}}"><br>
+				<button id="editProfile" class="btn">Edit Profile</button>
+		</div>
+		<div class="volunteer-details span4">
+			<h3>{{detail.firstName}} {{detail.lastName}}</h3>
+			<p>
+				{{#if detail.primaryEmail}}<a href="mailto:{{detail.primaryEmail}}">{{detail.primaryEmail}}</a><br>{{/if}}
+				{{#if detail.secondaryEmail}}<a href="mailto:{{detail.secondaryEmail}}">{{detail.secondaryEmail}}</a>{{/if}}
+			</p>
+			<p>
+				{{#if detail.homePhone}}Home phone: {{detail.homePhone}}<br>{{/if}}
+				{{#if detail.workPhone}}Work phone: {{detail.workPhone}}<br>{{/if}}
+				{{#if detail.mobilePhone}}Mobile phone: {{detail.mobilePhone}}{{/if}}
+			</p>
+			<address>
+				{{#if detail.address}}{{detail.address}}<br>{{/if}}
+				{{#if detail.city}}{{detail.city}}<br>{{/if}}
+				{{#if detail.suburb}}{{detail.suburb}}<br>{{/if}}
+				{{#if detail.postalCode}}{{detail.postalCode}}<br>{{/if}}
+			</address>
+		</div>
+		<div class="volunteer-details span5">
+			{{#if myTournamentsExist}}
+			<h3>My Tournaments</h3>
+			{{#each myTournaments}}
+			<div class="media">
+				<a class="pull-left" href="#">
+					<img class="media-object" data-src="">
+				</a>
+				<div class="media-body">
+					<h4 class="media-heading"><a href="/tournament/{{_id}}">{{tournamentName}}</a></h4>
+				</div>
+			</div>
+			{{/each}}
+			{{/if}}
+
+			{{#if availableTournamentsExist}}
+			<h3>Available Tournaments</h3>
+			{{#each availableTournaments}}
+			<div class="media">
+				<a class="pull-left" href="#">
+					<img class="media-object" data-src="">
+				</a>
+				<div class="media-body">
+					<h4 class="media-heading">{{tournamentName}}</h4>
+					<p><a href="/tournament/{{_id}}/signup">Sign up to volunteer</a></p>
+				</div>
+			</div>
+			{{/each}}
+			{{/if}}
+		</div>
+	</div>
 </template>
 
 

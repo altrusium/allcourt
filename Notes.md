@@ -55,6 +55,8 @@ Tournaments Collection
 
 Tournament
 - tournamentName: String
+- description: String ---------- todo
+- logo: String        ---------- todo
 - days: Array
   - Date
 - roles: Array
@@ -64,12 +66,12 @@ Tournament
   - shiftDefId: UUID
   - roleId: UUID
   - shiftName: String
-  - startDate: Date
-  - endDate: Date
+  - startTime: Date
+  - endTime: Date
 - shifts: Array
-  - active: Boolean
-  - startDate: Date
-  - endDate: Date
+  - count: Number
+  - startTime: Date
+  - endTime: Date
   - day: Date
   - roleId: UUID
   - shiftId: UUID
@@ -106,6 +108,24 @@ Volunteer
 
 - preferredRoles: Array
   - role UUID
+
+
+
+TournamentVolunteers
+- volunteerId
+- tournamentId
+- availability: Array
+  - date
+  - startTime
+  - endTime
+- rolePreferrences: Array
+  - roleId
+- schedule: Array
+  - shiftId
+  - roleId
+
+
+
 
 
 

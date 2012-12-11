@@ -3,3 +3,6 @@ Meteor.publish 'volunteers', ->
 	
 Meteor.publish 'tournaments', ->
 	return Tournaments.find()
+
+Meteor.publish 'tournamentVolunteers', ->
+	return TournamentVolunteers.find()

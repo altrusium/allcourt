@@ -80,3 +80,17 @@ Template.volunteerDetails.detail = ->
 
 Template.volunteerDetails.photoRoot = ->
   return 'http://s3-ap-southeast-2.amazonaws.com/shifty-photos/' 
+
+Template.volunteerDetails.availableTournaments = ->
+  tournaments = Tournaments.find {}, fields: {tournamentName: 1, days: 1}
+  futureTournaments = for tournament in tournaments.fetch()
+    tournamentStartDate = new Date tournament.days[0]
+    if new Date() - tournamentStartDate < 0
+      tournament
+
+Template.volunteerDetails.availableTournamentsExist = ->
+  tournaments = Template.volunteerDetails.availableTournaments()
+  return tournaments.length > 0
+
+Template.volunteerDetails.myTournamentsExist = ->
+  return false

@@ -1,5 +1,6 @@
 Meteor.subscribe 'volunteers'
 Meteor.subscribe 'tournaments'
+Meteor.subscribe 'tournamentVolunteers'
 
 Meteor.Router.add
   '/': 'home',
@@ -41,7 +42,7 @@ $('button[data-dismiss]').click ->
   Session.set 'user-message',
     type: '', title: '', message: ''
 
-
+# For debugging and styling
 # Session.set 'user-message',
 #   type: 'alert'
 #   title: 'Back again!'
