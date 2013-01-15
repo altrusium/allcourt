@@ -76,6 +76,7 @@ Tournament
   - roleId: UUID
   - shiftId: UUID
   - shiftDefId: UUID
+  - publicSignup: Boolean -------todo
 
 
 

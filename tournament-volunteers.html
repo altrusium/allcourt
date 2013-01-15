@@ -1,0 +1,67 @@
+<template name="tournamentVolunteerSignup">
+	{{setTab 'tournaments'}}
+	<ul class="breadcrumb">
+		<li><a href="/tournaments">Tournaments</a> <span class="divider">/</span></li>
+		<li class="active">Signup</li>
+	</ul>
+	{{> userMessages}}
+	<div class="row">
+		<div class="span5">
+			<h2 class="column-header"><small>Volunteer Preferences</small></h2> 
+			<div class="row"><div class="span6"></div></div>
+			<p>Sort (drag and drop) the following volunteer roles in the order of your preference.</p>
+			<ul id="sortableRoles" class="nav nav-pills nav-stacked">
+				{{#each roles}}
+				<li><a href="#">{{roleName}}</a></li>
+				{{/each}}
+			</ul>
+			<p>Select a role below and check the boxes in the table for each of the shifts you wish to volunteer. You should at least do this for your first choice, preferably your first few choices.</p>
+			<form class="form-vertical">
+					<div class="control-group">
+						<label for="role" class="control-label">Role</label>
+						<div class="controls">
+							<select id="role" class="span3">
+								{{#each roles}}
+								<option value="{{roleId}}" {{markSelectedRole}}>{{roleName}}</option>
+								{{/each}}
+							</select>
+						</div>
+					</div>
+			</form>
+		</div>
+		<div class="span7">
+			<h2 class="column-header"><small>{{activeRoleName}} Shifts</small></h2>
+			<p></p>
+			<table class="table table-striped table-condensed">
+				<thead>
+					<tr>
+						<td>
+							Date<br>
+							and<br>
+							Shift 
+						</td>
+						{{#each shifts.defs}}
+						<th>
+							{{shiftName}} <i class="icon-remove" data-delete-shiftdef-id="{{shiftDefId}}"></i><br>
+							{{startTime}}<br>
+							{{endTime}}
+						</th>
+						{{/each}}
+					</tr>
+				</thead>
+				<tbody>
+					{{#each shifts.days}}
+					<tr>
+						<td><strong>{{dayOfWeek}}<br>{{dayOfMonth}}</strong></td>
+						{{#each activeShifts}}
+						<td>
+							<!-- include checkbox here -->
+						</td>
+						{{/each}}
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</template>

@@ -25,6 +25,16 @@
 	</div>
 </template>
 
+<template name="tournamentDetails">
+	{{setTab 'tournaments'}}
+	<ul class="breadcrumb">
+		<li><a href="/tournaments">Tournaments</a> <span class="divider">/</span></li>
+		<li class="active">Details</li>
+	</ul>
+	{{> userMessages}}
+	<a href="/tournament/{{tournamentId}}/signup">Sign up</a>
+</template>
+
 <template name="setupTournament">
 	{{setTab 'tournaments'}}
 	<ul class="breadcrumb">

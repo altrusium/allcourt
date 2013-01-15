@@ -12,6 +12,12 @@ getSortedTournamentList = ->
 
 
 
+Template.tournamentDetails.tournamentId = ->
+  return Session.get('active-tournament').tournamentId
+
+
+
+
 Template.setupTournament.rendered = ->
   $('.tournamentDatepicker').datepicker format: 'dd M yyyy'
   $('#firstDateIcon').click ->
@@ -72,10 +78,7 @@ Template.setupRoles.rolesExist = ->
 
 Template.setupRoles.roles = ->
   id = Session.get('active-tournament').tournamentId
-  unless id
-    return
-  tournament = Tournaments.findOne id, fields: roles: 1
-  return tournament.roles
+  getRoles id
 
 Template.setupRoles.activeTournamentName = ->
   return Session.get('active-tournament').name

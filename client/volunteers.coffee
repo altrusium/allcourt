@@ -1,3 +1,5 @@
+photoRoot = 'http://s3-ap-southeast-2.amazonaws.com/shifty-photos/'
+
 updatePage = (file) ->
   $('#photoImg').attr 'src', Template.volunteersList.photoRoot() + file.key
   $('#photoPlaceholder').removeClass('empty').find('p, h4').remove()
@@ -69,7 +71,7 @@ Template.volunteersList.volunteers = ->
   return Volunteers.find() 
 
 Template.volunteersList.photoRoot = ->
-  return 'http://s3-ap-southeast-2.amazonaws.com/shifty-photos/' 
+  return photoRoot
 
 
 
@@ -79,18 +81,21 @@ Template.volunteerDetails.detail = ->
   Volunteers.findOne id
 
 Template.volunteerDetails.photoRoot = ->
-  return 'http://s3-ap-southeast-2.amazonaws.com/shifty-photos/' 
-
-Template.volunteerDetails.availableTournaments = ->
-  tournaments = Tournaments.find {}, fields: {tournamentName: 1, days: 1}
-  futureTournaments = for tournament in tournaments.fetch()
-    tournamentStartDate = new Date tournament.days[0]
-    if new Date() - tournamentStartDate < 0
-      tournament
+  return photoRoot
 
 Template.volunteerDetails.availableTournamentsExist = ->
   tournaments = Template.volunteerDetails.availableTournaments()
   return tournaments.length > 0
 
+Template.volunteerDetails.availableTournaments = ->
+  tournaments = Tournaments.find({}, fields: {tournamentName: 1, days: 1}).fetch()
+  futureTournaments = for tournament in tournaments
+    tournamentStartDate = new Date tournament.days[0]
+    tournament if new Date() - tournamentStartDate < 0
+
 Template.volunteerDetails.myTournamentsExist = ->
   return false
+
+Template.volunteerDetails.myTournaments = ->
+  return []
+
