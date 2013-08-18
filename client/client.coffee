@@ -2,14 +2,14 @@ Meteor.subscribe 'volunteers'
 Meteor.subscribe 'tournaments'
 Meteor.subscribe 'tournamentVolunteers'
 
-setActiveTournament = (id) ->
-  tournament = Tournaments.findOne id
+setActiveTournament = (slug) ->
+  tournament = Tournaments.findOne slug: slug
   unless tournament
     return 'notFound'
   else
     Session.set 'active-tournament', 
       tournamentId: tournament._id, name: tournament.tournamentName
-    return 'tournamentDetails'
+    return false
 
 Meteor.Router.add
   '/': 'home',
@@ -22,12 +22,13 @@ Meteor.Router.add
   '/shifts': 'shifts'
   '/tournaments': 'tournaments'
   '/tournament/create': 'setupTournament'
+  '/tournament/list': 'tournamentList'
   '/tournament/roles': 'setupRoles'
   '/tournament/shifts': 'setupShifts'
-  '/tournament/:id': (id) ->
-    return setActiveTournament(id)
+  '/tournament/:slug': (slug) ->
+    return setActiveTournament(slug) || 'tournamentDetails'
   '/tournament/:id/signup': (id) ->
-    return setActiveTournament(id)
+    return setActiveTournament(id) || 'tournamentVolunteerSignup'
   '*': 'notFound'
 
 Handlebars.registerHelper 'setTab', (tabName, options) ->

@@ -25,6 +25,7 @@ Meteor.methods
   saveTournament: (options, callback) ->
     Tournaments.insert {
       tournamentName: options.tournamentName,
+      slug: options.slug,
       days: options.days,
       roles: [],
       shifts: [],

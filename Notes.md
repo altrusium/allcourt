@@ -51,7 +51,7 @@ Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicke
 4 Dec 2012: Learned MongoDB doesn't really like arrays of objects that don't have a unique property. The alternative is to use the positional operator, which can only go one level deep [http://docs.mongodb.org/manual/reference/operators/#update-operators-array]. Also, Meteor's minimongo doesn't support it yet [https://github.com/meteor/meteor/issues/153]. 
 
 Tournaments Collection
-- tournaments: Tournament
+- tournaments: Tournament[]
 
 Tournament
 - tournamentName: String
@@ -126,6 +126,18 @@ TournamentVolunteers
   - roleId
 
 
+## User accounts & roles
+
+Roles
+- Admin
+  - All URLs
+- Role lead
+  - All volunteer URLs
+  - Some specific role lead URLs
+- Volunteer
+  - /volunteer/create
+  - /volunteer/[id] (for themself)
+  - /tournament/[id]/signup|edit
 
 
 

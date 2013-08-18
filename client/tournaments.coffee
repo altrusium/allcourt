@@ -1,5 +1,5 @@
 getSortedTournamentList = ->
-  tournaments = Tournaments.find {}, fields: tournamentName: 1, days: 1
+  tournaments = Tournaments.find {}, fields: tournamentName: 1, slug: 1, days: 1
   list = tournaments.fetch()
   list.sort (t1, t2) ->
     date1 = new Date(t1.days[0])
@@ -38,15 +38,27 @@ Template.setupTournament.events
     length = lastDay.diff(firstDay, 'days') 
     options = 
       tournamentName: template.find('#tournamentName').value
+      slug: template.find('#tournamentName').value.replace(/\s/g, '')
       firstDay: firstDay.toDate()
       lastDay: lastDay.toDate()
       days: for count in [1..length + 1]
         moment(firstDay).add('days', count).toDate()
+    # Todo: Need to make sure slug is unique
+    console.log options.slug
     Meteor.call 'saveTournament', options, (err, id) ->
         $('#tournamentName').val ''
   'click [data-action=delete]': (evnt, template) ->
     id = $(evnt.currentTarget).data 'tournament-id'
     Tournaments.remove id
+
+
+
+
+Template.tournamentList.tournamentsExist = ->
+  return Tournaments.find().count() > 0
+
+Template.tournamentList.tournaments = ->
+  getSortedTournamentList()
 
 
 

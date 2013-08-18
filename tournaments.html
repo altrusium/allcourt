@@ -2,6 +2,7 @@
 	{{setTab 'tournaments'}}
 	<ul class="breadcrumb">
 		<li><a href="/tournament/create">Create</a> <span class="divider">|</span></li>
+		<li><a href="/tournament/list">List</a> <span class="divider">|</span></li>
 		<li><a href="/tournament/roles">Roles</a> <span class="divider">|</span></li>
 		<li><a href="/tournament/shifts">Shifts</a>
 	</ul>
@@ -12,6 +13,9 @@
 
 		  <h2><small><a href="/tournament/create">Create</a></small></h2>
 		  <p>Add a new tournament, edit future and currently running tournaments, or view past tournaments.</p>
+
+		  <h2><small><a href="/tournament/list">List</a></small></h2>
+		  <p>View a list of all tournaments. You must select a tournament before defining its roles and shifts.</p>
 
 		  <h2><small><a href="/tournament/roles">Roles</a></small></h2>
 		  <p>Define all of the roles for a particular tournament (drivers, ball kids, marshalls, runners, etc).</p> 
@@ -33,6 +37,24 @@
 	</ul>
 	{{> userMessages}}
 	<a href="/tournament/{{tournamentId}}/signup">Sign up</a>
+</template>
+
+<template name="tournamentList">
+	{{setTab 'tournaments'}}
+	<ul class="breadcrumb">
+		<li><a href="/tournaments">Tournaments</a> <span class="divider">/</span></li>
+		<li class="active">List</li>
+	</ul>
+	{{> userMessages}}
+	{{#if tournamentsExist}}
+	<h2 class="column-header"><small>Existing Tournaments</small></h2>
+		{{#each tournaments}}
+		<p>
+			<a href="/tournament/{{_id}}">{{tournamentName}}</a>
+				<a href="#" data-tournament-id="{{_id}}" data-action="delete"><i class="icon-remove"></i></a>
+		</p>
+		{{/each}}
+	{{/if}}
 </template>
 
 <template name="setupTournament">
@@ -95,7 +117,7 @@
 				<tbody>
 					{{#each tournaments}}
 					<tr>
-						<td><a href="/tournament/{{_id}}">{{tournamentName}}</a></td>
+						<td><a href="/tournament/{{slug}}">{{tournamentName}}</a></td>
 						<td>
 							<a href="#" data-tournament-id="{{_id}}" data-action="delete"><i class="icon-remove"></i></a>
 						</td>
