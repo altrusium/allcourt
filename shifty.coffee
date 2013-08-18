@@ -23,6 +23,7 @@ Meteor.methods
       notes: options.notes
     
   saveTournament: (options, callback) ->
+    # Todo: Need to make sure slug is unique
     Tournaments.insert {
       tournamentName: options.tournamentName,
       slug: options.slug,

@@ -8,7 +8,9 @@ setActiveTournament = (slug) ->
     return 'notFound'
   else
     Session.set 'active-tournament', 
-      tournamentId: tournament._id, name: tournament.tournamentName
+      tournamentId: tournament._id, 
+      name: tournament.tournamentName,
+      slug: tournament.slug
     return false
 
 Meteor.Router.add
@@ -34,7 +36,7 @@ Meteor.Router.add
 Handlebars.registerHelper 'setTab', (tabName, options) ->
   Session.set 'selected_tab', tabName 
 
-Session.set 'active-tournament', {tournamentId: '', name: ''}
+Session.set 'active-tournament', {tournamentId: '', name: '', slug: ''}
 
 Session.set 'user-message',
   type: '', title: '', message: ''

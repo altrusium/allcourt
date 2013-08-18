@@ -50,7 +50,7 @@
 	<h2 class="column-header"><small>Existing Tournaments</small></h2>
 		{{#each tournaments}}
 		<p>
-			<a href="/tournament/{{_id}}">{{tournamentName}}</a>
+			<a href="/tournament/{{slug}}">{{tournamentName}}</a>
 				<a href="#" data-tournament-id="{{_id}}" data-action="delete"><i class="icon-remove"></i></a>
 		</p>
 		{{/each}}

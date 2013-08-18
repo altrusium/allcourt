@@ -43,8 +43,6 @@ Template.setupTournament.events
       lastDay: lastDay.toDate()
       days: for count in [1..length + 1]
         moment(firstDay).add('days', count).toDate()
-    # Todo: Need to make sure slug is unique
-    console.log options.slug
     Meteor.call 'saveTournament', options, (err, id) ->
         $('#tournamentName').val ''
   'click [data-action=delete]': (evnt, template) ->
@@ -90,7 +88,10 @@ Template.setupRoles.rolesExist = ->
 
 Template.setupRoles.roles = ->
   id = Session.get('active-tournament').tournamentId
-  getRoles id
+  unless id
+    return
+  tournament = Tournaments.findOne id, fields: roles: 1
+  return tournament.roles
 
 Template.setupRoles.activeTournamentName = ->
   return Session.get('active-tournament').name
