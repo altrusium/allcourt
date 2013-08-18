@@ -54,6 +54,8 @@
 				<a href="#" data-tournament-id="{{_id}}" data-action="delete"><i class="icon-remove"></i></a>
 		</p>
 		{{/each}}
+	{{else}}
+		<p>What? No tournaments? Looks like you need to <a href="/tournament/create">create one</a>.</p>
 	{{/if}}
 </template>
 

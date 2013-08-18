@@ -58,6 +58,14 @@ Template.tournamentList.tournamentsExist = ->
 Template.tournamentList.tournaments = ->
   getSortedTournamentList()
 
+Template.tournamentList.events 
+  'click [data-action=delete]': (evnt, template) ->
+    id = $(evnt.currentTarget).data 'tournament-id'
+    Tournaments.remove id
+
+Template.tournamentList.tournamentsExist = ->
+  return Tournaments.find().count() > 0
+
 
 
 
