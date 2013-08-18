@@ -230,7 +230,7 @@ Template.setupShifts.shifts = ->
     dayShifts = 
       dayOfWeek: moment(day).format('ddd')
       dayOfMonth: moment(day).format('Do')
-      activeShifts: (shift for shift in sortedShifts when shift.day is day)
+      activeShifts: (shift for shift in sortedShifts when shift.day.valueOf() is day.valueOf())
   # return the result
   result = 
     defs: shiftDefs
