@@ -1,6 +1,6 @@
-Meteor.subscribe 'volunteers'
-Meteor.subscribe 'tournaments'
-Meteor.subscribe 'tournamentVolunteers'
+volunteers = Meteor.subscribe 'volunteers'
+tournaments = Meteor.subscribe 'tournaments'
+tournamentVolunteers = Meteor.subscribe 'tournamentVolunteers'
 
 setActiveTournament = (slug) ->
   tournament = Tournaments.findOne slug: slug
@@ -13,14 +13,26 @@ setActiveTournament = (slug) ->
       slug: tournament.slug
     return false
 
+setActiveVolunteer = (slug) ->
+  if volunteers.ready()
+    volunteer = Volunteers.findOne slug: slug
+    unless volunteer
+      return 'notFound'
+    else
+      Session.set 'active-volunteer', volunteer
+      return false
+  else 
+    return 'loading'
+
 Meteor.Router.add
   '/': 'home',
   '/volunteers': 'volunteers'
-  '/volunteers/create': 'volunteersCreate'
-  '/volunteers/list': 'volunteersList'
-  '/volunteer/:id': (id) ->
-    Session.set 'active-volunteer-id', id
-    return 'volunteerDetails'
+  '/volunteer/create': 'volunteerCreate'
+  '/volunteer/list': 'volunteerList'
+  '/volunteer/edit/:slug': (slug) ->
+    return setActiveVolunteer(slug) || 'volunteerCreate'
+  '/volunteer/:slug': (slug) ->
+    return setActiveVolunteer(slug) || 'volunteerDetails'
   '/shifts': 'shifts'
   '/tournaments': 'tournaments'
   '/tournament/create': 'setupTournament'
@@ -29,12 +41,17 @@ Meteor.Router.add
   '/tournament/shifts': 'setupShifts'
   '/tournament/:slug': (slug) ->
     return setActiveTournament(slug) || 'tournamentDetails'
-  '/tournament/:id/signup': (id) ->
-    return setActiveTournament(id) || 'tournamentVolunteerSignup'
+  '/tournament/:slug/signup': (id) ->
+    return setActiveTournament(slug) || 'tournamentVolunteerSignup'
   '*': 'notFound'
 
 Handlebars.registerHelper 'setTab', (tabName, options) ->
   Session.set 'selected_tab', tabName 
+
+Handlebars.registerHelper 'select', (value, options) ->
+  $el = $('<select />').html options.fn(this)
+  $el.find('[value=' + value + ']').attr({'selected':'selected'})
+  return $el.html()
 
 Session.set 'active-tournament', {tournamentId: '', name: '', slug: ''}
 
