@@ -64,6 +64,7 @@
 					<label class="control-label" for="shirtSize">Shirt Size</label>
 					<div class="controls">
 						<select id="shirtSize" class="input-small">
+							<option value="blank"></option>
 							<option value="3xs">3XS</option>
 							<option value="2xs">2XS</option>
 							<option value="xs">XS</option>
@@ -85,12 +86,6 @@
 					<label class="control-label" for="primaryEmail">Primary Email</label>
 					<div class="controls">
 						<input type="text" id="primaryEmail" required>
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="secondaryEmail">SecondaryEmail</label>
-					<div class="controls">
-						<input type="text" id="secondaryEmail">
 					</div>
 				</div>
 				<div class="control-group">
@@ -118,15 +113,15 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label" for="lastName">City</label>
-					<div class="controls">
-						<input type="text" id="city">
-					</div>
-				</div>
-				<div class="control-group">
 					<label class="control-label" for="suburb">Suburb</label>
 					<div class="controls">
 						<input type="text" id="suburb">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="lastName">City</label>
+					<div class="controls">
+						<input type="text" id="city">
 					</div>
 				</div>
 				<div class="control-group">
@@ -174,11 +169,12 @@
 	</ul>
 	{{> userMessages}}
 	<div class="row">
+		{{#with detail}}
 		<div class="span3">
 				<img class="volunteer-photo" src="{{photoRoot}}{{detail.photoFilename}}"><br>
-				<button id="editProfile" class="btn">Edit Profile</button>
+				<p><button id="editProfile" class="btn" data-volunteer-id="{{_id}}">Edit Profile</button></p>
+				<p><button id="deleteVolunteer" class="btn btn-link" data-volunteer-id="{{_id}}">Delete Volunteer</button></p>
 		</div>
-		{{#with detail}}
 		<div class="volunteer-details span4">
 			<h3>{{firstName}} {{lastName}}</h3>
 			<p>
@@ -228,6 +224,19 @@
 			{{/each}}
 			{{/if}}
 		</div>
+	</div>
+	<div id="deleteModal" class="modal hide fade">
+	  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	    <h3>Deleting a volunteer</h3>
+	  </div>
+	  <div class="modal-body">
+	    <p>Are you sure you wish to delete this volunteer? This can not be undone.</p>
+	  </div>
+	  <div class="modal-footer">
+	    <a href="#" class="btn link" id="deleteConfirmed" data-dismiss="modal">Delete volunteer</a>
+	    <a href="#" class="btn btn-primary" id="deleteCancelled" data-dismiss="modal">Do not delete</a>
+	  </div>
 	</div>
 </template>
 

@@ -39,7 +39,7 @@ Handlebars.registerHelper 'setTab', (tabName, options) ->
 Session.set 'active-tournament', {tournamentId: '', name: '', slug: ''}
 
 Session.set 'user-message',
-  type: '', title: '', message: ''
+ type: '', title: '', message: ''
 
 tabIsSelected = (tab) ->
   return tab is Session.get 'selected_tab'
@@ -55,12 +55,23 @@ Template.userMessages.message = ->
   msg = Session.get 'user-message'
   return msg || type: '', title: '', message: ''
 
+Template.userMessages.showMessage = (options) ->
+  Session.set 'user-message', 
+    title: options.title,
+    message: options.message,
+    type: 'alert alert-' + options.type
+  setTimeout -> 
+    Session.set 'user-message', 
+      type: '', title: '', message: '',
+  , options.timeout || 4000 unless options.type is 'error'
+
 $('button[data-dismiss]').click ->
   Session.set 'user-message',
     type: '', title: '', message: ''
+    # type can be 'error', 'success', and 'info'
 
 # For debugging and styling
 # Session.set 'user-message',
-#   type: 'alert'
+#   type: 'error'
 #   title: 'Back again!'
 #   message: 'Don\'t worry. I\'m not staying long'

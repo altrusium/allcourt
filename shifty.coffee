@@ -3,9 +3,10 @@ Meteor.startup ->
     filepicker.setKey 'AOu8DnUQ3Tm6caoisKdpnz'
 
 Meteor.methods 
-  saveVolunteer: (options) ->
-    Volunteers.insert 
-      photoFilename: options.photoFilename
+  saveVolunteer: (options, callback) ->
+    Volunteers.insert { 
+      slug: options.firstName + options.lastName,
+      photoFilename: options.photoFilename,
       firstName: options.firstName,
       lastName: options.lastName,
       birthdate: options.birthdate,
@@ -21,6 +22,7 @@ Meteor.methods
       suburb: options.suburb,
       postalCode: options.postalCode,
       notes: options.notes
+    }, callback
     
   saveTournament: (options, callback) ->
     # Todo: Need to make sure slug is unique
@@ -52,4 +54,7 @@ Meteor.methods
         startTime: newShiftDef.startTime
         shiftDefId: newShiftDef.shiftDefId
       Tournaments.update options.tournamentId, $push: shifts: newShift
+
+
+
 

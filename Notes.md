@@ -35,6 +35,10 @@ Using Meteor Router from: https://github.com/tmeasday/meteor-router
 Which uses Page.js: http://visionmedia.github.com/page.js/
 
 
+## Connecting to the production DB
+http://stackoverflow.com/questions/11801278/accessing-meteor-production-database
+
+
 ## Date picker
 
 Using Datepicker for Bootstrap from: https://github.com/eternicode/bootstrap-datepicker
