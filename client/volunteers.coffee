@@ -165,13 +165,13 @@ Template.volunteerDetails.events =
   'click #deleteVolunteer': (evnt, template) ->
     $('#deleteModal').modal()
   'click #deleteConfirmed': (evnt, template) ->
-    id = Session.get 'active-volunteer-id'
-    Volunteers.remove id
-    Meteor.Router.to 'volunteerList'
-    Template.userMessages.showMessage 
-      type: 'info',
-      title: 'Deleted!',
-      message: 'The volunteer was deleted'
+    id = Session.get('active-volunteer')._id
+    Volunteers.remove id, ->
+      Meteor.Router.to 'volunteerList'
+      Template.userMessages.showMessage 
+        type: 'info',
+        title: 'Deleted!',
+        message: 'The volunteer was deleted'
   'click #deleteCancelled': (evnt, template) ->
     $('#deleteModal').hide()
   'click #editProfile': (evnt, template) ->
