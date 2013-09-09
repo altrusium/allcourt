@@ -64,15 +64,22 @@ i[data-delete-shiftdef-id] {
 	height: 200px;
 	margin: 0 auto 20px auto;
 	position: relative;
+	background-repeat: no-repeat;
+}
+.photo-placeholder.small {
+	width: 70px;
+	height: 70px;
+	background-size: contain;
+	border: 1px solid silver;
 }
 .photo-placeholder.empty {
 	border: 2px dashed silver;
 }
 .photo-placeholder.male {
-	background: url(/img/no-male-photo.jpg) no-repeat;
+	background-image: url(/img/no-male-photo.jpg);
 }
 .photo-placeholder.female {
-	background: url(/img/no-female-photo.jpg) no-repeat;
+	background-image: url(/img/no-female-photo.jpg);
 }
 .photo-placeholder h4 {
 	text-align: center;

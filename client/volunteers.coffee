@@ -11,7 +11,10 @@ Template.volunteers.rendered = ->
 
 Template.volunteerList.volunteers = ->
   Session.set 'active-volunteer', null
-  return Volunteers.find() 
+  Volunteers.find().map (volunteer) ->
+    volunteer.isMale = ->
+      return volunteer.gender is 'male'
+    volunteer
 
 Template.volunteerList.photoRoot = ->
   return photoRoot

@@ -164,7 +164,11 @@
 		<div class="row">
 			<div class="span1">
 				<a href="/volunteer/{{slug}}">
-					<img src="{{photoRoot}}{{photoFilename}}"><br>
+					{{#if photoFilename}}
+						<img src="{{photoRoot}}{{photoFilename}}"><br>
+					{{else}}
+						<div class="small {{#if isMale}}male{{else}}female{{/if}} photo-placeholder"></div>
+					{{/if}}}
 				</a>
 			</div>
 			<div class="span5 volunteer-info">
@@ -187,7 +191,11 @@
 	<div class="row">
 		{{#with detail}}
 		<div class="span3">
-				<img class="volunteer-photo" src="{{photoRoot}}{{detail.photoFilename}}"><br>
+				{{#if photoFilename}}
+					<img class="volunteer-photo" src="{{photoRoot}}{{detail.photoFilename}}"><br>
+				{{else}}
+					<div class="{{#if isMale}}male{{else}}female{{/if}} photo-placeholder"></div>
+				{{/if}}}
 				<p><button id="editProfile" class="btn" data-volunteer-id="{{_id}}">Edit Profile</button></p>
 				<p><button id="deleteVolunteer" class="btn btn-link" data-volunteer-id="{{_id}}">Delete Volunteer</button></p>
 		</div>
