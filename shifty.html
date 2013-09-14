@@ -1,77 +1,19 @@
 <head>
-  <title>Shifty: A Volunteer Shift Manager</title>
+  <title>All-court</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
 	<div class="container">
-	  <div class="page-header">
-	  	<h2><a href="/">Volunteer Management</a></h2>
-	  	{{> activeTournament}}
-	  </div>
-	  {{> tabs}}
+  	<h2><a href="/">All-court</a> {{> activeTournament}}</h2>
 	  {{renderPage}}
 	</div>
 </body>
 
 <template name="activeTournament">
-	<h3>{{tournament.name}}</h3>
-</template>
-
-<template name="tabs">
-	<div class="navbar">
-		<div class="navbar-inner">
-			<div class="container">
-				<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</a>
-				<div class="tabs nav-collapse collapse">
-					<ul class="nav">
-						<li class="{{tabSelected 'tournaments'}}"><a href="/tournaments">Tournaments</a></li>
-						<li class="{{tabSelected 'volunteers'}}"><a href="/volunteers">Volunteers</a></li>
-						<li class="{{tabSelected 'shifts'}}"><a href="/shifts">Shifts</a></li>
-					</ul>
-					<form class="navbar-search pull-right">
-						<input type="text" class="search-query" placeholder="Find volunteers, shifts and roles" data-provide="typeahead">
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-</template>
-
-<template name="userMessages">
-	<div class="message-placeholder">
-		<div class="{{message.type}}">
-			<button type="button" class="close" data-dismiss="alert">&times;</button>
-			<strong>{{message.title}}</strong> {{message.message}}
-		</div>
-	</div>
-</template>
-
-<template name="home">
-  {{setTab 'home'}}
-  {{> userMessages}}
-  <div class="row">
-	  <div class="span8">
-	  	<p class="lead">Welcome. If you have any questions, comments, or suggestions, please don't hesitate to <a href="mailto:locksmithdon@gmail.com">flick me a message</a>. I hope this tool helps make your life easier and your event more successful. Cheers!</p>
-
-		  <h2><small><a href="/tournaments">Tournaments</a></small></h2>
-		  <p>The tournaments tab above is the area where you define the parameters of the tournament, the volunteer roles at the tournament, and the necessary shifts throughout the day for those roles. This is the first thing to do when setting up a new tournament. Everything else builds off of what is defined in setup.</p>
-		  <p>Typically, this is only done once. Beyond a little tweaking prior to the tournament, you won't use this during normal operations.</p>
-
-		  <h2><small><a href="/volunteers">Volunteers</a></small></h2>
-		  <p>The Volunteers tab is where to view lists and details of volunteers. You can also edit their details here. Currently someone needs to enter all of the volunteer data. In the future, the volunteer will do this themselves.</p> 
-
-		  <h2><small><a href="/shifts">Shifts</a></small></h2>
-		  <p>Once the days and shifts have been been defined in setup and the volunteers have been entered, the Shifts tab is used to assign volunteers to shifts. This is also the best place to view all of the volunteers in a shift or a specific day.</p>
-		</div>
-	  <div class="span3 offset1">
-	  	<img src="/img/ta-logo.png" alt="Tennis Auckland Logo">
-	  </div>
-	</div>
+	{{#if tournament.name}}
+		<span style="color: gray"> :: {{tournament.name}}</span>
+	{{/if}}
 </template>
 
 <template name="notFound">

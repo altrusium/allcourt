@@ -1,0 +1,73 @@
+<template name="signIn">
+	<h2><small>Register/Sign-in options</small></h2>
+	<p>If you already have a Facebook or Google account, you can sign in with them. The only information All-court will have access to is your name, gender, and email address, which we need anyway. If you would rather create a new password, you can do that instead.
+
+	<div class="tabbable tabs-left"> 
+	  <ul class="nav nav-tabs">
+	    <li class="active"><a href="#sign-in-tab" data-toggle="tab">Register/Sign in</a></li>
+	    <li><a href="#recover-tab" data-toggle="tab">Recover password</a></li>
+	  </ul>
+	  <div class="tab-content">
+	    <div class="tab-pane active" id="sign-in-tab">
+	      <form class="form-horizontal">
+				  <div class="control-group">
+				    <label class="control-label" for="inputEmail">Facebook</label>
+				    <div class="controls">
+				  		<button id="facebookButton" class="btn btn-facebook" type="button"><i class="icon-facebook"></i> &nbsp; Connect using Facebook</button>
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <label class="control-label" for="inputEmail">Google</label>
+				    <div class="controls">
+				  		<button id="googleButton" class="btn btn-google-plus" type="button"><i class="icon-google-plus"></i> &nbsp; Connect using Google</button>
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <label class="control-label" for="inputEmail"></label>
+				    <div class="controls">
+				    	<span>Or</span>
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <label class="control-label" for="inputEmail">Email</label>
+				    <div class="controls">
+				      <input type="text" id="inputEmail" placeholder="Email">
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <label class="control-label" for="inputPassword">Password</label>
+				    <div class="controls">
+				      <input type="password" id="inputPassword" placeholder="Password">
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <div class="controls">
+				    	<!--
+				      <label class="checkbox">
+				        <input type="checkbox"> Remember me
+				      </label>
+				      -->
+				      <button type="submit" class="btn">Register/Sign in</button>
+				    </div>
+				  </div>
+				</form>
+	    </div>
+	    <div class="tab-pane" id="recover-tab">
+	      <form class="form-horizontal">
+				  <div class="control-group">
+				    <label class="control-label" for="inputEmail">Email</label>
+				    <div class="controls">
+				      <input type="text" id="inputEmail" placeholder="Email">
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <div class="controls">
+				      <button type="submit" class="btn">Reset password</button>
+				    </div>
+				  </div>
+				</form>
+	    </div>
+	  </div>
+	</div>
+</template>
+

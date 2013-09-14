@@ -1,0 +1,37 @@
+<template name="home">
+	{{#if currentUser}}
+	  {{#unless role}}
+	  	{{> newUserTabs}}
+		  {{setTab 'role'}}
+	  {{/unless}}
+  {{/if}}
+  {{> userMessages}}
+  <div class="row">
+	  <div class="span8">
+
+	  	{{#unless currentUser}}
+	  		{{> anonymousWelcome}}
+	  		{{> signIn}}
+	  	{{/unless}}
+	  	{{! loginButtons}}
+
+			{{#if currentUser}}
+		  	{{#unless role}}
+		  		{{> setupNewUser}}
+		  	{{/unless}}
+		  {{/if}}
+
+			<h2><small>Thoughts?</small></h2>
+			<p>Hi, I'm Don. If you have any questions, comments, or suggestions, please don't hesitate to <a href="mailto:locksmithdon@gmail.com">flick me a mail</a>. As the creator and current maintainer of All-court, I'm happy to help however I can.</p>
+
+		</div>
+	  <div class="span3 offset1">
+	  	<img src="/img/ta-logo.png" alt="Tennis Auckland Logo">
+	  </div>
+	</div>
+</template>
+
+<template name="anonymousWelcome">
+	<p class="lead">Welcome to All-court, a tool helping to support Auckland's <a href="http://festivaloftennis.co.nz">Festival of Tennis</a>. Register and sign-in below to make our next professional tennis tournaments <em>even better</em> than the last.</p>
+</template>
+

@@ -1,0 +1,20 @@
+<template name="setupNewUser">
+	<h2><small>Welcome!</small></h2>
+	<p>It's great to have you on the team. In order to know what information we need from you, please help us understand the capacity of your involvement.</p>
+
+	<form class="form-inline">
+		<label for="userType">My role is </label>
+		<select id="userType" class="input-medium">
+			<option value="blank"></option>
+			<option value="volunteer">Volunteer</option>
+			<option value="sponsor">Sponsor</option>
+			<option value="coach">Coach</option>
+			<option value="referee">Referee</option>
+			<option value="media">Media</option>
+			<option value="hospitality">Hospitality</option>
+			<option value="security">Security</option>
+			<option value="laneControl">Lane Control</option>
+		</select>
+		<button type="button" id="saveRole" class="btn btn-primary">Save Role</button>
+	</form>
+</template>

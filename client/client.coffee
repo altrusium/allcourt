@@ -45,47 +45,17 @@ Meteor.Router.add
     return setActiveTournament(slug) || 'tournamentVolunteerSignup'
   '*': 'notFound'
 
-Handlebars.registerHelper 'setTab', (tabName, options) ->
-  Session.set 'selected_tab', tabName 
-
 Handlebars.registerHelper 'select', (value, options) ->
   $el = $('<select />').html options.fn(this)
   $el.find('[value=' + value + ']').attr({'selected':'selected'})
   return $el.html()
 
-Session.set 'active-tournament', {tournamentId: '', name: '', slug: ''}
+Session.set 'active-tournament', { tournamentId: '', name: '', slug: '' }
 
-Session.set 'user-message',
- type: '', title: '', message: ''
-
-tabIsSelected = (tab) ->
-  return tab is Session.get 'selected_tab'
-
-Template.tabs.tabSelected = (tab) ->
-  return if tabIsSelected tab then 'active' else ''
 
 Template.activeTournament.tournament = ->
   tournament = Session.get 'active-tournament'
   return tournament || tournamentId: '', name: ''
-
-Template.userMessages.message = ->
-  msg = Session.get 'user-message'
-  return msg || type: '', title: '', message: ''
-
-Template.userMessages.showMessage = (options) ->
-  Session.set 'user-message', 
-    title: options.title,
-    message: options.message,
-    type: 'alert alert-' + options.type
-  setTimeout -> 
-    Session.set 'user-message', 
-      type: '', title: '', message: '',
-  , options.timeout || 4000 unless options.type is 'error'
-
-$('button[data-dismiss]').click ->
-  Session.set 'user-message',
-    type: '', title: '', message: ''
-    # type can be 'error', 'success', and 'info'
 
 # For debugging and styling
 # Session.set 'user-message',
