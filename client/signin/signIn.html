@@ -1,15 +1,16 @@
 <template name="signIn">
-	<h2><small>Register/Sign-in options</small></h2>
-	<p>If you already have a Facebook or Google account, you can sign in with them. The only information All-court will have access to is your name, gender, and email address, which we need anyway. If you would rather create a new password, you can do that instead.
+	<h2><small>Registration and sign-in options</small></h2>
+	<p>If you already have a Facebook or Google account, we recommend you use it to sign in. It's less hassle and just as secure. All-court will only use is your name, gender, and email address. Alternatively, you can use your email address and create a new password.
 
-	<div class="tabbable tabs-left"> 
+	<div class="tabbable"> 
 	  <ul class="nav nav-tabs">
-	    <li class="active"><a href="#sign-in-tab" data-toggle="tab">Register/Sign in</a></li>
+	    <li class="active"><a href="#sign-in-tab" data-toggle="tab">Sign in</a></li>
+	    <li><a href="#register-tab" data-toggle="tab">Register account</a></li>
 	    <li><a href="#recover-tab" data-toggle="tab">Recover password</a></li>
 	  </ul>
 	  <div class="tab-content">
 	    <div class="tab-pane active" id="sign-in-tab">
-	      <form class="form-horizontal">
+	      <form id="signInForm" name="signInForm" class="form-horizontal">
 				  <div class="control-group">
 				    <label class="control-label" for="inputEmail">Facebook</label>
 				    <div class="controls">
@@ -28,16 +29,18 @@
 				    	<span>Or</span>
 				    </div>
 				  </div>
-				  <div class="control-group">
-				    <label class="control-label" for="inputEmail">Email</label>
+				  <div id="signInEmailGroup" class="control-group">
+				    <label class="control-label" for="signInEmail">Email</label>
 				    <div class="controls">
-				      <input type="text" id="inputEmail" placeholder="Email">
+				      <input type="text" id="signInEmail" placeholder="Email" required>
+				      <span class="required help-inline">Required</span>
 				    </div>
 				  </div>
-				  <div class="control-group">
-				    <label class="control-label" for="inputPassword">Password</label>
+				  <div id="signInPasswordGroup" class="control-group">
+				    <label class="control-label" for="signInPassword">Password</label>
 				    <div class="controls">
-				      <input type="password" id="inputPassword" placeholder="Password">
+				      <input type="password" id="signInPassword" placeholder="Password" required>
+				      <span class="required help-inline">Required</span>
 				    </div>
 				  </div>
 				  <div class="control-group">
@@ -47,22 +50,91 @@
 				        <input type="checkbox"> Remember me
 				      </label>
 				      -->
-				      <button type="submit" class="btn">Register/Sign in</button>
+				      <button type="submit" class="btn btn-primary">Sign in</button>
+				    </div>
+				  </div>
+				</form>
+	    </div>
+	    <div class="tab-pane" id="register-tab">
+	      <form id="registerForm" name="registerForm" class="form-horizontal">
+				  <div class="control-group">
+				    <label class="control-label" for="inputEmail">Facebook</label>
+				    <div class="controls">
+				  		<button id="facebookButton" class="btn btn-facebook" type="button"><i class="icon-facebook"></i> &nbsp; Connect using Facebook</button>
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <label class="control-label" for="inputEmail">Google</label>
+				    <div class="controls">
+				  		<button id="googleButton" class="btn btn-google-plus" type="button"><i class="icon-google-plus"></i> &nbsp; Connect using Google</button>
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <label class="control-label"></label>
+				    <div class="controls">
+				    	<span>Or</span>
+				    </div>
+				  </div>
+				  <div id="registerFirstNameGroup" class="control-group">
+				    <label class="control-label" for="firstName">First Name</label>
+				    <div class="controls">
+				      <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
+				      <span class="required help-inline">Required</span>
+				    </div>
+				  </div>
+				  <div id="registerLastNameGroup" class="control-group">
+				    <label class="control-label" for="lastName">Surname</label>
+				    <div class="controls">
+				      <input type="text" id="lastName" name="lastName" placeholder="Surname" required>
+				      <span class="required help-inline">Required</span>
+				    </div>
+				  </div>
+				  <div id="registerEmailGroup" class="control-group">
+				    <label class="control-label" for="registerEmail">Email</label>
+				    <div class="controls">
+				      <input type="text" id="registerEmail" name="registerEmail" placeholder="Email" required>
+				      <span class="required help-inline">Required</span>
+				    </div>
+				  </div>
+				  <div id="registerPasswordGroup" class="control-group">
+				    <label class="control-label" for="registerPassword">Password</label>
+				    <div class="controls">
+				      <input type="password" id="registerPassword" name="registerPassword" placeholder="Password" required>
+				      <span class="required help-inline">Required</span>
+				    </div>
+				  </div>
+				  <div id="registerConfirmPasswordGroup" class="control-group">
+				    <label class="control-label" for="registerConfirmPassword">Confirm Password</label>
+				    <div class="controls">
+				      <input type="password" id="registerConfirmPassword" name="registerConfirmPassword" placeholder="Password again" required>
+				      <span class="match help-inline">Passwords don't match</span>
+				      <span class="required help-inline">Required</span>
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <div class="controls">
+				    	<!--
+				      <label class="checkbox">
+				        <input type="checkbox"> Remember me
+				      </label>
+				      -->
+				      <button type="submit" class="btn btn-primary">Register</button>
 				    </div>
 				  </div>
 				</form>
 	    </div>
 	    <div class="tab-pane" id="recover-tab">
-	      <form class="form-horizontal">
-				  <div class="control-group">
-				    <label class="control-label" for="inputEmail">Email</label>
+	      <form id="recoveryForm" name="recoveryForm" class="form-horizontal">
+				  <div id="recoveryEmailGroup" class="control-group">
+				    <label class="control-label" for="recoverEmail">Email</label>
 				    <div class="controls">
-				      <input type="text" id="inputEmail" placeholder="Email">
+				      <input type="text" id="recoverEmail" name="recoverEmail" placeholder="Email" required>
+				      <span class="required help-inline">Required</span>
 				    </div>
 				  </div>
 				  <div class="control-group">
 				    <div class="controls">
-				      <button type="submit" class="btn">Reset password</button>
+				      <button type="submit" class="btn btn-primary">Reset password</button>
 				    </div>
 				  </div>
 				</form>
