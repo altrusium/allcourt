@@ -1,4 +1,5 @@
 <template name="volunteers">
+	{{> tabs}}
 	{{setTab 'volunteers'}}
 	<ul class="breadcrumb">
 		<li><a href="/volunteer/create">Create</a> <span class="divider">|</span></li>
@@ -8,6 +9,7 @@
 </template>
 
 <template name="volunteerCreate">
+	{{> tabs}}
 	{{setTab 'volunteers'}}
 	<ul class="breadcrumb">
 		<li><a href="/volunteers">Volunteers</a> <span class="divider">/</span></li>
@@ -135,6 +137,24 @@
 					</div>
 				</div>
 				<div class="control-group">
+					<label class="control-label" for="userType">User Type</label>
+					<div class="controls">
+						<select id="userType" class="input-medium">
+							{{#select userType}}
+							<option value="blank"></option>
+							<option value="volunteer">Volunteer</option>
+							<option value="sponsor">Sponsor</option>
+							<option value="coach">Coach</option>
+							<option value="referee">Referee</option>
+							<option value="media">Media</option>
+							<option value="hospitality">Hospitality</option>
+							<option value="security">Security</option>
+							<option value="laneControl">Lane Control</option>
+							{{/select}}
+						</select>
+					</div>
+				</div>
+				<div class="control-group">
 					<label class="control-label" for="notes">Notes</label>
 					<div class="controls">
 						<textarea id="notes" class="input-large">{{notes}}</textarea>
@@ -153,6 +173,7 @@
 </template>
 
 <template name="volunteerList">
+	{{> tabs}}
 	{{setTab 'volunteers'}}
 	<ul class="breadcrumb">
 		<li><a href="/volunteers">Volunteers</a> <span class="divider">/</span></li>
@@ -182,6 +203,7 @@
 </template>
 
 <template name="volunteerDetails">
+	{{> tabs}}
 	{{setTab 'volunteers'}}
 	<ul class="breadcrumb">
 		<li><a href="/volunteers">Volunteers</a> <span class="divider">/</span></li>

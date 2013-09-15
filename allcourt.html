@@ -1,11 +1,11 @@
 <head>
-  <title>All-court</title>
+  <title>All-Court</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
 	<div class="container">
-  	<h2><a href="/">All-court</a> {{> activeTournament}}</h2>
+  	<h2><a href="/">All-Court</a> {{> activeTournament}}</h2>
 	  {{renderPage}}
 	</div>
 </body>
@@ -14,6 +14,10 @@
 	{{#if tournament.name}}
 		<span style="color: gray"> :: {{tournament.name}}</span>
 	{{/if}}
+</template>
+
+<template name="notAuthorised">
+	You are not authorised to view this page.
 </template>
 
 <template name="notFound">

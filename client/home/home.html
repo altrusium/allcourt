@@ -1,10 +1,5 @@
 <template name="home">
-	{{#if currentUser}}
-	  {{#unless role}}
-	  	{{> newUserTabs}}
-		  {{setTab 'role'}}
-	  {{/unless}}
-  {{/if}}
+	{{> tabs}}
   {{> userMessages}}
   <div class="row">
 	  <div class="span8">
@@ -13,7 +8,6 @@
 	  		{{> anonymousWelcome}}
 	  		{{> signIn}}
 	  	{{/unless}}
-	  	{{! loginButtons}}
 
 			{{#if currentUser}}
 		  	{{#unless role}}
@@ -21,8 +15,16 @@
 		  	{{/unless}}
 		  {{/if}}
 
+		  {{#if role}}
+		  	{{#if isAdmin}}
+		  		{{> adminMessage}}
+		  	{{else}}
+			  	{{> userRegistered}}
+		  	{{/if}}
+		  {{/if}}
+
 			<h2><small>Thoughts?</small></h2>
-			<p>Hi, I'm Don. If you have any questions, comments, or suggestions, please don't hesitate to <a href="mailto:locksmithdon@gmail.com">flick me a mail</a>. As the creator and current maintainer of All-court, I'm happy to help however I can.</p>
+			<p>Hi, I'm Don. If you have any questions, comments, or suggestions, please don't hesitate to <a href="mailto:locksmithdon@gmail.com">flick me a mail</a>. As the creator and current maintainer of All-Court, I'm happy to help however I can.</p>
 
 		</div>
 	  <div class="span3 offset1">
@@ -32,6 +34,11 @@
 </template>
 
 <template name="anonymousWelcome">
-	<p class="lead">Welcome to All-court, a tool supporting Auckland's <a href="http://festivaloftennis.co.nz">Festival of Tennis</a>. Register and sign-in below to make our next professional tennis tournaments <em>even better</em> than the last.</p>
+	<p class="lead">Welcome to All-Court, a tool supporting Auckland's <a href="http://festivaloftennis.co.nz">Festival of Tennis</a>. Register and sign-in below to make our next professional tennis tournaments <em>even better</em> than the last.</p>
+</template>
+
+<template name="adminMessage">
+	<h2><small>Administrator</small></h2>
+	<p>You are currently signed in as an administrator.</p>
 </template>
 

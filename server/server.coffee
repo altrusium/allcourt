@@ -1,9 +1,9 @@
 process.env.MAIL_URL = "smtp://postmaster@allcourt.co.nz:3w2b7k814mn4@smtp.mailgun.org:25"
 
-Accounts.emailTemplates.siteName = 'All-court (allcourt.co.nz)'
-Accounts.emailTemplates.from = 'All-court Admin <admin@allcourt.co.nz>'
+Accounts.emailTemplates.siteName = 'All-Court (allcourt.co.nz)'
+Accounts.emailTemplates.from = 'All-Court Admin <admin@allcourt.co.nz>'
 Accounts.emailTemplates.resetPassword.subject = (user) ->
-  'Resetting your All-court password'
+  'Resetting your All-Court password'
 Accounts.emailTemplates.resetPassword.text = (user, url) ->
 	msg = "Hi #{user.profile.firstName},\n\n
 To reset your password on allcourt.co.nz, simply click the link below and enter a new password on the resulting page.\n\n

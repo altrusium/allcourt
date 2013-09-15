@@ -24,34 +24,44 @@ setActiveVolunteer = (slug) ->
   else 
     return 'loading'
 
+isAdmin = ->
+  return Meteor.user() && Meteor.user().profile.type is 'admin'
+
 Meteor.Router.add
   '/': 'home',
-  '/volunteers': 'volunteers'
-  '/volunteer/create': 'volunteerCreate'
-  '/volunteer/list': 'volunteerList'
+  '/volunteers': ->
+    return if isAdmin() then 'volunteers' else 'notAuthorised'
+  '/volunteer/create': ->
+    return if isAdmin() then 'volunteerCreate' else 'notAuthorised'
+  '/volunteer/list': ->
+    return if isAdmin() then 'volunteerList' else 'notAuthorised'
   '/volunteer/edit/:slug': (slug) ->
+    unless isAdmin() then return 'notAuthorised'
     return setActiveVolunteer(slug) || 'volunteerCreate'
   '/volunteer/:slug': (slug) ->
+    unless isAdmin() then return 'notAuthorised'
     return setActiveVolunteer(slug) || 'volunteerDetails'
-  '/shifts': 'shifts'
-  '/tournaments': 'tournaments'
-  '/tournament/create': 'setupTournament'
-  '/tournament/list': 'tournamentList'
-  '/tournament/roles': 'setupRoles'
-  '/tournament/shifts': 'setupShifts'
+  '/shifts': ->
+    return if isAdmin() then 'shifts' else 'notAuthorised'
+  '/tournaments': ->
+    return if isAdmin() then 'tournaments' else 'notAuthorised'
+  '/tournament/create': ->
+    return if isAdmin() then 'setupTournament' else 'notAuthorised'
+  '/tournament/list': ->
+    return if isAdmin() then 'tournamentList' else 'notAuthorised'
+  '/tournament/roles': ->
+    return if isAdmin() then 'setupRoles' else 'notAuthorised'
+  '/tournament/shifts': ->
+    return if isAdmin() then 'setupShifts' else 'notAuthorised'
   '/tournament/:slug': (slug) ->
+    unless isAdmin() then return 'notAuthorised'
     return setActiveTournament(slug) || 'tournamentDetails'
   '/tournament/:slug/signup': (id) ->
+    unless isAdmin() then return 'notAuthorised'
     return setActiveTournament(slug) || 'tournamentVolunteerSignup'
   '*': 'notFound'
 
-Handlebars.registerHelper 'select', (value, options) ->
-  $el = $('<select />').html options.fn(this)
-  $el.find('[value=' + value + ']').attr({'selected':'selected'})
-  return $el.html()
-
 Session.set 'active-tournament', { tournamentId: '', name: '', slug: '' }
-
 
 Template.activeTournament.tournament = ->
   tournament = Session.get 'active-tournament'

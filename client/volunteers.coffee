@@ -89,6 +89,7 @@ getFormValues = (template) ->
     suburb: template.find('#suburb').value
     city: template.find('#city').value
     postalCode: template.find('#postalCode').value
+    userType: template.find('#userType').value
     notes: template.find('#notes').value
 
 clearFormValues = (template) ->
@@ -106,6 +107,7 @@ clearFormValues = (template) ->
   template.find('#suburb').value = ''
   template.find('#city').value = ''
   template.find('#postalCode').value = ''
+  template.find('#userType').value = 'blank'
   template.find('#notes').value = ''
 
   $('#photoPlaceholder').addClass('empty').find('p, h4').remove()
@@ -134,8 +136,7 @@ Template.volunteerCreate.events
         type: 'info',
         title: 'Success!',
         message: 'The volunteer ' + options.firstName + ' ' + options.lastName + ' was saved'
-    unless options._id
-      clearFormValues template
+    unless options._id then clearFormValues template
     $('.wait-message').hide()
 
 
@@ -143,6 +144,7 @@ Template.volunteerCreate.events
 Template.volunteerDetails.detail = ->
   info = Session.get 'active-volunteer' || {}
   volunteer = Volunteers.findOne info._id
+  volunteer.isMale = volunteer && volunteer.gender is 'male'
   return volunteer || {}
 
 Template.volunteerDetails.photoRoot = ->
