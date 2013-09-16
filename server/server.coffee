@@ -22,3 +22,7 @@ Meteor.publish 'tournaments', ->
 Meteor.publish 'tournamentVolunteers', ->
 	return TournamentVolunteers.find()
 
+Meteor.methods
+  sendEmail: (options) ->
+    this.unblock()
+    Email.send options
