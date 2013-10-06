@@ -23,6 +23,7 @@ Template.userMenu.usersname = ->
 Template.userMenu.events
 	'click #signOut': (evnt, temlate) ->
 		Meteor.logout ->
+      Session.set 'user-just-added', false
 	    Meteor.Router.to '/'
 	'click #goToProfile': (evnt, temlate) ->
 	  Meteor.Router.to '/profile'

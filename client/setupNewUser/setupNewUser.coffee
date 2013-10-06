@@ -41,8 +41,10 @@ Template.setupNewUser.events
 				title: 'Must choose a role.',
 				message: 'Please select a role to continue.'
 		else
+			Session.set 'user-just-added', true
 			updateUserProfileWithType userType
-			createVolunteerDocument()
+			if userType is 'volunteer'
+				createVolunteerDocument()
 			sendConfirmationEmail()
 
 	'change #userType': (evnt, template) ->

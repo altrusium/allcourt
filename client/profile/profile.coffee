@@ -82,7 +82,8 @@ Template.profileDetails.details = ->
 
 Template.profileDetails.availableTournamentsExist = ->
   tournaments = Template.profileDetails.availableTournaments()
-  return tournaments.length > 0
+  # return tournaments.length > 0
+  return false
 
 Template.profileDetails.availableTournaments = ->
   tournaments = Tournaments.find({}, fields: { tournamentName: 1, days: 1 }).fetch()
