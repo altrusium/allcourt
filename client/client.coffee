@@ -29,6 +29,8 @@ isAdmin = ->
 
 Meteor.Router.add
   '/': 'home',
+  '/profile': 'profileDetails',
+  '/profile/edit': 'profileEdit',
   '/volunteers': ->
     return if isAdmin() then 'volunteers' else 'notAuthorised'
   '/volunteer/create': ->

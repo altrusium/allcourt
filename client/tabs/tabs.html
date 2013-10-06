@@ -67,7 +67,7 @@
 				</a>
 				<div class="tabs nav-collapse collapse">
 					<ul class="nav">
-						<!-- <li class="{{tabSelected 'role'}}"><a href="/">Define Role</a></li> -->
+						<li class="{{tabSelected 'profile'}}"><a href="/profile">Profile</a></li>
 					</ul>
 					{{> userMenu}}
 				</div>
@@ -81,6 +81,9 @@
 		<li class="dropdown">
 			<a class="dropdown-toggle" href="#" data-toggle="dropdown" role="button" id="nameLabel">{{usersname}} <b class="caret"></b></a>
 			<ul class="dropdown-menu" role="menu" aria-labelledby="nameLabel">
+				<li id="goToProfile" role="presentation">
+					<a href="#" role="menuitem" tabindex="-1">My Profile</a>
+				</li>
 				<li id="signOut" role="presentation">
 					<a href="#" role="menuitem" tabindex="-1">Sign out</a>
 				</li>

@@ -3,14 +3,17 @@ Accounts.onCreateUser (options, user) ->
 	facebook = user.services && user.services.facebook
 	google = user.services && user.services.google
 	if facebook
+		user.profile.email = facebook.email
 		user.profile.firstName = facebook.first_name
 		user.profile.lastName = facebook.last_name
-		user.profile.email = facebook.email
+		user.profile.gender = facebook.gender
 	if google
+		user.profile.email = google.email
 		user.profile.firstName = google.given_name
 		user.profile.lastName = google.family_name
-		user.profile.email = google.email
+		user.profile.gender = google.gender
 	user.profile.fullName = user.profile.firstName + ' ' + user.profile.lastName
-	user.profile.agreedToTerms = false
+	user.profile.slug = user.profile.firstName + user.profile.lastName
+	user.profile.gender = user.profile.gender || 'female'
 	user.profile.type = ''
 	user

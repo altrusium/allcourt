@@ -25,4 +25,4 @@ Meteor.publish 'tournamentVolunteers', ->
 Meteor.methods
   sendEmail: (options) ->
     this.unblock()
-    Email.send options
+    #Email.send options
