@@ -19,7 +19,7 @@ Template.volunteerList.volunteers = ->
     volunteer.email = user.profile.email
     volunteer.slug = user.profile.slug
     volunteer.isMale = ->
-      return user.gender is 'male'
+      return user.profile.gender is 'male'
     volunteer
 
 Template.volunteerList.photoRoot = ->
@@ -165,8 +165,9 @@ Template.volunteerCreate.detail = ->
   if volunteer.userDetails # editing, not creating
     profile = volunteer.userDetails.profile
     volunteer.isMale = profile.gender is 'male'
-    volunteer.photoPath = photoRoot + profile.photoFilename
     volunteer.photoFilename = profile.photoFilename
+    if volunteer.photoFilename
+      volunteer.photoPath = photoRoot + profile.photoFilename
     volunteer.firstName = profile.firstName
     volunteer.lastName = profile.lastName
     volunteer.primaryEmail = profile.email

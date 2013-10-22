@@ -138,4 +138,5 @@ Template.profileEdit.events
         title: 'Success!',
         message: 'Your profile details were saved successfully.'
     $('.wait-message').hide()
+    Meteor.Router.to '/profile/'
 

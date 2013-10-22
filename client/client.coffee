@@ -48,17 +48,14 @@ Meteor.Router.add
     return if isAdmin() then 'tournaments' else 'notAuthorised'
   '/tournament/create': ->
     return if isAdmin() then 'setupTournament' else 'notAuthorised'
-  '/tournament/list': ->
-    return if isAdmin() then 'tournamentList' else 'notAuthorised'
+  '/tournament/list': 'tournamentList'
   '/tournament/roles': ->
     return if isAdmin() then 'setupRoles' else 'notAuthorised'
   '/tournament/shifts': ->
     return if isAdmin() then 'setupShifts' else 'notAuthorised'
   '/tournament/:slug': (slug) ->
-    unless isAdmin() then return 'notAuthorised'
     return setActiveTournament(slug) or 'tournamentDetails'
-  '/tournament/:slug/signup': (id) ->
-    unless isAdmin() then return 'notAuthorised'
+  '/tournament/:slug/signup': (slug) ->
     return setActiveTournament(slug) or 'tournamentVolunteerSignup'
   '*': 'notFound'
 

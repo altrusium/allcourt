@@ -38,7 +38,13 @@
 		<li class="active">Details</li>
 	</ul>
 	{{> userMessages}}
-	<a href="/tournament/{{tournamentId}}/signup">Sign up</a>
+	<p>
+		<a href="/tournament/{{tournamentId}}/signup">Sign up to volunteer</a>
+	</p>
+	<p>&nbsp;</p>
+	<p>
+		<em>Tournament dates and analytics forthcoming</em>
+	</p>
 </template>
 
 <template name="tournamentList">
@@ -54,7 +60,9 @@
 		{{#each tournaments}}
 		<p>
 			<a href="/tournament/{{slug}}">{{tournamentName}}</a>
-				<a href="#" data-tournament-id="{{_id}}" data-action="delete"><i class="icon-remove"></i></a>
+			{{#if isAdmin}}
+			<a href="#" data-tournament-id="{{_id}}" data-action="delete"><i class="icon-remove"></i></a>
+			{{/if}}
 		</p>
 		{{/each}}
 	{{else}}

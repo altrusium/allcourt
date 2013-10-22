@@ -1,7 +1,8 @@
 <template name="tournamentVolunteerSignup">
+	{{> tabs}}
 	{{setTab 'tournaments'}}
 	<ul class="breadcrumb">
-		<li><a href="/tournaments">Tournaments</a> <span class="divider">/</span></li>
+		<li><a href="/tournament/list">Tournaments</a> <span class="divider">/</span></li>
 		<li class="active">Signup</li>
 	</ul>
 	{{> userMessages}}
@@ -17,16 +18,16 @@
 			</ul>
 			<p>Select a role below and check the boxes in the table for each of the shifts you wish to volunteer. You should at least do this for your first choice, preferably your first few choices.</p>
 			<form class="form-vertical">
-					<div class="control-group">
-						<label for="role" class="control-label">Role</label>
-						<div class="controls">
-							<select id="role" class="span3">
-								{{#each roles}}
-								<option value="{{roleId}}" {{markSelectedRole}}>{{roleName}}</option>
-								{{/each}}
-							</select>
-						</div>
+				<div class="control-group">
+					<label for="role" class="control-label">Role</label>
+					<div class="controls">
+						<select id="role" class="span3">
+							{{#each roles}}
+							<option value="{{roleId}}" {{markSelectedRole}}>{{roleName}}</option>
+							{{/each}}
+						</select>
 					</div>
+				</div>
 			</form>
 		</div>
 		<div class="span7">
@@ -42,7 +43,7 @@
 						</td>
 						{{#each shifts.defs}}
 						<th>
-							{{shiftName}} <i class="icon-remove" data-delete-shiftdef-id="{{shiftDefId}}"></i><br>
+							{{shiftName}}<br>
 							{{startTime}}<br>
 							{{endTime}}
 						</th>
@@ -55,7 +56,7 @@
 						<td><strong>{{dayOfWeek}}<br>{{dayOfMonth}}</strong></td>
 						{{#each activeShifts}}
 						<td>
-							<!-- include checkbox here -->
+							<input type="checkbox" data-shift-id="{{shiftId}}">
 						</td>
 						{{/each}}
 					</tr>

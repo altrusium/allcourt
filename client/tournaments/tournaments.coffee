@@ -13,7 +13,7 @@ getSortedTournamentList = ->
 
 
 Template.tournamentDetails.tournamentId = ->
-  return Session.get('active-tournament').tournamentId
+  return Session.get('active-tournament').slug
 
 
 
@@ -53,18 +53,21 @@ Template.setupTournament.events
 
 
 Template.tournamentList.tournamentsExist = ->
-  return Tournaments.find().count() > 0
+  Tournaments.find().count() > 0
 
 Template.tournamentList.tournaments = ->
   getSortedTournamentList()
+
+Template.tournamentList.tournamentsExist = ->
+  Tournaments.find().count() > 0
+
+Template.tournamentList.isAdmin = ->
+  Meteor.user().profile.role is 'admin'
 
 Template.tournamentList.events 
   'click [data-action=delete]': (evnt, template) ->
     id = $(evnt.currentTarget).data 'tournament-id'
     Tournaments.remove id
-
-Template.tournamentList.tournamentsExist = ->
-  return Tournaments.find().count() > 0
 
 
 
@@ -142,7 +145,7 @@ Template.setupShifts.setActiveTournament = ->
     Session.set 'active-tournament', {tournamentId: id, name: name}
 
 Template.setupShifts.activeTournamentName = ->
-  return Session.get('active-tournament').name
+  Session.get('active-tournament').name
 
 Template.setupShifts.setActiveRole = ->
     id = $('#role option:selected').val()
@@ -151,15 +154,15 @@ Template.setupShifts.setActiveRole = ->
     Session.set 'active-role-name', name
 
 Template.setupShifts.activeRoleName = ->
-  return Session.get 'active-role-name'
+  Session.get 'active-role-name'
 
 Template.setupShifts.noRolesYet = ->
   id = Session.get('active-tournament').tournamentId
   tournament = Tournaments.findOne id, fields: roles: 1
-  return tournament && tournament.roles.length is 0
+  tournament && tournament.roles.length is 0
 
 Template.setupShifts.shiftsToShow = ->
-  return Session.get('active-tournament').tournamentId && Session.get('active-role-id')
+  Session.get('active-tournament').tournamentId && Session.get('active-role-id')
 
 Template.setupShifts.markSelectedTournament = ->
   if this._id is Session.get('active-tournament').tournamentId
@@ -179,10 +182,10 @@ Template.setupShifts.roles = ->
     return tournament && tournament.roles
 
 Template.setupShifts.editingShift = ->
-  return this.shiftId is Session.get 'editing-shift-id'
+  this.shiftId is Session.get 'editing-shift-id'
 
 Template.setupShifts.zeroClass = ->
-  return 'zero' if this.count is '0'
+  'zero' if this.count is '0'
  
 Template.setupShifts.shiftDefs = ->
   tId = Session.get('active-tournament').tournamentId

@@ -21,7 +21,7 @@
 		{{#with detail}}
 		<div class="span5">
 			<form class="form-horizontal">
-				<div id="photoPlaceholder" class="empty female photo-placeholder">
+				<div id="photoPlaceholder" class="{{#if isMale}}male{{else}}female{{/if}} empty photo-placeholder">
 					<img src="{{photoPath}}" id="photoImg">
 				</div>
 				<div class="control-group">

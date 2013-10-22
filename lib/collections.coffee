@@ -18,4 +18,10 @@ Volunteers.allow
   remove: (userId, doc) ->
     return Meteor.user().profile.role is 'admin'
 
-
+Tournaments.allow
+  insert: (userId, doc) ->
+    return Meteor.user().profile.role is 'admin'
+  update: (userId, doc) ->
+    return Meteor.user().profile.role is 'admin'
+  remove: (userId, doc) ->
+    return Meteor.user().profile.role is 'admin'
