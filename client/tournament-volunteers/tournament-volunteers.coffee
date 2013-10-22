@@ -1,46 +1,67 @@
+setSignupId = ->
+  vId = Meteor.userId()
+  tId = Session.get('active-tournament').tournamentId
+  signup = TournamentVolunteers.findOne { tournamentId: tId, volunteerId: vId }
+  Session.set 'signup-id', signup._id
+
 setActiveRole = ->
   id = $('#role option:selected').val()
   name = $('#role option:selected').text()
   Session.set 'active-role-id', id
   Session.set 'active-role-name', name
 
+getRolePreferences = ->
+  signupId = Session.get 'signup-id'
+  tournament = TournamentVolunteers.findOne { _id: signupId }#, { fields: preferences: 1 }
+  tournament.preferences
+
 associateVolunteerWithTournament = ->
-	vId = Meteor.userId()
-	tId = Session.get('active-tournament').tournamentId
-	found = TournamentVolunteers.findOne { tournamentId: tId, volunteerId: vId }
-	unless vId and found
-		TournamentVolunteers.insert { tournamentId: tId, volunteerId: vId }
+  setSignupId()
+  signup = Session.get 'signup-id'
+  unless signup
+    TournamentVolunteers.insert { tournamentId: tId, volunteerId: vId }
 
 saveRolePreferences = (prefs) ->
-	vId = Meteor.userId()
-	tId = Session.get('active-tournament').tournamentId
-	signupId = TournamentVolunteers.findOne({ tournamentId: tId, volunteerId: vId })._id
-	TournamentVolunteers.update { _id: signupId }, { $set: preferences: prefs}, $upsert: 1
+  signupId = Session.get 'signup-id'
+  TournamentVolunteers.update { _id: signupId }, { $set: preferences: prefs}, $upsert: 1
 
-Template.tournamentVolunteerSignup.days = ->
-	id = Session.get('active-tournament').tournamentid
-	tournament = Tournaments.findOne id, fields: days: 1
-	days = tournament.days
-	formattedDays = for day in days
-		dayOfWeek: moment(day).format 'ddd'
-		dayOfMonth: moment(day).format 'do'
-
-Template.tournamentVolunteerSignup.roles = ->
-	id = Session.get('active-tournament').tournamentId
-	tournament = Tournaments.findOne id, fields: roles: 1
-	tournament.roles
+Template.tournamentVolunteerSignup.created = ->
+  associateVolunteerWithTournament()
 
 Template.tournamentVolunteerSignup.rendered = ->
-	associateVolunteerWithTournament()
-	$('#sortableRoles').disableSelection()
-	$('#sortableRoles').sortable 
-		forcePlaceholderSize: true 
-		stop: (evnt, ui) ->
-			preferences = $('#sortableRoles').sortable('toArray').slice(0, 4)
-			saveRolePreferences preferences
+  $('#sortableRoles').disableSelection()
+  $('#sortableRoles').sortable 
+    forcePlaceholderSize: true 
+    stop: (evnt, ui) ->
+      preferences = $('#sortableRoles').sortable('toArray').slice(0, 4)
+      saveRolePreferences preferences
+
+Template.tournamentVolunteerSignup.days = ->
+  id = Session.get('active-tournament').tournamentId
+  tournament = Tournaments.findOne id, fields: days: 1
+  days = tournament.days
+  formattedDays = for day in days
+    dayOfWeek: moment(day).format 'ddd'
+    dayOfMonth: moment(day).format 'do'
+
+Template.tournamentVolunteerSignup.roles = ->
+  sortedRoles = []
+  rolePrefs = getRolePreferences()
+  id = Session.get('active-tournament').tournamentId
+  tournament = Tournaments.findOne id, fields: roles: 1
+  for role in rolePrefs
+    pref = _.find tournament.roles, (item) ->
+      if item.roleId is role and !item.found
+        item.found = true
+        item
+    sortedRoles.push pref
+  for role in tournament.roles
+    unless role.found
+      sortedRoles.push role
+  sortedRoles
 
 Template.tournamentVolunteerSignup.activeRoleName = ->
-	Session.get 'active-role-name'
+  Session.get 'active-role-name'
 
 Template.tournamentVolunteerSignup.markSelectedRole = ->
   if this.roleName is Session.get 'active-role-name'
@@ -89,8 +110,8 @@ Template.tournamentVolunteerSignup.shifts = ->
     days: shiftDays
 
 Template.tournamentVolunteerSignup.events
-	'change #role': (evnt, template) ->
-		setActiveRole()
+  'change #role': (evnt, template) ->
+    setActiveRole()
 
 
 
