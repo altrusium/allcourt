@@ -1,3 +1,22 @@
+setActiveRole = ->
+  id = $('#role option:selected').val()
+  name = $('#role option:selected').text()
+  Session.set 'active-role-id', id
+  Session.set 'active-role-name', name
+
+associateVolunteerWithTournament = ->
+	vId = Meteor.userId()
+	tId = Session.get('active-tournament').tournamentId
+	found = TournamentVolunteers.findOne { tournamentId: tId, volunteerId: vId }
+	unless vId and found
+		TournamentVolunteers.insert { tournamentId: tId, volunteerId: vId }
+
+saveRolePreferences = (prefs) ->
+	vId = Meteor.userId()
+	tId = Session.get('active-tournament').tournamentId
+	signupId = TournamentVolunteers.findOne({ tournamentId: tId, volunteerId: vId })._id
+	TournamentVolunteers.update { _id: signupId }, { $set: preferences: prefs}, $upsert: 1
+
 Template.tournamentVolunteerSignup.days = ->
 	id = Session.get('active-tournament').tournamentid
 	tournament = Tournaments.findOne id, fields: days: 1
@@ -12,11 +31,13 @@ Template.tournamentVolunteerSignup.roles = ->
 	tournament.roles
 
 Template.tournamentVolunteerSignup.rendered = ->
+	associateVolunteerWithTournament()
+	$('#sortableRoles').disableSelection()
 	$('#sortableRoles').sortable 
 		forcePlaceholderSize: true 
 		stop: (evnt, ui) ->
-			console.log 'stopped sorting'
-	$('#sortableRoles').disableSelection()
+			preferences = $('#sortableRoles').sortable('toArray').slice(0, 4)
+			saveRolePreferences preferences
 
 Template.tournamentVolunteerSignup.activeRoleName = ->
 	Session.get 'active-role-name'
@@ -69,8 +90,7 @@ Template.tournamentVolunteerSignup.shifts = ->
 
 Template.tournamentVolunteerSignup.events
 	'change #role': (evnt, template) ->
-		Session.set 'active-role-name', $('#role option:selected').text()
-		Session.set 'active-role-id', $('#role option:selected').val()
+		setActiveRole()
 
 
 

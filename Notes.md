@@ -119,10 +119,6 @@ Volunteer
 TournamentVolunteers
 - volunteerId
 - tournamentId
-- availability: Array
-  - date
-  - startTime
-  - endTime
 - rolePreferrences: Array
   - roleId
 - schedule: Array

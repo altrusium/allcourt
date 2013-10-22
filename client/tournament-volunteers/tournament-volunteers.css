@@ -1,0 +1,8 @@
+.sortable-roles li a {
+  color: rgb(151, 151, 151);
+}
+
+.sortable-roles li:nth-child(-n+4) a {
+  color: rgb(0, 136, 204);
+}
+

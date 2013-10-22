@@ -10,13 +10,13 @@
 		<div class="span5">
 			<h2 class="column-header"><small>Volunteer Preferences</small></h2> 
 			<div class="row"><div class="span6"></div></div>
-			<p>Sort (drag and drop) the following volunteer roles in the order of your preference.</p>
-			<ul id="sortableRoles" class="nav nav-pills nav-stacked">
+			<p>Sort (drag and drop) the following volunteer roles in the order of your preference. Only the order of the top 4 are saved.</p>
+			<ul id="sortableRoles" class="sortable-roles nav nav-pills nav-stacked">
 				{{#each roles}}
-				<li><a href="#">{{roleName}}</a></li>
+				<li id="{{roleId}}"><a href="#">{{roleName}}</a></li>
 				{{/each}}
 			</ul>
-			<p>Select a role below and check the boxes in the table for each of the shifts you wish to volunteer. You should at least do this for your first choice, preferably your first few choices.</p>
+			<p>Select a role below and check the boxes in the table for each of the shifts you wish to volunteer. You should at least do this for your first choice, and preferably for your top 4 choices.</p>
 			<form class="form-vertical">
 				<div class="control-group">
 					<label for="role" class="control-label">Role</label>
