@@ -14,18 +14,17 @@ setActiveTournament = (slug) ->
     return false
 
 setActiveVolunteer = (slug) ->
-  if volunteers.ready()
-    volunteer = Volunteers.findOne slug: slug
-    unless volunteer
-      return 'notFound'
-    else
-      Session.set 'active-volunteer', volunteer
-      return false
-  else 
-    return 'loading'
+  userDetails = Meteor.users.findOne 'profile.slug': slug
+  volunteer = userDetails and Volunteers.findOne userDetails._id
+  unless volunteer
+    return 'notFound'
+  else
+    volunteer.userDetails = userDetails
+    Session.set 'active-volunteer', volunteer
+    return false
 
 isAdmin = ->
-  return Meteor.user() && Meteor.user().profile.type is 'admin'
+  return Meteor.user() and Meteor.user().profile.role is 'admin'
 
 Meteor.Router.add
   '/': 'home',
@@ -39,10 +38,10 @@ Meteor.Router.add
     return if isAdmin() then 'volunteerList' else 'notAuthorised'
   '/volunteer/edit/:slug': (slug) ->
     unless isAdmin() then return 'notAuthorised'
-    return setActiveVolunteer(slug) || 'volunteerCreate'
+    return setActiveVolunteer(slug) or 'volunteerCreate'
   '/volunteer/:slug': (slug) ->
     unless isAdmin() then return 'notAuthorised'
-    return setActiveVolunteer(slug) || 'volunteerDetails'
+    return setActiveVolunteer(slug) or 'volunteerDetails'
   '/shifts': ->
     return if isAdmin() then 'shifts' else 'notAuthorised'
   '/tournaments': ->
@@ -57,17 +56,17 @@ Meteor.Router.add
     return if isAdmin() then 'setupShifts' else 'notAuthorised'
   '/tournament/:slug': (slug) ->
     unless isAdmin() then return 'notAuthorised'
-    return setActiveTournament(slug) || 'tournamentDetails'
+    return setActiveTournament(slug) or 'tournamentDetails'
   '/tournament/:slug/signup': (id) ->
     unless isAdmin() then return 'notAuthorised'
-    return setActiveTournament(slug) || 'tournamentVolunteerSignup'
+    return setActiveTournament(slug) or 'tournamentVolunteerSignup'
   '*': 'notFound'
 
 Session.set 'active-tournament', { tournamentId: '', name: '', slug: '' }
 
 Template.activeTournament.tournament = ->
   tournament = Session.get 'active-tournament'
-  return tournament || tournamentId: '', name: ''
+  return tournament or tournamentId: '', name: ''
 
 # For debugging and styling
 # Session.set 'user-message',

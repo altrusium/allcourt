@@ -101,6 +101,11 @@
 						</label>
 					</div>
 				</div>
+				<div class="control-group">
+					<div class="controls">
+						<button type="button" id="saveProfile" class="btn btn-primary">Save Profile</button>
+					</div>
+				</div>
 			</form>
       {{/with}}
 		</div>
@@ -113,16 +118,16 @@
 						<select id="shirtSize" class="input-small">
 							{{#select shirtSize}}
 							<option value=""></option>
-							<option value="3xs">3XS</option>
-							<option value="2xs">2XS</option>
-							<option value="xs">XS</option>
-							<option value="s">S</option>
-							<option value="m">M</option>
-							<option value="l">L</option>
-							<option value="xl">XL</option>
-							<option value="2xl">2XL</option>
-							<option value="3xl">3XL</option>
-							<option value="4xl">4XL</option>
+							<option value="3XS">3XS</option>
+							<option value="2XS">2XS</option>
+							<option value="XS">XS</option>
+							<option value="S">S</option>
+							<option value="M">M</option>
+							<option value="L">L</option>
+							<option value="XL">XL</option>
+							<option value="2XL">2XL</option>
+							<option value="3XL">3XL</option>
+							<option value="4XL">4XL</option>
 							{{/select}}
 						</select>
 					</div>
@@ -171,11 +176,6 @@
 					<label class="control-label" for="postalCode">Postal Code</label>
 					<div class="controls">
 						<input type="text" id="postalCode" value="{{postalCode}}" class="input-small">
-					</div>
-				</div>
-				<div class="control-group">
-					<div class="controls">
-						<button type="button" id="saveProfile" class="btn btn-primary">Save Profile</button>
 					</div>
 				</div>
 			</form>

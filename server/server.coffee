@@ -2,6 +2,7 @@ process.env.MAIL_URL = "smtp://postmaster@allcourt.co.nz:3w2b7k814mn4@smtp.mailg
 
 Accounts.emailTemplates.siteName = 'All-Court (allcourt.co.nz)'
 Accounts.emailTemplates.from = 'All-Court Admin <admin@allcourt.co.nz>'
+
 Accounts.emailTemplates.resetPassword.subject = (user) ->
   'Resetting your All-Court password'
 Accounts.emailTemplates.resetPassword.text = (user, url) ->
@@ -12,6 +13,9 @@ All the best,\n\n
 Don Smith\n
 allcourt.co.nz"
 	msg
+
+Meteor.publish null, ->
+  return Meteor.users.find {}, fields: username: 1, email: 1, profile: 1
 
 Meteor.publish 'volunteers', ->
 	return Volunteers.find()

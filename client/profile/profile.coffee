@@ -127,12 +127,12 @@ Template.profileEdit.events
     userOptions = getUserFormValues template
     volunteerOptions = getVolunteerFormValues template
     # Todo: add exception handling for these 2 calls
-    Meteor.call 'updateUser', userOptions, (err) ->
+    Meteor.call 'updateUserProfile', userOptions, (err) ->
       Template.userMessages.showMessage 
         type: 'info',
         title: 'Success!',
         message: 'Your profile details were saved successfully.'
-    Meteor.call 'updateVolunteer', volunteerOptions, (err) ->
+    Meteor.call 'updateVolunteerProfile', volunteerOptions, (err) ->
       Template.userMessages.showMessage 
         type: 'info',
         title: 'Success!',

@@ -12,8 +12,14 @@ Template.volunteers.rendered = ->
 Template.volunteerList.volunteers = ->
   Session.set 'active-volunteer', null
   Volunteers.find().map (volunteer) ->
+    user = Meteor.users.findOne('_id': volunteer._id)
+    volunteer.firstName = user.profile.firstName
+    volunteer.lastName = user.profile.lastName
+    volunteer.photoFilename = user.profile.photoFilename
+    volunteer.email = user.profile.email
+    volunteer.slug = user.profile.slug
     volunteer.isMale = ->
-      return volunteer.gender is 'male'
+      return user.gender is 'male'
     volunteer
 
 Template.volunteerList.photoRoot = ->
@@ -71,26 +77,60 @@ initializeControls = ->
   $('#femaleGender, #maleGender').change ->
     $('#photoPlaceholder').toggleClass 'male female'
 
-getFormValues = (template) ->
-  active = Session.get 'active-volunteer'
+getUserFormValues = (template) ->
+  firstName = template.find('#firstName').value
+  lastName = template.find('#lastName').value
+  email = template.find('#primaryEmail').value
   return values = 
-    _id: active && active._id || ''
-    photoFilename: template.find('#photoFilename').value
-    firstName: template.find('#firstName').value
-    lastName: template.find('#lastName').value
-    birthdate: template.find('#birthdate').value
-    gender: template.find('input:radio[name=gender]:checked').value
+    email: email
+    profile:
+      email: email
+      firstName: firstName
+      lastName: lastName
+      slug: firstName + lastName
+      fullName: firstName + ' ' + lastName
+      role: template.find('#role').value
+      photoFilename: template.find('#photoFilename').value
+      gender: template.find('input:radio[name=gender]:checked').value
+
+getVolunteerFormValues = (template) ->
+  return values = 
     shirtSize: template.find('#shirtSize').value
-    primaryEmail: template.find('#primaryEmail').value
+    birthdate: template.find('#birthdate').value
     homePhone: template.find('#homePhone').value
-    workPhone: template.find('#workPhone').value
     mobilePhone: template.find('#mobilePhone').value
     address: template.find('#address').value
     suburb: template.find('#suburb').value
     city: template.find('#city').value
     postalCode: template.find('#postalCode').value
-    userType: template.find('#userType').value
     notes: template.find('#notes').value
+
+createNewVolunteer = (options, callback) ->
+  Volunteers.insert { 
+    _id: options._id,
+    birthdate: options.birthdate || '',
+    shirtSize: options.shirtSize || '',
+    homePhone: options.homePhone || '',
+    mobilePhone: options.mobilePhone || '',
+    address: options.address || '',
+    city: options.city || '',
+    suburb: options.suburb || '',
+    postalCode: options.postalCode || '',
+    notes: options.notes || ''
+  }, callback
+
+updateVolunteer = (options, callback) ->
+  Volunteers.update { _id: options._id }, { $set: {
+    birthdate: options.birthdate || ''
+    shirtSize: options.shirtSize || ''
+    homePhone: options.homePhone || ''
+    mobilePhone: options.mobilePhone || ''
+    address: options.address || ''
+    city: options.city || ''
+    suburb: options.suburb || ''
+    postalCode: options.postalCode || ''
+    notes: options.notes || ''
+  }}, callback
 
 clearFormValues = (template) ->
   template.find('#photoFilename').value = ''
@@ -101,17 +141,18 @@ clearFormValues = (template) ->
   template.find('#shirtSize').value = 'M'
   template.find('#primaryEmail').value = ''
   template.find('#homePhone').value = ''
-  template.find('#workPhone').value = ''
   template.find('#mobilePhone').value = ''
   template.find('#address').value = ''
   template.find('#suburb').value = ''
   template.find('#city').value = ''
   template.find('#postalCode').value = ''
-  template.find('#userType').value = 'blank'
+  template.find('#role').value = 'blank'
   template.find('#notes').value = ''
 
   $('#photoPlaceholder').addClass('empty').find('p, h4').remove()
   $('#photoImg').attr('src', '').fadeOut 400
+
+
 
 Template.volunteerCreate.rendered = ->
   initializeControls()
@@ -120,32 +161,70 @@ Template.volunteerCreate.rendered = ->
     $('.photo-placeholder').removeClass 'empty'
 
 Template.volunteerCreate.detail = ->
-  info = Session.get('active-volunteer') || {}
-  volunteer = Volunteers.findOne(info._id) || {}
-  volunteer.isMale = volunteer && volunteer.gender is 'male'
-  volunteer.isNew = !info._id
-  if volunteer && volunteer.photoFilename
-    volunteer.photoPath = photoRoot + volunteer.photoFilename
+  volunteer = Session.get('active-volunteer') or {}
+  if volunteer.userDetails # editing, not creating
+    profile = volunteer.userDetails.profile
+    volunteer.isMale = profile.gender is 'male'
+    volunteer.photoPath = photoRoot + profile.photoFilename
+    volunteer.photoFilename = profile.photoFilename
+    volunteer.firstName = profile.firstName
+    volunteer.lastName = profile.lastName
+    volunteer.primaryEmail = profile.email
+    volunteer.role = profile.role
+  else
+    volunteer.detail = {}
   return volunteer
 
 Template.volunteerCreate.events
   'click #saveProfile': (event, template) ->
-    options = getFormValues template
-    Meteor.call 'saveVolunteer', options, ->
-      Template.userMessages.showMessage 
-        type: 'info',
-        title: 'Success!',
-        message: 'The volunteer ' + options.firstName + ' ' + options.lastName + ' was saved'
-    unless options._id then clearFormValues template
-    $('.wait-message').hide()
+    activeVolunteer = Session.get 'active-volunteer'
+    userOptions = getUserFormValues template
+    volunteerOptions = getVolunteerFormValues template
+    unless activeVolunteer # new user
+      Meteor.call 'createNewUser', userOptions, (err, id) ->
+        if err
+          Template.userMessages.showMessage 
+            type: 'error',
+            title: 'Uh oh!',
+            message: 'The volunteer was not saved. Reason: ' + err.reason
+        else
+          volunteerOptions._id = id
+          createNewVolunteer volunteerOptions, (err) ->
+            if id then clearFormValues template
+            Template.userMessages.showMessage 
+              type: 'info',
+              title: 'Success!',
+              message: 'The volunteer ' + userOptions.profile.fullName + ' was saved'
+        $('.wait-message').hide()
+    else # updating exiting volunteer
+      userOptions._id = activeVolunteer._id
+      Meteor.call 'updateUser', userOptions, (err) ->
+        if err
+          Template.userMessages.showMessage 
+            type: 'error',
+            title: 'Uh oh!',
+            message: 'The volunteer was not saved. Reason: ' + err.reason
+        else
+          volunteerOptions._id = activeVolunteer._id
+          updateVolunteer volunteerOptions, (err) ->
+            Template.userMessages.showMessage 
+              type: 'info',
+              title: 'Success!',
+              message: 'The volunteer ' + userOptions.profile.fullName + ' was saved'
+        $('.wait-message').hide()
 
 
 
 Template.volunteerDetails.detail = ->
-  info = Session.get 'active-volunteer' || {}
-  volunteer = Volunteers.findOne info._id
-  volunteer.isMale = volunteer && volunteer.gender is 'male'
-  return volunteer || {}
+  volunteer = Session.get 'active-volunteer'
+  profile = volunteer.userDetails.profile
+  volunteer.isMale = profile.gender is 'male'
+  volunteer.photoFilename = profile.photoFilename
+  volunteer.firstName = profile.firstName
+  volunteer.lastName = profile.lastName
+  volunteer.primaryEmail = profile.email
+  volunteer.role = profile.role
+  return volunteer
 
 Template.volunteerDetails.photoRoot = ->
   return photoRoot
@@ -172,7 +251,8 @@ Template.volunteerDetails.events =
   'click #deleteConfirmed': (evnt, template) ->
     id = Session.get('active-volunteer')._id
     Volunteers.remove id, ->
-      Meteor.Router.to 'volunteerList'
+      Meteor.users.remove id, ->
+      Meteor.Router.to '/volunteer/list'
       Template.userMessages.showMessage 
         type: 'info',
         title: 'Deleted!',
@@ -180,7 +260,7 @@ Template.volunteerDetails.events =
   'click #deleteCancelled': (evnt, template) ->
     $('#deleteModal').hide()
   'click #editProfile': (evnt, template) ->
-    Meteor.Router.to '/volunteer/edit/' + Session.get('active-volunteer').slug
+    Meteor.Router.to '/volunteer/edit/' + Session.get('active-volunteer').userDetails.profile.slug
 
 
 

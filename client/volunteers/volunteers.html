@@ -32,6 +32,12 @@
 					</div>
 				</div>
 				<div class="control-group">
+					<label class="control-label" for="primaryEmail">Primary Email</label>
+					<div class="controls">
+						<input type="text" id="primaryEmail" value="{{primaryEmail}}" required>
+					</div>
+				</div>
+				<div class="control-group">
 					<label class="control-label" for="firstName">First Name</label>
 					<div class="controls">
 						<input type="text" id="firstName" class="input-medium" value="{{firstName}}" required>
@@ -41,16 +47,6 @@
 					<label class="control-label" for="lastName">Last Name</label>
 					<div class="controls">
 						<input type="text" id="lastName" class="input-medium" value="{{lastName}}" required>
-					</div>
-				</div>
-				<div class="control-group">
-					<label for="birthdate" class="control-label">Birthdate</label>
-					<div class="controls">
-						<div class="input-append">
-							<input type="text" class="birthDatepicker input-small" id="birthdate" data-date-format="dd/mm/yyyy" value="{{birthdate}}" required>
-							<span class="add-on" id="birthdateIcon"><i class="icon-calendar"></i></span>
-						</div>
-						<span class="help-block">Not a valid date</span>
 					</div>
 				</div>
 				<div class="control-group">
@@ -64,34 +60,38 @@
 						</label>
 					</div>
 				</div>
+			</form>
+		</div>
+		<div class="span5">
+			<form class="form-horizontal">
 				<div class="control-group">
 					<label class="control-label" for="shirtSize">Shirt Size</label>
 					<div class="controls">
 						<select id="shirtSize" class="input-small">
 							{{#select shirtSize}}
 							<option value=""></option>
-							<option value="3xs">3XS</option>
-							<option value="2xs">2XS</option>
-							<option value="xs">XS</option>
-							<option value="s">S</option>
-							<option value="m" selected="selected">M</option>
-							<option value="l">L</option>
-							<option value="xl">XL</option>
-							<option value="2xl">2XL</option>
-							<option value="3xl">3XL</option>
-							<option value="4xl">4XL</option>
+							<option value="3XS">3XS</option>
+							<option value="2XS">2XS</option>
+							<option value="XS">XS</option>
+							<option value="S">S</option>
+							<option value="M" selected="selected">M</option>
+							<option value="L">L</option>
+							<option value="XL">XL</option>
+							<option value="2XL">2XL</option>
+							<option value="3XL">3XL</option>
+							<option value="4XL">4XL</option>
 							{{/select}}
 						</select>
 					</div>
 				</div>
-			</form>
-		</div>
-		<div class="span5">
-			<form class="form-horizontal">
 				<div class="control-group">
-					<label class="control-label" for="primaryEmail">Primary Email</label>
+					<label for="birthdate" class="control-label">Birthdate</label>
 					<div class="controls">
-						<input type="text" id="primaryEmail" value="{{primaryEmail}}" required>
+						<div class="input-append">
+							<input type="text" class="birthDatepicker input-small" id="birthdate" data-date-format="dd/mm/yyyy" value="{{birthdate}}" required>
+							<span class="add-on" id="birthdateIcon"><i class="icon-calendar"></i></span>
+						</div>
+						<span class="help-block">Not a valid date</span>
 					</div>
 				</div>
 				<div class="control-group">
@@ -101,19 +101,13 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label" for="workPhone">Work Phone</label>
-					<div class="controls">
-						<input type="text" id="workPhone" value="{{workPhone}}">
-					</div>
-				</div>
-				<div class="control-group">
 					<label class="control-label" for="mobilePhone">Mobile Phone</label>
 					<div class="controls">
 						<input type="text" id="mobilePhone" value="{{mobilePhone}}">
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label" for="firstName">Address</label>
+					<label class="control-label" for="address">Address</label>
 					<div class="controls">
 						<input type="text" id="address" value="{{address}}">
 					</div>
@@ -137,11 +131,12 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label" for="userType">User Type</label>
+					<label class="control-label" for="role">User Type</label>
 					<div class="controls">
-						<select id="userType" class="input-medium">
-							{{#select userType}}
+						<select id="role" class="input-medium">
+							{{#select role}}
 							<option value="blank"></option>
+							<option value="admin">Admin</option>
 							<option value="volunteer">Volunteer</option>
 							<option value="sponsor">Sponsor</option>
 							<option value="coach">Coach</option>
@@ -195,7 +190,7 @@
 			<div class="span5 volunteer-info">
 				<a href="/volunteer/{{slug}}" class="volunteer-name">{{firstName}} {{lastName}}</a><br>
 				<span class="volunteer-phone">Mobile: {{mobilePhone}}</span><br>
-				<span class="volunteer-email">Email: <a href="mailto:{{primaryEmail}}">{{primaryEmail}}</a>
+				<span class="volunteer-email">Email: <a href="mailto:{{email}}">{{email}}</a>
 			</div>
 		</div>
 		{{/each}}
@@ -250,21 +245,6 @@
 				</a>
 				<div class="media-body">
 					<h4 class="media-heading"><a href="/tournament/{{_id}}">{{tournamentName}}</a></h4>
-				</div>
-			</div>
-			{{/each}}
-			{{/if}}
-
-			{{#if availableTournamentsExist}}
-			<h3>Available Tournaments</h3>
-			{{#each availableTournaments}}
-			<div class="media">
-				<a class="pull-left" href="#">
-					<img class="media-object" data-src="">
-				</a>
-				<div class="media-body">
-					<h4 class="media-heading">{{tournamentName}}</h4>
-					<p><a href="/tournament/{{_id}}/signup">Sign up to volunteer</a></p>
 				</div>
 			</div>
 			{{/each}}

@@ -65,7 +65,7 @@ Template.signIn.events
 			username: email,
 			password: template.find('#registerPassword').value,
 			profile: 
-				type: '',
+				role: '',
 				email: email,
 				agreedToTerms: false,
 				firstName: template.find('#firstName').value,
