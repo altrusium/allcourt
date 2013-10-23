@@ -119,11 +119,10 @@ Volunteer
 TournamentVolunteers
 - volunteerId
 - tournamentId
-- rolePreferrences: Array
+- preferrences: Array (order significant)
   - roleId
-- schedule: Array
+- shifts: Array
   - shiftId
-  - roleId
 
 
 ## User accounts & roles

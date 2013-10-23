@@ -10,10 +10,15 @@ setActiveRole = ->
   Session.set 'active-role-id', id
   Session.set 'active-role-name', name
 
+setAcceptedShifts = ->
+  signupId = Session.get 'signup-id'
+  signup = TournamentVolunteers.findOne { _id: signupId }
+  Session.set 'accepted-shifts', signup.shifts
+
 getRolePreferences = ->
   signupId = Session.get 'signup-id'
-  tournament = TournamentVolunteers.findOne { _id: signupId }#, { fields: preferences: 1 }
-  tournament.preferences
+  signup = TournamentVolunteers.findOne { _id: signupId }
+  signup.preferences
 
 associateVolunteerWithTournament = ->
   setSignupId()
@@ -23,12 +28,22 @@ associateVolunteerWithTournament = ->
 
 saveRolePreferences = (prefs) ->
   signupId = Session.get 'signup-id'
-  TournamentVolunteers.update { _id: signupId }, { $set: preferences: prefs}, $upsert: 1
+  TournamentVolunteers.update(
+    { _id: signupId }, 
+    { $set: preferences: prefs}, 
+    { $upsert: 1 }, (err) ->
+      Template.userMessages.showMessage
+        type: 'info'
+        title: 'Saved:'
+        message: 'The order of your role preferences have been saved.'
+        timeout: 2000
+  )
 
 Template.tournamentVolunteerSignup.created = ->
   associateVolunteerWithTournament()
 
 Template.tournamentVolunteerSignup.rendered = ->
+  setActiveRole()
   $('#sortableRoles').disableSelection()
   $('#sortableRoles').sortable 
     forcePlaceholderSize: true 
@@ -49,16 +64,20 @@ Template.tournamentVolunteerSignup.roles = ->
   rolePrefs = getRolePreferences()
   id = Session.get('active-tournament').tournamentId
   tournament = Tournaments.findOne id, fields: roles: 1
-  for role in rolePrefs
+  for role in rolePrefs # add preferences first
     pref = _.find tournament.roles, (item) ->
       if item.roleId is role and !item.found
         item.found = true
         item
     sortedRoles.push pref
-  for role in tournament.roles
+  for role in tournament.roles # then the rest of them
     unless role.found
       sortedRoles.push role
   sortedRoles
+
+Template.tournamentVolunteerSignup.acceptedShift = ->
+  if _.contains Session.get('accepted-shifts'), this.shiftId
+    return 'checked="checked"'
 
 Template.tournamentVolunteerSignup.activeRoleName = ->
   Session.get 'active-role-name'
@@ -112,7 +131,24 @@ Template.tournamentVolunteerSignup.shifts = ->
 Template.tournamentVolunteerSignup.events
   'change #role': (evnt, template) ->
     setActiveRole()
-
+  'change #shiftTable [data-shift]': (evnt, template) ->
+    input = $(evnt.currentTarget)
+    id = input.data 'shift-id'
+    checked = input.is ':checked'
+    signupId = Session.get 'signup-id'
+    showSaved = (action) ->
+      Template.userMessages.showMessage
+        type: 'info'
+        title: action + ':'
+        message: 'Your shift schedule has been saved.'
+        timeout: 2000
+    if checked
+      TournamentVolunteers.update { _id: signupId }, { $push: shifts: id }, (err) ->
+        unless err then showSaved 'Added'
+    else
+      TournamentVolunteers.update { _id: signupId }, { $pull: shifts: id }, (err) ->
+        unless err then showSaved 'Removed'
+    setAcceptedShifts()
 
 
 
