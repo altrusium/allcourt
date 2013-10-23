@@ -1,9 +1,3 @@
-setSignupId = ->
-  vId = Meteor.userId()
-  tId = Session.get('active-tournament').tournamentId
-  signup = TournamentVolunteers.findOne { tournamentId: tId, volunteerId: vId }
-  Session.set 'signup-id', signup._id
-
 setActiveRole = ->
   id = $('#role option:selected').val()
   name = $('#role option:selected').text()
@@ -18,13 +12,28 @@ setAcceptedShifts = ->
 getRolePreferences = ->
   signupId = Session.get 'signup-id'
   signup = TournamentVolunteers.findOne { _id: signupId }
-  signup.preferences
+  signup and signup.preferences or []
 
 associateVolunteerWithTournament = ->
-  setSignupId()
-  signup = Session.get 'signup-id'
-  unless signup
-    TournamentVolunteers.insert { tournamentId: tId, volunteerId: vId }
+  vId = Meteor.userId()
+  tId = Session.get('active-tournament').tournamentId
+  signup = TournamentVolunteers.findOne { tournamentId: tId, volunteerId: vId }
+  if signup
+    Session.set 'signup-id', signup._id
+  else 
+    TournamentVolunteers.insert { tournamentId: tId, volunteerId: vId }, (err, id) ->
+      unless err
+        console.log 'new id is ' + id
+        Session.set 'signup-id', id
+        Template.userMessages.showMessage
+          type: 'info'
+          title: 'Success:'
+          message: 'You have been successfully signed up. Thank you!'
+      else
+        Template.userMessages.showMessage
+          type: 'error'
+          title: 'Sign-up Failed:'
+          message: 'An error occurred while signing you up. Please refresh your browser and let us know if this continues.'
 
 saveRolePreferences = (prefs) ->
   signupId = Session.get 'signup-id'
@@ -64,6 +73,7 @@ Template.tournamentVolunteerSignup.roles = ->
   rolePrefs = getRolePreferences()
   id = Session.get('active-tournament').tournamentId
   tournament = Tournaments.findOne id, fields: roles: 1
+  unless tournament.roles then return
   for role in rolePrefs # add preferences first
     pref = _.find tournament.roles, (item) ->
       if item.roleId is role and !item.found
