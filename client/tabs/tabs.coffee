@@ -1,29 +1,21 @@
 Handlebars.registerHelper 'setTab', (tabName, options) ->
   Session.set 'selected-tab', tabName 
 
-Template.tabs.role = ->
-	return Meteor.user() && Meteor.user().profile.role
-
 Template.tabs.isAdmin = ->
-	return Meteor.user() && Meteor.user().profile.role is 'admin'
+	return Meteor.user() && Meteor.user().profile.admin
 	
 Template.adminTabs.tabSelected = (tab) ->
   return if tab is Session.get 'selected-tab' then 'active' else ''
 
-Template.newUserTabs.tabSelected = (tab) ->
-  return if tab is Session.get 'selected-tab' then 'active' else ''
-
-Template.userRegisteredTabs.tabSelected = (tab) ->
+Template.userTabs.tabSelected = (tab) ->
   return if tab is Session.get 'selected-tab' then 'active' else ''
 
 Template.userMenu.usersname = ->
-	user = Meteor.user().profile
-	return user.fullName
+	return Meteor.user().profile.fullName
 
 Template.userMenu.events
 	'click #signOut': (evnt, temlate) ->
 		Meteor.logout ->
-      Session.set 'user-just-added', false
 	    Meteor.Router.to '/'
 	'click #goToProfile': (evnt, temlate) ->
 	  Meteor.Router.to '/profile'

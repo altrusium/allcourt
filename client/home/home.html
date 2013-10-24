@@ -4,23 +4,15 @@
   <div class="row">
 	  <div class="span8">
 
-	  	{{#unless currentUser}}
-	  		{{> anonymousWelcome}}
-	  		{{> signIn}}
-	  	{{/unless}}
-
 			{{#if currentUser}}
-		  	{{#unless role}}
-		  		{{> setupNewUser}}
-		  	{{/unless}}
-		  {{/if}}
-
-		  {{#if role}}
 		  	{{#if isAdmin}}
-		  		{{> adminMessage}}
+		  		{{> adminHome}}
 		  	{{else}}
-			  	{{> userRegistered}}
-		  	{{/if}}
+		  		{{> userHome}}
+			  {{/if}}
+			{{else}}
+	  		{{> anonymousHome}}
+	  		{{> signIn}}
 		  {{/if}}
 
 			<h2><small>Thoughts?</small></h2>
@@ -33,12 +25,17 @@
 	</div>
 </template>
 
-<template name="anonymousWelcome">
+<template name="anonymousHome">
 	<p class="lead">Welcome to All-Court, a tool supporting Auckland's <a href="http://festivaloftennis.co.nz">Festival of Tennis</a>. Register and sign-in below to make our next professional tennis tournaments <em>even better</em> than the last.</p>
 </template>
 
-<template name="adminMessage">
+<template name="adminHome">
 	<h2><small>Administrator</small></h2>
 	<p>You are currently signed in as an administrator.</p>
+</template>
+
+<template name="userHome">
+	<h2><small>User</small></h2>
+	<p>You are currently signed in as a user.</p>
 </template>
 

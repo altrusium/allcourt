@@ -24,7 +24,7 @@ setActiveVolunteer = (slug) ->
     return false
 
 isAdmin = ->
-  return Meteor.user() and Meteor.user().profile.role is 'admin'
+  return Meteor.user() and Meteor.user().profile.admin
 
 Meteor.Router.add
   '/': 'home',
@@ -42,8 +42,6 @@ Meteor.Router.add
   '/volunteer/:slug': (slug) ->
     unless isAdmin() then return 'notAuthorised'
     return setActiveVolunteer(slug) or 'volunteerDetails'
-  '/shifts': ->
-    return if isAdmin() then 'shifts' else 'notAuthorised'
   '/tournaments': ->
     return if isAdmin() then 'tournaments' else 'notAuthorised'
   '/tournament/create': ->

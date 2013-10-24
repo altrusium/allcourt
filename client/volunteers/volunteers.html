@@ -60,6 +60,13 @@
 						</label>
 					</div>
 				</div>
+				<div class="control-group">
+					<div class="controls">
+						<label class="checkbox">
+							<input type="checkbox" id="siteAdmin" {{siteAdmin}}> Site Administrator
+						</label>
+					</div>
+				</div>
 			</form>
 		</div>
 		<div class="span5">
@@ -128,25 +135,6 @@
 					<label class="control-label" for="postalCode">Postal Code</label>
 					<div class="controls">
 						<input type="text" id="postalCode" value="{{postalCode}}" class="input-small">
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="role">User Type</label>
-					<div class="controls">
-						<select id="role" class="input-medium">
-							{{#select role}}
-							<option value="blank"></option>
-							<option value="admin">Admin</option>
-							<option value="volunteer">Volunteer</option>
-							<option value="sponsor">Sponsor</option>
-							<option value="coach">Coach</option>
-							<option value="referee">Referee</option>
-							<option value="media">Media</option>
-							<option value="hospitality">Hospitality</option>
-							<option value="security">Security</option>
-							<option value="laneControl">Lane Control</option>
-							{{/select}}
-						</select>
 					</div>
 				</div>
 				<div class="control-group">

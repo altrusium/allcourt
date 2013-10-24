@@ -89,8 +89,8 @@ getUserFormValues = (template) ->
       lastName: lastName
       slug: firstName + lastName
       fullName: firstName + ' ' + lastName
-      role: template.find('#role').value
       photoFilename: template.find('#photoFilename').value
+      admin: if template.find('#siteAdmin:checked') then true
       gender: template.find('input:radio[name=gender]:checked').value
 
 getVolunteerFormValues = (template) ->
@@ -172,6 +172,7 @@ Template.volunteerCreate.detail = ->
     volunteer.lastName = profile.lastName
     volunteer.primaryEmail = profile.email
     volunteer.role = profile.role
+    volunteer.siteAdmin = if profile.admin then 'checked="checked"' else ''
   else
     volunteer.detail = {}
   return volunteer
