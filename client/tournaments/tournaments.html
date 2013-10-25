@@ -1,28 +1,43 @@
 <template name="tournaments">
 	{{> tabs}}
 	{{setTab 'tournaments'}}
+	{{#if isAdmin}}
 	<ul class="breadcrumb">
-		<li><a href="/tournament/create">Create</a> <span class="divider">|</span></li>
-		<li><a href="/tournament/list">List</a> <span class="divider">|</span></li>
-		<li><a href="/tournament/roles">Roles</a> <span class="divider">|</span></li>
-		<li><a href="/tournament/shifts">Shifts</a>
+		<li><a href="/tournament/create">Create New Tournament</a></li>
 	</ul>
+	{{/if}}
 	{{> userMessages}}
   <div class="row">
 	  <div class="span8">
-	  	<p class="lead">Setup tournament parameters here. Typically, you'll only need to do this once per tournament as you're setting things up.</p>
+	  	<p class="lead">Please select a tournament to continue.</p>
 
-		  <h2><small><a href="/tournament/create">Create</a></small></h2>
-		  <p>Add a new tournament, edit future and currently running tournaments, or view past tournaments.</p>
+	  	{{#if myTournaments}}
+			<h2 class="column-header"><small>My Tournaments</small></h2>
+				<ul>
+					{{#each myTournaments}}
+					<li><a href="/tournament/{{slug}}">{{tournamentName}}</a></li>
+					{{/each}}
+				</ul>
+	  	{{/if}}
 
-		  <h2><small><a href="/tournament/list">List</a></small></h2>
-		  <p>View a list of all tournaments. You must select a tournament before defining its roles and shifts.</p>
+			{{#if activeTournaments}}
+			<h2 class="column-header"><small>Active Tournaments</small></h2>
+				<ul>
+					{{#each activeTournaments}}
+					<li><a href="/tournament/{{slug}}">{{tournamentName}}</a></li>
+					{{/each}}
+				</ul>
+			{{/if}}
 
-		  <h2><small><a href="/tournament/roles">Roles</a></small></h2>
-		  <p>Define all of the roles for a particular tournament (drivers, ball kids, marshalls, runners, etc).</p> 
+			{{#if previousTournaments}}
+			<h2 class="column-header"><small>Previous Tournaments</small></h2>
+				<ul>
+					{{#each previousTournaments}}
+					<li><a href="/tournament/{{slug}}">{{tournamentName}}</a></li>
+					{{/each}}
+				</ul>
+			{{/if}}
 
-		  <h2><small><a href="/tournament/shifts">Shifts</a></small></h2>
-		  <p>Define the shifts for each role on every day of the tournament.</p>
 		</div>
 	  <div class="span3 offset1">
 	  	<img src="/img/ta-logo.png" alt="Tennis Auckland Logo">
@@ -34,48 +49,23 @@
 	{{> tabs}}
 	{{setTab 'tournaments'}}
 	<ul class="breadcrumb">
-		<li><a href="/tournaments">Tournaments</a> <span class="divider">/</span></li>
-		<li class="active">Details</li>
+		<li><a href="/tournament/{{activeTournamentSlug}}/roles">Roles</a> <span class="divider">|</span></li>
+		<li><a href="/tournament/{{activeTournamentSlug}}/teams">Teams</a> <span class="divider">|</span></li>
+		<li><a href="/tournament/{{activeTournamentSlug}}/members">Members</a></li>
 	</ul>
 	{{> userMessages}}
 	<p>
-		<a href="/tournament/{{tournamentId}}/signup">Sign up to volunteer</a>
-	</p>
-	<p>&nbsp;</p>
-	<p>
-		<em>Tournament dates and analytics forthcoming</em>
+		<em>Details and analytics forthcoming</em>
 	</p>
 </template>
 
-<template name="tournamentList">
+<template name="createTournament">
 	{{> tabs}}
 	{{setTab 'tournaments'}}
 	<ul class="breadcrumb">
-		<li><a href="/tournaments">Tournaments</a> <span class="divider">/</span></li>
-		<li class="active">List</li>
-	</ul>
-	{{> userMessages}}
-	{{#if tournamentsExist}}
-	<h2 class="column-header"><small>Existing Tournaments</small></h2>
-		{{#each tournaments}}
-		<p>
-			<a href="/tournament/{{slug}}">{{tournamentName}}</a>
-			{{#if isAdmin}}
-			<a href="#" data-tournament-id="{{_id}}" data-action="delete"><i class="icon-remove"></i></a>
-			{{/if}}
-		</p>
-		{{/each}}
-	{{else}}
-		<p>What? No tournaments? Looks like you need to <a href="/tournament/create">create one</a>.</p>
-	{{/if}}
-</template>
-
-<template name="setupTournament">
-	{{> tabs}}
-	{{setTab 'tournaments'}}
-	<ul class="breadcrumb">
-		<li><a href="/tournaments">Tournaments</a> <span class="divider">/</span></li>
-		<li class="active">Create</li>
+		<li><a href="/tournament/roles">Roles</a> <span class="divider">|</span></li>
+		<li><a href="/tournament/teams">Teams</a> <span class="divider">|</span></li>
+		<li><a href="/tournament/members">Members</a></li>
 	</ul>
   {{> userMessages}}
 	<div class="row">
@@ -149,8 +139,9 @@
 	{{> tabs}}
 	{{setTab 'tournaments'}}
 	<ul class="breadcrumb">
-		<li><a href="/tournaments">Tournaments</a> <span class="divider">/</span></li>
-		<li class="active">Roles</li>
+		<li class="active">Roles <span class="divider">|</span></li>
+		<li><a href="/tournament/{{activeTournamentSlug}}/teams">Teams</a> <span class="divider">|</span></li>
+		<li><a href="/tournament/{{activeTournamentSlug}}/members">Members</a></li>
 	</ul>
   {{> userMessages}}
 	{{#if noTournamentsYet}}
@@ -158,18 +149,8 @@
 	{{else}}
 	<div class="row">
 		<div class="span5">
-			<h2 class="column-header"><small>Manage roles by tournament</small></h2>
+			<h2 class="column-header"><small>Create roles</small></h2>
 			<form class="form-vertical">
-				<div class="control-group">
-					<label for="tournament" class="control-label">Tournament</label>
-					<div class="controls">
-						<select id="tournament">
-							{{#each tournaments}}
-							<option value="{{_id}}" {{markSelected}}>{{tournamentName}}</option>
-							{{/each}}
-						</select>
-					</div>
-				</div>
 				<div class="control-group">
 					<label for="copyRoles" class="control-label">Optionally copy roles from</label>
 					<div class="controls">
@@ -184,7 +165,7 @@
 				<div class="control-group">
 					<label for="roleName" class="control-label">Role name</label>
 					<div class="controls">
-						<input type="text" id="roleName" placeholder="Driver">
+						<input type="text" id="roleName" placeholder="Volunteer">
 						<button type="button" id="addRole" class="btn btn-primary">Add</button>
 					</div>
 				</div>
@@ -205,7 +186,7 @@
 					<tr>
 						<td>{{roleName}}</td>
 						<td>
-							<a href="#" data-action="delete" data-role="{{roleName}}"><i class="icon-remove"></i></a>
+							<a href="#" data-action="delete" data-role="{{roleId}}"><i class="icon-remove"></i></a>
 						</td>
 					</tr>
 					{{/each}}
@@ -214,7 +195,70 @@
 			{{/if}}
 		</div>
 	</div>
-	<p>Next: <a href="/tournament/shifts">Setup shifts</a></p>
+	<p>Next: <a href="/tournament/{{activeTournamentSlug}}/teams">Setup teams</a></p>
+	{{/if}}
+</template>
+
+<template name="setupTeams">
+	{{> tabs}}
+	{{setTab 'tournaments'}}
+	<ul class="breadcrumb">
+		<li><a href="/tournament/{{activeTournamentSlug}}/roles">Roles</a> <span class="divider">|</span></li>
+		<li class="active">Teams <span class="divider">|</span></li>
+		<li><a href="/tournament/{{activeTournamentSlug}}/members">Members</a></li>
+	</ul>
+  {{> userMessages}}
+	{{#if noRolesYet}}
+		<p>You must first setup at least one role <a href="/tournament/setupRoles">here</a>.</p>
+	{{else}}
+	<div class="row">
+		<div class="span5">
+			<h2 class="column-header"><small>Manage teams by role</small></h2>
+			<form class="form-vertical">
+				<div class="control-group">
+					<label for="role" class="control-label">Role</label>
+					<div class="controls">
+						<select id="role">
+							{{#each roles}}
+							<option value="{{roleId}}">{{roleName}}</option>
+							{{/each}}
+						</select>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="teamName" class="control-label">Team name</label>
+					<div class="controls">
+						<input type="text" id="teamName" placeholder="Drivers">
+						<button type="button" id="addTeam" class="btn btn-primary">Add</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="span6">
+			{{#if teamsExist}}
+			<h2 class="column-header"><small>{{activeRoleName}} Teams</small></h2>
+			<table class="table table-hover table-striped">
+				<thead>
+					<tr>
+						<th>Team name</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{#each teams}}
+					<tr>
+						<td>{{teamName}}</td>
+						<td>
+							<a href="#" data-action="delete" data-team="{{teamId}}"><i class="icon-remove"></i></a>
+						</td>
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+			{{/if}}
+		</div>
+	</div>
+	<p>Next: <a href="/tournament/{{activeTournamentSlug}}/members">Setup members</a></p>
 	{{/if}}
 </template>
 

@@ -17,6 +17,3 @@ Template.userMenu.events
 	'click #signOut': (evnt, temlate) ->
 		Meteor.logout ->
 	    Meteor.Router.to '/'
-	'click #goToProfile': (evnt, temlate) ->
-	  Meteor.Router.to '/profile'
-		false

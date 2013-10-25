@@ -1,18 +1,18 @@
-<template name="volunteers">
+<template name="users">
 	{{> tabs}}
-	{{setTab 'volunteers'}}
+	{{setTab 'users'}}
 	<ul class="breadcrumb">
-		<li><a href="/volunteer/create">Create</a> <span class="divider">|</span></li>
+		<li><a href="/user/create">Create</a> <span class="divider">|</span></li>
 		<li><a href="/volunteer/list">List Volunteers</a></li>
 	</ul>
 	{{> userMessages}}
 </template>
 
-<template name="volunteerCreate">
+<template name="userCreate">
 	{{> tabs}}
-	{{setTab 'volunteers'}}
+	{{setTab 'users'}}
 	<ul class="breadcrumb">
-		<li><a href="/volunteers">Volunteers</a> <span class="divider">/</span></li>
+		<li><a href="/users">Users</a> <span class="divider">/</span></li>
 		<li class="active">{{#if detail.isNew}}Create{{else}}Edit{{/if}}</li>
 	</ul>
 	{{> userMessages}}
@@ -155,16 +155,16 @@
 	</div>
 </template>
 
-<template name="volunteerList">
+<template name="userList">
 	{{> tabs}}
-	{{setTab 'volunteers'}}
+	{{setTab 'users'}}
 	<ul class="breadcrumb">
-		<li><a href="/volunteers">Volunteers</a> <span class="divider">/</span></li>
+		<li><a href="/users">Users</a> <span class="divider">/</span></li>
 		<li class="active">List</li>
 	</ul>
 	{{> userMessages}}
 	<div class="container volunteer-list">
-		{{#each volunteers}}
+		{{#each users}}
 		<div class="row">
 			<div class="span1">
 				<a href="/volunteer/{{slug}}">
@@ -185,11 +185,11 @@
 	</div>
 </template>
 
-<template name="volunteerDetails">
+<template name="userDetails">
 	{{> tabs}}
-	{{setTab 'volunteers'}}
+	{{setTab 'users'}}
 	<ul class="breadcrumb">
-		<li><a href="/volunteers">Volunteers</a> <span class="divider">/</span></li>
+		<li><a href="/users">Users</a> <span class="divider">/</span></li>
 		<li class="active">Details</li>
 	</ul>
 	{{> userMessages}}

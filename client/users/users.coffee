@@ -3,33 +3,27 @@ photoRoot = 'http://s3-ap-southeast-2.amazonaws.com/shifty-photos/'
 
 
 
-Template.volunteers.rendered = ->
+Template.users.rendered = ->
   Session.set 'active-volunteer', null
 
 
 
 
-Template.volunteerList.volunteers = ->
+Template.userList.volunteers = ->
   Session.set 'active-volunteer', null
-  Volunteers.find().map (volunteer) ->
-    user = Meteor.users.findOne('_id': volunteer._id)
-    volunteer.firstName = user.profile.firstName
-    volunteer.lastName = user.profile.lastName
-    volunteer.photoFilename = user.profile.photoFilename
-    volunteer.email = user.profile.email
-    volunteer.slug = user.profile.slug
-    volunteer.isMale = ->
+  Meteor.users.find().map (user) ->
+    user.isMale = ->
       return user.profile.gender is 'male'
-    volunteer
+    user
 
-Template.volunteerList.photoRoot = ->
+Template.userList.photoRoot = ->
   return photoRoot
 
 
 
 
 updatePage = (file) ->
-  $('#photoImg').fadeIn(400).attr 'src', Template.volunteerList.photoRoot() + file.key
+  $('#photoImg').fadeIn(400).attr 'src', photoRoot + file.key
   $('#photoPlaceholder').removeClass('empty').find('h4, p, .loading').remove()
   $('#photoFilename').val file.key
   $('#pickPhoto').removeAttr 'disabled'
@@ -154,13 +148,13 @@ clearFormValues = (template) ->
 
 
 
-Template.volunteerCreate.rendered = ->
+Template.userCreate.rendered = ->
   initializeControls()
-  volunteer = Session.get 'active-volunteer'
-  if volunteer && volunteer.profile.photoFilename
+  user = Session.get 'active-user'
+  if user && user.profile.photoFilename
     $('.photo-placeholder').removeClass 'empty'
 
-Template.volunteerCreate.detail = ->
+Template.userCreate.detail = ->
   volunteer = Session.get('active-volunteer') or {}
   if volunteer.userDetails # editing, not creating
     profile = volunteer.userDetails.profile
@@ -177,7 +171,7 @@ Template.volunteerCreate.detail = ->
     volunteer.detail = {}
   return volunteer
 
-Template.volunteerCreate.events
+Template.userCreate.events
   'click #saveProfile': (event, template) ->
     activeVolunteer = Session.get 'active-volunteer'
     userOptions = getUserFormValues template
@@ -217,7 +211,7 @@ Template.volunteerCreate.events
 
 
 
-Template.volunteerDetails.detail = ->
+Template.userDetails.detail = ->
   volunteer = Session.get 'active-volunteer'
   profile = volunteer.userDetails.profile
   volunteer.isMale = profile.gender is 'male'
@@ -228,26 +222,26 @@ Template.volunteerDetails.detail = ->
   volunteer.role = profile.role
   return volunteer
 
-Template.volunteerDetails.photoRoot = ->
+Template.userDetails.photoRoot = ->
   return photoRoot
 
-Template.volunteerDetails.availableTournamentsExist = ->
+Template.userDetails.availableTournamentsExist = ->
   tournaments = Template.volunteerDetails.availableTournaments()
   return tournaments.length > 0
 
-Template.volunteerDetails.availableTournaments = ->
+Template.userDetails.availableTournaments = ->
   tournaments = Tournaments.find({}, fields: {tournamentName: 1, days: 1}).fetch()
   futureTournaments = for tournament in tournaments
     tournamentStartDate = new Date tournament.days[0]
     tournament if new Date() - tournamentStartDate < 0
 
-Template.volunteerDetails.myTournamentsExist = ->
+Template.userDetails.myTournamentsExist = ->
   return false
 
-Template.volunteerDetails.myTournaments = ->
+Template.userDetails.myTournaments = ->
   return []
 
-Template.volunteerDetails.events =
+Template.userDetails.events =
   'click #deleteVolunteer': (evnt, template) ->
     $('#deleteModal').modal()
   'click #deleteConfirmed': (evnt, template) ->

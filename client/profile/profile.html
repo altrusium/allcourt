@@ -1,6 +1,5 @@
 <template name="profileDetails">
 	{{> tabs}}
-	{{setTab 'profile'}}
 	{{> userMessages}}
 	<div class="row">
 		{{#with details}}
@@ -55,7 +54,6 @@
 
 <template name="profileEdit">
 	{{> tabs}}
-	{{setTab 'profile'}}
 	{{> userMessages}}
 	<div class="row">
 		<form method="post">

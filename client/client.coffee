@@ -7,10 +7,7 @@ setActiveTournament = (slug) ->
   unless tournament
     return 'notFound'
   else
-    Session.set 'active-tournament', 
-      tournamentId: tournament._id, 
-      name: tournament.tournamentName,
-      slug: tournament.slug
+    Session.set 'active-tournament', tournament
     return false
 
 setActiveVolunteer = (slug) ->
@@ -23,6 +20,14 @@ setActiveVolunteer = (slug) ->
     Session.set 'active-volunteer', volunteer
     return false
 
+setActiveUser = (slug) ->
+  userDetails = Meteor.users.findOne 'profile.slug': slug
+  unless userDetails
+    return 'notFound'
+  else
+    Session.set 'active-user', userDetails
+    return false
+    
 isAdmin = ->
   return Meteor.user() and Meteor.user().profile.admin
 
@@ -30,6 +35,18 @@ Meteor.Router.add
   '/': 'home',
   '/profile': 'profileDetails',
   '/profile/edit': 'profileEdit',
+  '/users': ->
+    return if isAdmin() then 'users' else 'notAuthorised'
+  '/user/create': ->
+    return if isAdmin() then 'userCreate' else 'notAuthorised'
+  '/user/list': ->
+    return if isAdmin() then 'userList' else 'notAuthorised'
+  '/user/edit/:slug': (slug) ->
+    unless isAdmin() then return 'notAuthorised'
+    return setActiveUser(slug) or 'userCreate'
+  '/user/:slug': (slug) ->
+    unless isAdmin() then return 'notAuthorised'
+    return setActiveUser(slug) or 'userDetails'
   '/volunteers': ->
     return if isAdmin() then 'volunteers' else 'notAuthorised'
   '/volunteer/create': ->
@@ -45,23 +62,28 @@ Meteor.Router.add
   '/tournaments': ->
     return if isAdmin() then 'tournaments' else 'notAuthorised'
   '/tournament/create': ->
-    return if isAdmin() then 'setupTournament' else 'notAuthorised'
-  '/tournament/list': 'tournamentList'
-  '/tournament/roles': ->
-    return if isAdmin() then 'setupRoles' else 'notAuthorised'
-  '/tournament/shifts': ->
-    return if isAdmin() then 'setupShifts' else 'notAuthorised'
+    return if isAdmin() then 'createTournament' else 'notAuthorised'
+  '/tournament/:slug/roles': (slug) ->
+    unless isAdmin() then return 'notAuthorised'
+    return setActiveTournament(slug) or 'setupRoles' 
+  '/tournament/:slug/teams': (slug) ->
+    unless isAdmin() then return 'notAuthorised'
+    return setActiveTournament(slug) or 'setupTeams' 
+  '/tournament/:slug/members': (slug) ->
+    unless isAdmin() then return 'notAuthorised'
+    return setActiveTournament(slug) or 'setupMembers' 
+  '/tournament/:slug/shifts': ->
+    unless isAdmin() then return 'notAuthorised'
+    return setActiveTournament(slug) or 'setupShifts' 
   '/tournament/:slug': (slug) ->
     return setActiveTournament(slug) or 'tournamentDetails'
   '/tournament/:slug/signup': (slug) ->
     return setActiveTournament(slug) or 'tournamentVolunteerSignup'
   '*': 'notFound'
 
-Session.set 'active-tournament', { tournamentId: '', name: '', slug: '' }
-
 Template.activeTournament.tournament = ->
   tournament = Session.get 'active-tournament'
-  return tournament or tournamentId: '', name: ''
+  return tournament 
 
 # For debugging and styling
 # Session.set 'user-message',

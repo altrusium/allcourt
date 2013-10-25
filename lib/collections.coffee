@@ -4,27 +4,27 @@
 
 Meteor.users.allow
   insert: (userId, doc) ->
-    Meteor.user().profile.role is 'admin'
+    Meteor.user().profile.admin
   update: (userId, doc) ->
-    Meteor.user().profile.role is 'admin'
+    Meteor.user().profile.admin
   remove: (userId, doc) ->
-    Meteor.user().profile.role is 'admin'
+    Meteor.user().profile.admin
 
 Volunteers.allow
   insert: (userId, doc) ->
-    Meteor.user().profile.role is 'admin'
+    Meteor.user().profile.admin
   update: (userId, doc) ->
-    Meteor.userId() is doc._id or Meteor.user().profile.role is 'admin'
+    Meteor.userId() is doc._id or Meteor.user().profile.admin
   remove: (userId, doc) ->
-    Meteor.user().profile.role is 'admin'
+    Meteor.user().profile.admin
 
 Tournaments.allow
   insert: (userId, doc) ->
-    Meteor.user().profile.role is 'admin'
+    Meteor.user().profile.admin
   update: (userId, doc) ->
-    Meteor.user().profile.role is 'admin'
+    Meteor.user().profile.admin
   remove: (userId, doc) ->
-    Meteor.user().profile.role is 'admin'
+    Meteor.user().profile.admin
 
 TournamentVolunteers.allow
   insert: (userId, doc) ->
@@ -32,4 +32,4 @@ TournamentVolunteers.allow
   update: (userId, doc) ->
     true
   remove: (userId, doc) ->
-    Meteor.user().profile.role is 'admin'
+    Meteor.user().profile.admin

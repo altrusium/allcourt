@@ -1,4 +1,4 @@
-getSortedTournamentList = ->
+getSortedTournaments = ->
   tournaments = Tournaments.find {}, fields: tournamentName: 1, slug: 1, days: 1
   list = tournaments.fetch()
   list.sort (t1, t2) ->
@@ -9,29 +9,64 @@ getSortedTournamentList = ->
     return 0
   return list
 
+getActiveTournaments = ->
+  list = getSortedTournaments()
+  result = (t for t in list when new Date(t.days[t.days.length-1]) > new Date())
+
+getPreviousTournaments = ->
+  list = getSortedTournaments()
+  result = (t for t in list when new Date(t.days[t.days.length-1]) < new Date())
+
+setActiveTournament = ->
+  id = $('#tournament option:selected').val()
+  tournament = Tournaments.findOne id, fields: roles: 1, teams: 1
+  Session.set 'active-tournament', tournament
+
+setActiveRole = ->
+  rId = $('#role option:selected').val()
+  tournament = Session.get 'active-tournament'
+  activeRole = _.find tournament.roles, (role) ->
+    if role.roleId is rId then return role
+  Session.set 'active-role', activeRole
 
 
 
-Template.tournamentDetails.tournamentId = ->
+
+
+Template.tournaments.created = ->
+  Session.set 'active-tournament', null
+
+Template.tournaments.isAdmin = ->
+  Meteor.user().profile.admin
+
+Template.tournaments.activeTournaments = ->
+  getActiveTournaments()
+
+Template.tournaments.previousTournaments = ->
+  getPreviousTournaments()
+
+
+
+
+Template.tournamentDetails.activeTournamentSlug = ->
   return Session.get('active-tournament').slug
 
 
 
-
-Template.setupTournament.rendered = ->
+Template.createTournament.rendered = ->
   $('.tournamentDatepicker').datepicker format: 'dd M yyyy'
   $('#firstDateIcon').click ->
     $('#firstDate').datepicker 'show'
   $('#lastDateIcon').click ->
     $('#lastDate').datepicker 'show'
 
-Template.setupTournament.tournaments = ->
-  getSortedTournamentList()
+Template.createTournament.tournaments = ->
+  getSortedTournaments()
 
-Template.setupTournament.tournamentsExist = ->
+Template.createTournament.tournamentsExist = ->
   return Tournaments.find().count() > 0
 
-Template.setupTournament.events 
+Template.createTournament.events 
   'click #saveTournament': (evnt, template) ->
     firstDay = moment(template.find('#firstDate').value, 'DD MMM YYYY')
     lastDay = moment(template.find('#lastDate').value, 'DD MMM YYYY')
@@ -52,67 +87,52 @@ Template.setupTournament.events
 
 
 
-Template.tournamentList.tournamentsExist = ->
-  Tournaments.find().count() > 0
-
-Template.tournamentList.tournaments = ->
-  getSortedTournamentList()
-
-Template.tournamentList.tournamentsExist = ->
-  Tournaments.find().count() > 0
-
-Template.tournamentList.isAdmin = ->
-  Meteor.user().profile.role is 'admin'
-
-Template.tournamentList.events 
-  'click [data-action=delete]': (evnt, template) ->
-    id = $(evnt.currentTarget).data 'tournament-id'
-    Tournaments.remove id
-
-
-
-
-Template.setupRoles.setActiveTournament = ->
-    id = $('#tournament option:selected').val()
-    name = $('#tournament option:selected').text()
-    Session.set 'active-tournament', {tournamentId: id, name: name}
-
 Template.setupRoles.noTournamentsYet = ->
   Tournaments.find().count() is 0
 
 Template.setupRoles.tournaments = ->
-  getSortedTournamentList()
+  getSortedTournaments()
+
+Template.setupRoles.activeTournaments = ->
+  getActiveTournaments()
+
+Template.setupRoles.activeTournamentSlug = ->
+  Session.get('active-tournament').slug
+
+Template.setupRoles.previousTournaments = ->
+  getPreviousTournaments()
 
 Template.setupRoles.copyableTournaments = ->
-  Tournaments.find _id: $ne: Session.get('active-tournament').tournamentId
+  id = Session.get('active-tournament')._id
+  list = getSortedTournaments()
+  result = (t for t in list when t._id isnt id)
 
 Template.setupRoles.markSelected = ->
-  if this._id is Session.get('active-tournament').tournamentId
+  if this._id is Session.get('active-tournament')._id
     return 'selected=selected'
 
 Template.setupRoles.rolesExist = ->
-  id = Session.get('active-tournament').tournamentId
+  id = Session.get('active-tournament')._id
   unless id
     return false
   tournament = Tournaments.findOne id, fields: roles: 1
   return Object.keys(tournament.roles).length > 0
 
 Template.setupRoles.roles = ->
-  id = Session.get('active-tournament').tournamentId
-  unless id
-    return
-  tournament = Tournaments.findOne id, fields: roles: 1
-  return tournament.roles
+  id = Session.get('active-tournament')._id
+  unless id then return
+  tournament = Tournaments.findOne id, fields: roles: 1 
+  return tournament.roles.sort (a, b) ->
+    if a.roleName < b.roleName then return -1
+    if a.roleName > b.roleName then return 1
+    return 0
 
 Template.setupRoles.activeTournamentName = ->
-  return Session.get('active-tournament').name
+  return Session.get('active-tournament').tournamentName
 
 Template.setupRoles.events
-  'change #tournament': (evnt, template) ->
-    Template.setupRoles.setActiveTournament()
-
   'click #addRole': (evnt, template) ->
-    id = Session.get('active-tournament').tournamentId
+    id = Session.get('active-tournament')._id
     name = template.find('#roleName').value
     newRole = roleId: Meteor.uuid(), roleName: name
     Tournaments.update(id, $push: roles: newRole)
@@ -121,62 +141,123 @@ Template.setupRoles.events
   'click #copyRoles': (evnt, template) ->
     # RoleIDs are only unique within a tournament, NOT across them
     fromId = $('#copyFrom option:selected').val()
-    toId = Session.get('active-tournament').tournamentId
+    toId = Session.get('active-tournament')._id
     fromRoles = Tournaments.findOne(fromId, fields: roles: 1).roles
     Tournaments.update toId, $set: roles: fromRoles
 
   'click [data-action=delete]': (evnt, template) ->
-    keepingRoles = []
-    id = Session.get('active-tournament').tournamentId
+    id = Session.get('active-tournament')._id
     roleToDelete = $(evnt.currentTarget).data 'role'
-    roles = Template.setupRoles.roles()
-    keepingRoles = (role for role in roles when role.roleName isnt roleToDelete)
+    roles = Session.get('active-tournament').roles
+    keepingRoles = (role for role in roles when role.roleId isnt roleToDelete)
     Tournaments.update id, $set: roles: keepingRoles
-
-Template.setupRoles.rendered = ->
-  Template.setupRoles.setActiveTournament()
-
-
+    teams = Session.get('active-tournament').teams
+    keepingTeams = (team for team in teams when team.roleId isnt roleToDelete)
+    Tournaments.update id, $set: teams: keepingTeams
 
 
-Template.setupShifts.setActiveTournament = ->
-    id = $('#tournament option:selected').val()
-    name = $('#tournament option:selected').text()
-    Session.set 'active-tournament', {tournamentId: id, name: name}
+
+
+
+Template.setupTeams.rendered = ->
+  setActiveRole()
+
+Template.setupTeams.activeTournaments = ->
+  getActiveTournaments()
+
+Template.setupTeams.activeTournamentSlug = ->
+  Session.get('active-tournament').slug
+
+Template.setupTeams.markSelectedTournament = ->
+  if this._id is Session.get('active-tournament')._id
+    return 'selected=selected'
+
+Template.setupTeams.markSelectedRole = ->
+  if this.roleId is Session.get('active-role')?.roleId
+    return 'selected=selected'
+
+Template.setupTeams.teams = ->
+  roleId = Session.get('active-role')?.roleId
+  tournament = Session.get 'active-tournament'
+  teams = (team for team in tournament.teams when team.roleId is roleId)
+
+Template.setupTeams.teamsExist = ->
+  teams = Template.setupTeams.teams()
+  teams.length > 0
+
+Template.setupTeams.roles = ->
+  id = Session.get('active-tournament')._id
+  unless id then return
+  tournament = Tournaments.findOne id, fields: roles: 1 
+  return tournament.roles.sort (a, b) ->
+    if a.roleName < b.roleName then return -1
+    if a.roleName > b.roleName then return 1
+    return 0
+
+Template.setupTeams.activeRoleName = ->
+  return Session.get('active-role').roleName
+
+Template.setupTeams.events
+  'change #role': (evnt, template) ->
+    setActiveRole()
+
+  'click #addTeam': (evnt, template) ->
+    tId = Session.get('active-tournament')._id
+    rId = Session.get('active-role').roleId
+    name = template.find('#teamName').value
+    newTeam = roleId: rId, teamId: Meteor.uuid(), teamName: name
+    Tournaments.update(tId, $push: 'teams': newTeam)
+    $('#teamName').val('').focus()
+
+  'click [data-action=delete]': (evnt, template) ->
+    id = Session.get('active-tournament')._id
+    teamToDelete = $(evnt.currentTarget).data 'team'
+    teams = Session.get('active-tournament').teams
+    keepingTeams = (team for team in teams when team.teamId isnt teamToDelete)
+    Tournaments.update id, $set: teams: keepingTeams
+
+
+
+
+
+Template.setupShifts.rendered = ->
+  setActiveTournament()
+  setActiveRole()
+  # This is a terrible hack, but it works until I can figure out
+  # why subsequent renders are preventing this control from showing
+  $('.timepicker-default').each ->
+    $(this).data 'timepicker', null
+  $('.bootstrap-timepicker').remove()
+  $('.timepicker-default').timepicker minuteStep: 30, showInputs: false
+  $('.icon-info-sign').popover()
 
 Template.setupShifts.activeTournamentName = ->
-  Session.get('active-tournament').name
-
-Template.setupShifts.setActiveRole = ->
-    id = $('#role option:selected').val()
-    name = $('#role option:selected').text()
-    Session.set 'active-role-id', id
-    Session.set 'active-role-name', name
+  Session.get('active-tournament').tournamentName
 
 Template.setupShifts.activeRoleName = ->
-  Session.get 'active-role-name'
+  Session.get('active-role').roleName
 
 Template.setupShifts.noRolesYet = ->
-  id = Session.get('active-tournament').tournamentId
+  id = Session.get('active-tournament')._id
   tournament = Tournaments.findOne id, fields: roles: 1
   tournament && tournament.roles.length is 0
 
 Template.setupShifts.shiftsToShow = ->
-  Session.get('active-tournament').tournamentId && Session.get('active-role-id')
+  Session.get('active-tournament')._id && Session.get('active-role').roleId
 
 Template.setupShifts.markSelectedTournament = ->
-  if this._id is Session.get('active-tournament').tournamentId
+  if this._id is Session.get('active-tournament')._id
     return 'selected=selected'
 
 Template.setupShifts.markSelectedRole = ->
-  if this.roleName is Session.get 'active-role-name'
+  if this.roleName is Session.get('active-role').roleName
     return 'selected=selected'
 
 Template.setupShifts.tournaments = ->
-  getSortedTournamentList()
+  getSortedTournaments()
 
 Template.setupShifts.roles = ->
-  id = Session.get('active-tournament').tournamentId
+  id = Session.get('active-tournament')._id
   if id
     tournament = Tournaments.findOne(id, fields: roles: 1)
     return tournament && tournament.roles
@@ -188,8 +269,8 @@ Template.setupShifts.zeroClass = ->
   'zero' if this.count is '0'
  
 Template.setupShifts.shiftDefs = ->
-  tId = Session.get('active-tournament').tournamentId
-  rId = Session.get 'active-role-id'
+  tId = Session.get('active-tournament')._id
+  rId = Session.get('active-role').roleId
   if tId
     tournament = Tournaments.findOne tId, {fields: {shiftDefs: 1}, sort: {shiftDefs: startTime: 1}}
     shiftDefs = for def in tournament.shiftDefs when def.roleId is rId
@@ -199,8 +280,8 @@ Template.setupShifts.shiftDefs = ->
 
 Template.setupShifts.shifts = ->
   # TODO: This needs refactoring
-  tId = Session.get('active-tournament').tournamentId
-  rId = Session.get 'active-role-id'
+  tId = Session.get('active-tournament')._id
+  rId = Session.get('active-role').roleId
   unless tId
     return
   tournament = Tournaments.findOne tId, {fields: shiftDefs: 1, shifts: 1, days: 1}
@@ -241,9 +322,9 @@ Template.setupShifts.shifts = ->
 
 Template.setupShifts.events
   'change #tournament': (evnt, template) ->
-    Template.setupShifts.setActiveTournament()
+    setActiveTournament()
   'change #role': (evnt, template) ->
-    Template.setupShifts.setActiveRole()
+    setActiveRole()
   'click #addShift': (evnt, template) ->
     options = 
       tournamentId: $('#tournament option:selected').val()
@@ -254,7 +335,7 @@ Template.setupShifts.events
       count: $('#shiftCount').val()
     Meteor.call 'addShift', options
   'click th [data-delete-shiftdef-id]': (evnt, template) ->
-    id = Session.get('active-tournament').tournamentId
+    id = Session.get('active-tournament')._id
     shiftDefId = $(evnt.currentTarget).data 'delete-shiftdef-id'
     Tournaments.update id, $pull: shifts: shiftDefId: shiftDefId
     Tournaments.update id, $pull: shiftDefs: shiftDefId: shiftDefId
@@ -262,7 +343,7 @@ Template.setupShifts.events
     id = $(evnt.currentTarget).closest('[data-shift-id]').data 'shift-id'
     Session.set 'editing-shift-id', id
   'click [data-save-shift-count]': (evnt, template) ->
-    id = Session.get('active-tournament').tournamentId
+    id = Session.get('active-tournament')._id
     shiftId = $(evnt.currentTarget).closest('[data-shift-id]').data 'shift-id'
     count = $(evnt.currentTarget).closest('div').find('input').val()
     tournament = Tournaments.findOne id, fields: shifts: 1
@@ -272,7 +353,7 @@ Template.setupShifts.events
     Tournaments.update id, $push: shifts: targetShift
     Session.set 'editing-shift-id', ''
   'click td [data-deactivate-shift-id]': (evnt, template) ->
-    id = Session.get('active-tournament').tournamentId
+    id = Session.get('active-tournament').id
     shiftId = $(evnt.currentTarget).data 'deactivate-shift-id'
     tournament = Tournaments.findOne id, fields: shifts: 1
     targetShift = (shift for shift in tournament.shifts when shift.shiftId is shiftId)[0]
@@ -280,7 +361,7 @@ Template.setupShifts.events
     Tournaments.update id, $pull: shifts: shiftId: shiftId
     Tournaments.update id, $push: shifts: targetShift
   'click td [data-activate-shift-id]': (evnt, template) ->
-    id = Session.get('active-tournament').tournamentId
+    id = Session.get('active-tournament')._id
     shiftId = $(evnt.currentTarget).data 'activate-shift-id'
     tournament = Tournaments.findOne id, fields: shifts: 1
     targetShift = (shift for shift in tournament.shifts when shift.shiftId is shiftId)[0]
@@ -288,13 +369,3 @@ Template.setupShifts.events
     Tournaments.update id, $pull: shifts: shiftId: shiftId
     Tournaments.update id, $push: shifts: targetShift
 
-Template.setupShifts.rendered = ->
-  Template.setupShifts.setActiveTournament()
-  Template.setupShifts.setActiveRole()
-  # This is a terrible hack, but it works until I can figure out
-  # why subsequent renders are preventing this control from showing
-  $('.timepicker-default').each ->
-    $(this).data 'timepicker', null
-  $('.bootstrap-timepicker').remove()
-  $('.timepicker-default').timepicker minuteStep: 30, showInputs: false
-  $('.icon-info-sign').popover()
