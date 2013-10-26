@@ -169,6 +169,14 @@ Template.userCreate.detail = ->
     volunteer.siteAdmin = if profile.admin then 'checked="checked"' else ''
   else
     volunteer.detail = {}
+
+  if volunteer.profile?.primaryEmail
+    volunteer.emailDisabled = ''
+    volunteer.hasProfileAccess = 'checked'
+  else 
+    volunteer.hasProfileAccess = ''
+    volunteer.emailDisabled = 'disabled'
+    volunteer.primaryEmail = 'no.mail@tennisauckland.co.nz'
   return volunteer
 
 Template.userCreate.events
@@ -208,6 +216,15 @@ Template.userCreate.events
               title: 'Success!',
               message: 'The volunteer ' + userOptions.profile.fullName + ' was saved'
         $('.wait-message').hide()
+  'change #hasProfileAccess': (evnt, template) ->
+    if $(evnt.currentTarget).prop('checked')
+      $('#primaryEmail').prop('disabled', false).val('')
+      $('#siteAdmin').prop('disabled', false)
+    else
+      $('#primaryEmail').prop('disabled', true).val('no.mail@tennisauckland.co.nz')
+      $('#siteAdmin').prop('disabled', true)
+      $('#siteAdmin').prop('checked', false)
+
 
 
 

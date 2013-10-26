@@ -1,0 +1,19 @@
+<template name="tournamentDetails">
+  {{> tabs}}
+  {{setTab 'tournaments'}}
+  <ul class="breadcrumb">
+    <li><a href="/tournament/{{activeTournamentSlug}}/roles">Roles</a> <span class="divider">|</span></li>
+    <li><a href="/tournament/{{activeTournamentSlug}}/teams">Teams</a> <span class="divider">|</span></li>
+    <li><a href="/tournament/{{activeTournamentSlug}}/registrants">Registrants</a></li>
+  </ul>
+  {{> userMessages}}
+  <p>
+    <em>Details and analytics forthcoming</em>
+  </p>
+  <ul>
+    <li>First day</li>
+    <li>Last day</li>
+    <li>Total number of registrants</li>
+    <li>What else?</li>
+  </ul>
+</template>

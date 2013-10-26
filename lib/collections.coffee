@@ -1,6 +1,6 @@
 @Volunteers = new Meteor.Collection 'volunteers'
+@Registrants = new Meteor.Collection 'registrants'
 @Tournaments = new Meteor.Collection 'tournaments'
-@TournamentVolunteers = new Meteor.Collection 'tournamentVolunteers'
 
 Meteor.users.allow
   insert: (userId, doc) ->
@@ -26,10 +26,11 @@ Tournaments.allow
   remove: (userId, doc) ->
     Meteor.user().profile.admin
 
-TournamentVolunteers.allow
+Registrants.allow
   insert: (userId, doc) ->
     true
   update: (userId, doc) ->
     true
   remove: (userId, doc) ->
     Meteor.user().profile.admin
+

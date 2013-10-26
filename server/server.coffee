@@ -21,8 +21,8 @@ Meteor.publish 'volunteers', ->
 Meteor.publish 'tournaments', ->
 	return Tournaments.find()
 
-Meteor.publish 'tournamentVolunteers', ->
-	return TournamentVolunteers.find()
+Meteor.publish 'registrants', ->
+  return Registrants.find()
 
 Meteor.methods
   sendEmail: (options) ->

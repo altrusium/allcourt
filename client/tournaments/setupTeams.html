@@ -1,0 +1,63 @@
+<template name="setupTeams">
+  {{> tabs}}
+  {{setTab 'tournaments'}}
+  <ul class="breadcrumb">
+    <li><a href="/tournament/{{activeTournamentSlug}}/roles">Roles</a> <span class="divider">|</span></li>
+    <li class="active">Teams <span class="divider">|</span></li>
+    <li><a href="/tournament/{{activeTournamentSlug}}/registrants">Registrants</a></li>
+  </ul>
+  {{> userMessages}}
+  {{#if noRolesYet}}
+    <p>You must first setup at least one role <a href="/tournament/setupRoles">here</a>.</p>
+  {{else}}
+  <div class="row">
+    <div class="span5">
+      <h2 class="column-header"><small>Manage teams by role</small></h2>
+      <form class="form-vertical">
+        <div class="control-group">
+          <label for="role" class="control-label">Role</label>
+          <div class="controls">
+            <select id="role">
+              {{#each roles}}
+              <option value="{{roleId}}">{{roleName}}</option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="teamName" class="control-label">Team name</label>
+          <div class="controls">
+            <input type="text" id="teamName" placeholder="Drivers">
+            <button type="button" id="addTeam" class="btn btn-primary">Add</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="span6">
+      {{#if teamsExist}}
+      <h2 class="column-header"><small>{{activeRoleName}} Teams</small></h2>
+      <table class="table table-hover table-striped">
+        <thead>
+          <tr>
+            <th>Team name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each teams}}
+          <tr>
+            <td>{{teamName}}</td>
+            <td>
+              <a href="#" data-action="delete" data-team="{{teamId}}"><i class="icon-remove"></i></a>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      {{/if}}
+    </div>
+  </div>
+  <p>Next: <a href="/tournament/{{activeTournamentSlug}}/registrants">Setup registrants</a></p>
+  {{/if}}
+</template>
+

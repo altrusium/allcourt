@@ -65,7 +65,8 @@ Meteor.methods
       tournamentName: options.tournamentName,
       slug: options.slug,
       days: options.days,
-      roles: [],
+      roles: [ roleId: Meteor.uuid(), roleName: 'Volunteer'],
+      teams: [],
       shifts: [],
       shiftDefs: []
     }, callback

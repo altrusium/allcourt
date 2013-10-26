@@ -1,0 +1,63 @@
+<template name="setupRoles">
+  {{> tabs}}
+  {{setTab 'tournaments'}}
+  <ul class="breadcrumb">
+    <li class="active">Roles <span class="divider">|</span></li>
+    <li><a href="/tournament/{{activeTournamentSlug}}/teams">Teams</a> <span class="divider">|</span></li>
+    <li><a href="/tournament/{{activeTournamentSlug}}/registrants">Registrants</a></li>
+  </ul>
+  {{> userMessages}}
+  {{#if noTournamentsYet}}
+    <p>You must first setup at least one tournament <a href="/tournament/create">here</a>.</p>
+  {{else}}
+  <div class="row">
+    <div class="span5">
+      <h2 class="column-header"><small>Create roles</small></h2>
+      <form class="form-vertical">
+        <div class="control-group">
+          <label for="copyRoles" class="control-label">Optionally copy roles from</label>
+          <div class="controls">
+            <select id="copyFrom">
+              {{#each copyableTournaments}}
+              <option value="{{_id}}">{{tournamentName}}</option>
+              {{/each}}
+            </select>
+            <button type="button" id="copyRoles" class="btn btn-primary">Copy</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="roleName" class="control-label">Role name</label>
+          <div class="controls">
+            <input type="text" id="roleName" placeholder="Volunteer">
+            <button type="button" id="addRole" class="btn btn-primary">Add</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="span6">
+      {{#if rolesExist}}
+      <h2 class="column-header"><small>Roles for the {{activeTournamentName}}</small></h2>
+      <table class="table table-hover table-striped">
+        <thead>
+          <tr>
+            <th>Role name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each roles}}
+          <tr>
+            <td>{{roleName}}</td>
+            <td>
+              <a href="#" data-action="delete" data-role="{{roleId}}"><i class="icon-remove"></i></a>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      {{/if}}
+    </div>
+  </div>
+  <p>Next: <a href="/tournament/{{activeTournamentSlug}}/teams">Setup teams</a></p>
+  {{/if}}
+</template>

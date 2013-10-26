@@ -1,8 +1,8 @@
-.sortable-roles li a {
+.sortable-teams li a {
   color: rgb(151, 151, 151);
 }
 
-.sortable-roles li:nth-child(-n+4) a {
+.sortable-teams li:nth-child(-n+4) a {
   color: rgb(0, 136, 204);
 }
 

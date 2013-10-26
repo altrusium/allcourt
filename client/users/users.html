@@ -6,6 +6,9 @@
 		<li><a href="/volunteer/list">List Volunteers</a></li>
 	</ul>
 	{{> userMessages}}
+	<form class="navbar-search pull-right">
+		<input type="text" class="search-query" placeholder="Find existing registrants" data-provide="typeahead">
+	</form>
 </template>
 
 <template name="userCreate">
@@ -34,7 +37,7 @@
 				<div class="control-group">
 					<label class="control-label" for="primaryEmail">Primary Email</label>
 					<div class="controls">
-						<input type="text" id="primaryEmail" value="{{primaryEmail}}" required>
+						<input type="text" id="primaryEmail" value="{{primaryEmail}}" {{emailDisabled}} required>
 					</div>
 				</div>
 				<div class="control-group">
@@ -63,8 +66,20 @@
 				<div class="control-group">
 					<div class="controls">
 						<label class="checkbox">
-							<input type="checkbox" id="siteAdmin" {{siteAdmin}}> Site Administrator
+							<input type="checkbox" id="hasProfileAccess" {{hasProfileAccess}}> Can manage their profile
 						</label>
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="controls">
+						<label class="checkbox">
+							<input type="checkbox" id="siteAdmin" {{siteAdmin}} {{emailDisabled}}> Site Administrator
+						</label>
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="controls">
+						<button type="button" id="saveProfile" class="btn btn-primary">Save Profile</button>
 					</div>
 				</div>
 			</form>
@@ -141,11 +156,6 @@
 					<label class="control-label" for="notes">Notes</label>
 					<div class="controls">
 						<textarea id="notes" class="input-large">{{notes}}</textarea>
-					</div>
-				</div>
-				<div class="control-group">
-					<div class="controls">
-						<button type="button" id="saveProfile" class="btn btn-primary">Save Profile</button>
 					</div>
 				</div>
 			</form>

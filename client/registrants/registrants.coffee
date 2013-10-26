@@ -1,27 +1,27 @@
-setActiveRole = ->
-  id = $('#role option:selected').val()
-  name = $('#role option:selected').text()
-  Session.set 'active-role-id', id
-  Session.set 'active-role-name', name
+setActiveTeam = ->
+  id = $('#team option:selected').val()
+  name = $('#team option:selected').text()
+  Session.set 'active-team-id', id
+  Session.set 'active-team-name', name
 
 setAcceptedShifts = ->
   signupId = Session.get 'signup-id'
-  signup = TournamentVolunteers.findOne { _id: signupId }
+  signup = Registrants.findOne { _id: signupId }
   Session.set 'accepted-shifts', signup.shifts
 
-getRolePreferences = ->
+getTeamPreferences = ->
   signupId = Session.get 'signup-id'
-  signup = TournamentVolunteers.findOne { _id: signupId }
-  signup and signup.preferences or []
+  signup = Registrants.findOne { _id: signupId }
+  signup and signup.teams or []
 
 associateVolunteerWithTournament = ->
   vId = Meteor.userId()
-  tId = Session.get('active-tournament').tournamentId
-  signup = TournamentVolunteers.findOne { tournamentId: tId, volunteerId: vId }
+  tId = Session.get('active-tournament')._id
+  signup = Registrants.findOne { tournamentId: tId, volunteerId: vId }
   if signup
     Session.set 'signup-id', signup._id
   else 
-    TournamentVolunteers.insert { tournamentId: tId, volunteerId: vId }, (err, id) ->
+    Registrants.insert { tournamentId: tId, volunteerId: vId }, (err, id) ->
       unless err
         console.log 'new id is ' + id
         Session.set 'signup-id', id
@@ -35,71 +35,78 @@ associateVolunteerWithTournament = ->
           title: 'Sign-up Failed:'
           message: 'An error occurred while signing you up. Please refresh your browser and let us know if this continues.'
 
-saveRolePreferences = (prefs) ->
+saveTeamPreferences = (prefs) ->
   signupId = Session.get 'signup-id'
-  TournamentVolunteers.update(
+  Registrants.update(
     { _id: signupId }, 
-    { $set: preferences: prefs}, 
+    { $set: teams: prefs}, 
     { $upsert: 1 }, (err) ->
       Template.userMessages.showMessage
         type: 'info'
         title: 'Saved:'
-        message: 'The order of your role preferences have been saved.'
+        message: 'The order of your team preferences have been saved.'
         timeout: 2000
   )
 
-Template.tournamentVolunteerSignup.created = ->
+getVolunteerRoleId = ->
+  tournament = Session.get('active-tournament')
+  role = (role for role in tournament.roles when role.roleName is 'Volunteer')
+  role[0].roleId
+
+Template.registration.created = ->
   associateVolunteerWithTournament()
 
-Template.tournamentVolunteerSignup.rendered = ->
-  setActiveRole()
-  $('#sortableRoles').disableSelection()
-  $('#sortableRoles').sortable 
+Template.registration.rendered = ->
+  setActiveTeam()
+  $('#sortableTeams').disableSelection()
+  $('#sortableTeams').sortable 
     forcePlaceholderSize: true 
     stop: (evnt, ui) ->
-      preferences = $('#sortableRoles').sortable('toArray').slice(0, 4)
-      saveRolePreferences preferences
+      teams = $('#sortableTeams').sortable('toArray').slice(0, 4)
+      saveTeamPreferences teams
 
-Template.tournamentVolunteerSignup.days = ->
-  id = Session.get('active-tournament').tournamentId
+Template.registration.days = ->
+  id = Session.get('active-tournament')._id
   tournament = Tournaments.findOne id, fields: days: 1
   days = tournament.days
   formattedDays = for day in days
     dayOfWeek: moment(day).format 'ddd'
     dayOfMonth: moment(day).format 'do'
 
-Template.tournamentVolunteerSignup.roles = ->
-  sortedRoles = []
-  rolePrefs = getRolePreferences()
-  id = Session.get('active-tournament').tournamentId
-  tournament = Tournaments.findOne id, fields: roles: 1
-  unless tournament.roles then return
-  for role in rolePrefs # add preferences first
-    pref = _.find tournament.roles, (item) ->
-      if item.roleId is role and !item.found
+Template.registration.teams = ->
+  sortedTeams = []
+  teamPrefs = getTeamPreferences()
+  id = Session.get('active-tournament')._id
+  roleId = getVolunteerRoleId()
+  tournament = Tournaments.findOne id, fields: teams: 1
+  unless tournament.teams then return
+  # Get the roleId of the Volunteers role and add that to the conditional below
+  for team in teamPrefs # add preferences first
+    pref = _.find tournament.teams, (item) ->
+      if item.teamId is team and !item.found
         item.found = true
         item
-    sortedRoles.push pref
-  for role in tournament.roles # then the rest of them
-    unless role.found
-      sortedRoles.push role
-  sortedRoles
+    sortedTeams.push pref
+  for team in tournament.teams when team.roleId is roleId # then the rest of them
+    unless team.found
+      sortedTeams.push team
+  sortedTeams
 
-Template.tournamentVolunteerSignup.acceptedShift = ->
+Template.registration.acceptedShift = ->
   if _.contains Session.get('accepted-shifts'), this.shiftId
     return 'checked="checked"'
 
-Template.tournamentVolunteerSignup.activeRoleName = ->
-  Session.get 'active-role-name'
+Template.registration.activeTeamName = ->
+  Session.get 'active-team-name'
 
-Template.tournamentVolunteerSignup.markSelectedRole = ->
-  if this.roleName is Session.get 'active-role-name'
+Template.registration.markSelectedTeam = ->
+  if this.teamName is Session.get 'active-team-name'
     return 'selected=selected'
 
-Template.tournamentVolunteerSignup.shifts = ->
+Template.registration.shifts = ->
   # TODO: This needs refactoring
-  tId = Session.get('active-tournament').tournamentId
-  rId = Session.get 'active-role-id'
+  tId = Session.get('active-tournament')._id
+  rId = Session.get 'active-team-id'
   unless tId
     return
   tournament = Tournaments.findOne tId, {fields: shiftDefs: 1, shifts: 1, days: 1}
@@ -111,14 +118,14 @@ Template.tournamentVolunteerSignup.shifts = ->
     if date1 < date2 then return -1
     return 0
   # formatShiftDefinitionTimes
-  shiftDefs = for def in sortedShiftDefs when def.roleId is rId
+  shiftDefs = for def in sortedShiftDefs when def.teamId is rId
     def.startTime = moment(def.startTime).format('h:mm a')
     def.endTime = moment(def.endTime).format('h:mm a')
     def
-  # getShiftsForRole
-  roleShifts = (shift for shift in tournament.shifts when shift.roleId is rId)
+  # getShiftsForTeam
+  teamShifts = (shift for shift in tournament.shifts when shift.teamId is rId)
   # sortShifts
-  sortedShifts = roleShifts.sort (shift1, shift2) ->
+  sortedShifts = teamShifts.sort (shift1, shift2) ->
     date1 = new Date(shift1.startTime)
     date2 = new Date(shift2.startTime)
     if date1 > date2 then return 1
@@ -138,9 +145,9 @@ Template.tournamentVolunteerSignup.shifts = ->
     defs: shiftDefs
     days: shiftDays
 
-Template.tournamentVolunteerSignup.events
-  'change #role': (evnt, template) ->
-    setActiveRole()
+Template.registration.events
+  'change #team': (evnt, template) ->
+    setActiveTeam()
   'change #shiftTable [data-shift]': (evnt, template) ->
     input = $(evnt.currentTarget)
     id = input.data 'shift-id'
@@ -153,10 +160,10 @@ Template.tournamentVolunteerSignup.events
         message: 'Your shift schedule has been saved.'
         timeout: 2000
     if checked
-      TournamentVolunteers.update { _id: signupId }, { $push: shifts: id }, (err) ->
+      Registrants.update { _id: signupId }, { $push: shifts: id }, (err) ->
         unless err then showSaved 'Added'
     else
-      TournamentVolunteers.update { _id: signupId }, { $pull: shifts: id }, (err) ->
+      Registrants.update { _id: signupId }, { $pull: shifts: id }, (err) ->
         unless err then showSaved 'Removed'
     setAcceptedShifts()
 

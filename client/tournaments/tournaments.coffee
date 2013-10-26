@@ -29,6 +29,14 @@ setActiveRole = ->
     if role.roleId is rId then return role
   Session.set 'active-role', activeRole
 
+setActiveTeam = ->
+  tId = $('#team option:selected').val()
+  tournament = Session.get 'active-tournament'
+  role = Session.get 'active-role'
+  activeTeam = _.find tournament.teams, (team) ->
+    if team.teamId is tId then return team
+  Session.set 'active-team', activeTeam
+
 
 
 
@@ -158,7 +166,6 @@ Template.setupRoles.events
 
 
 
-
 Template.setupTeams.rendered = ->
   setActiveRole()
 
@@ -217,6 +224,139 @@ Template.setupTeams.events
     Tournaments.update id, $set: teams: keepingTeams
 
 
+
+
+
+emptySearchResults = ->
+  Session.set 'search-results', null
+  $('#search').val ''
+
+setSearchableUserList = ->
+  users = Meteor.users.find({}).map (user) ->
+    usr = id: user._id, fullName: user.profile.firstName + ' ' + user.profile.lastName
+  Session.set 'user-list', users
+  emptySearchResults()
+
+associateUserWithTournament = (userId) ->
+  tId = Session.get('active-tournament')._id
+  teamId = Session.get('active-team').teamId
+  signup = Registrants.findOne { tournamentId: tId, userId: userId }
+  if signup
+    Session.set 'signup-id', signup._id
+    Registrants.update signup._id, $push: teams: teamId
+  else 
+    Registrants.insert { 
+      userId: userId, 
+      teams: [teamId],
+      tournamentId: tId, 
+      addedBy: Meteor.userId()
+    }, (err, id) ->
+      unless err
+        Session.set 'signup-id', id
+        Template.userMessages.showMessage
+          type: 'info'
+          title: 'Success:'
+          message: 'User has been successfully registered.'
+      else
+        Template.userMessages.showMessage
+          type: 'error'
+          title: 'Sign-up Failed:'
+          message: 'An error occurred while registering user. Please refresh the browser and let us know if this continues.'
+
+Template.setupRegistrants.created = ->
+  setSearchableUserList()
+
+Template.setupRegistrants.rendered = ->
+  setActiveRole()
+  setActiveTeam()
+
+Template.setupRegistrants.activeTournaments = ->
+  getActiveTournaments()
+
+Template.setupRegistrants.activeTournamentSlug = ->
+  Session.get('active-tournament').slug
+
+Template.setupRegistrants.markSelectedTournament = ->
+  if this._id is Session.get('active-tournament')._id
+    return 'selected=selected'
+
+Template.setupRegistrants.markSelectedRole = ->
+  if this.roleId is Session.get('active-role')?.roleId
+    return 'selected=selected'
+
+Template.setupRegistrants.teams = ->
+  roleId = Session.get('active-role')?.roleId
+  tournament = Session.get 'active-tournament'
+  teams = (team for team in tournament.teams when team.roleId is roleId)
+
+Template.setupRegistrants.roles = ->
+  id = Session.get('active-tournament')._id
+  unless id then return
+  tournament = Tournaments.findOne id, fields: roles: 1 
+  return tournament.roles.sort (a, b) ->
+    if a.roleName < b.roleName then return -1
+    if a.roleName > b.roleName then return 1
+    return 0
+
+Template.setupRegistrants.registrantsExist = ->
+  registrants = Template.setupRegistrants.registrants()
+  registrants.length > 0 and not Session.get('search-results')?
+
+Template.setupRegistrants.registrants = ->
+  registrants = []
+  tId = Session.get('active-tournament')._id
+  teamId = Session.get('active-team')?.teamId
+  unless tId and teamId then return []
+  Registrants.find({ tournamentId: tId }).forEach (reg) ->
+    if _.contains reg.teams, teamId
+      registrants.push reg.userId
+  users = for id in registrants
+    user = Meteor.users.findOne({ _id: id })?.profile
+    user.id = id
+    user
+
+Template.setupRegistrants.searchResults = ->
+  Session.get 'search-results'
+
+Template.setupRegistrants.activeTeamName = ->
+  return Session.get('active-team').teamName
+
+Template.setupRegistrants.events
+  'change #role': (evnt, template) ->
+    setActiveRole()
+    setActiveTeam()
+
+  'change #team': (evnt, template) ->
+    setActiveTeam()
+
+  'click #addTeam': (evnt, template) ->
+    tId = Session.get('active-tournament')._id
+    rId = Session.get('active-role').roleId
+    name = template.find('#teamName').value
+    newTeam = roleId: rId, teamId: Meteor.uuid(), teamName: name
+    Tournaments.update(tId, $push: 'teams': newTeam)
+    $('#teamName').val('').focus()
+
+  'click [data-action=delete]': (evnt, template) ->
+    tId = Session.get('active-tournament')._id
+    uId = $(evnt.currentTarget).data 'user'
+    reg = Registrants.findOne 'tournamentId': tId, 'userId': uId
+    Registrants.update reg._id, $pull: teams: Session.get('active-team').teamId
+
+  'keyup #search': (evnt, template) ->
+    query = $(evnt.currentTarget).val()
+    unless query
+      emptySearchResults()
+      return
+    users = Session.get 'user-list'
+    searcher = new Fuse users, keys: ['fullName']
+    results = searcher.search query
+    Session.set 'search-results', results
+
+  'click [data-action=register]': (evnt, template) ->
+    userId = $(evnt.currentTarget).data 'id'
+    associateUserWithTournament userId
+    emptySearchResults()
 
 
 

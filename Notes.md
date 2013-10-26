@@ -1,5 +1,5 @@
-Notes
-----------
+# Notes
+============
 
 ## File/photo uploads
 
@@ -19,11 +19,10 @@ Currently using this approach: http://stackoverflow.com/questions/11790191/meteo
 
 ## Session objects
 
-'active-tournament'
- - id: uuid()
- - name: String
-
-'user-message'
+* active-tournament
+* active-role
+* active-team
+* user-message
  - type: 'alert && alert-error || alert-info || alert-success'
  - title: String
  - message: String
@@ -37,6 +36,10 @@ Which uses Page.js: http://visionmedia.github.com/page.js/
 
 ## Connecting to the production DB
 http://stackoverflow.com/questions/11801278/accessing-meteor-production-database
+
+$ meteor mongo 
+(use the end of the resulting url in the next statement)
+> use allcourt_co_nz
 
 
 ## Date picker
@@ -54,18 +57,21 @@ Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicke
 
 4 Dec 2012: Learned MongoDB doesn't really like arrays of objects that don't have a unique property. The alternative is to use the positional operator, which can only go one level deep [http://docs.mongodb.org/manual/reference/operators/#update-operators-array]. Also, Meteor's minimongo doesn't support it yet [https://github.com/meteor/meteor/issues/153]. 
 
-Tournaments Collection
-- tournaments: Tournament[]
-
-Tournament
+### Tournaments 
 - tournamentName: String
-- description: String ---------- todo
-- logo: String        ---------- todo
+- description: String   ------- todo
+- logo: String          ------- todo
+- slug: String
 - days: Array
   - Date
 - roles: Array
   - roleId: UUID
   - roleName: String
+- teams: Array
+  - roleId: UUID
+  - teamId: UUID
+  - teamName: String
+  - publicCanSignup: Boolean ------- todo
 - shiftDefs: Array
   - shiftDefId: UUID
   - roleId: UUID
@@ -73,70 +79,39 @@ Tournament
   - startTime: Date
   - endTime: Date
 - shifts: Array
+  - day: Date
   - count: Number
+  - shiftDefId: UUID
+  - shiftId: UUID
+  - roleId: UUID
   - startTime: Date
   - endTime: Date
-  - day: Date
-  - roleId: UUID
-  - shiftId: UUID
-  - shiftDefId: UUID
-  - publicSignup: Boolean -------todo
 
-
-
-
-Volunteers Collection
-- volunteers: Volunteer[]
-
-Volunteer
-- firstname
-- lastname
-- gender
+### Volunteers 
 - birthdate
 - shirtSize
-- photo
 - notes
-
 - address
 - city
 - suburb
 - postalcode
 - country
 - primaryEmail
-- secondaryEmail
 - homephone
-- workphone
 - mobilephone
 
-- confirmedTournaments: Array
-  - UUID
-
-- preferredRoles: Array
-  - role UUID
-
-
-
-TournamentVolunteers
-- volunteerId
+### Registrants
+- userId
 - tournamentId
-- preferrences: Array (order significant)
-  - roleId
+- teams: Array (order significant)
+  - teamId
+- addedBy
+- approvedBy
+- agreedToTerms
+- isTeamLead
 - shifts: Array
   - shiftId
 
-
-## User accounts & roles
-
-Roles
-- Admin
-  - All URLs
-- Role lead
-  - All volunteer URLs
-  - Some specific role lead URLs
-- Volunteer
-  - /volunteer/create
-  - /volunteer/[id] (for themself)
-  - /tournament/[id]/signup|edit
 
 
 

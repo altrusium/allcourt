@@ -1,0 +1,89 @@
+<template name="setupRegistrants">
+  {{> tabs}}
+  {{setTab 'tournaments'}}
+  <ul class="breadcrumb">
+    <li><a href="/tournament/{{activeTournamentSlug}}/roles">Roles</a> <span class="divider">|</span></li>
+    <li><a href="/tournament/{{activeTournamentSlug}}/teams">Teams</a> <span class="divider">|</span></li>
+    <li class="active">Registrants</li>
+  </ul>
+  {{> userMessages}}
+  <div class="row">
+    <div class="span5">
+      <h2 class="column-header"><small>Manage team registrants</small></h2>
+      <form class="form-vertical">
+        <div class="control-group">
+          <label for="role" class="control-label">Role</label>
+          <div class="controls">
+            <select id="role">
+              {{#each roles}}
+              <option value="{{roleId}}">{{roleName}}</option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="team" class="control-label">Team</label>
+          <div class="controls">
+            <select id="team">
+              {{#each teams}}
+              <option value="{{teamId}}">{{teamName}}</option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="search" class="control-label">Register existing user</label>
+          <input id="search" type="text" placeholder="Partial name of user">
+        </div>
+        <div class="control-group">
+          <label for="addUser" class="control-label">Looked and can't find them?</label>
+          <a id="addUser" href="#">Add new user</a>
+        </div>
+      </form>
+    </div>
+    <div class="span6">
+      {{#if searchResults}}
+      <h2 class="column-header"><small>Possible user matches</small></h2>
+      <table class="table table-hover table-striped">
+        <thead>
+          <tr>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each searchResults}}
+          <tr>
+            <td>{{fullName}}</td>
+            <td>
+              <a href="#" data-action="register" data-id="{{id}}">Register</a>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      {{/if}}
+      {{#if registrantsExist}}
+      <h2 class="column-header"><small>Team: {{activeTeamName}}</small></h2>
+      <table class="table table-hover table-striped">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Unregister</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each registrants}}
+          <tr>
+            <td>{{fullName}}</td>
+            <td>
+              <a href="#" data-action="delete" data-user="{{id}}"><i class="icon-remove"></i></a>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      {{/if}}
+    </div>
+  </div>
+</template>
+

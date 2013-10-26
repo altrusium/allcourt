@@ -1,6 +1,6 @@
 volunteers = Meteor.subscribe 'volunteers'
 tournaments = Meteor.subscribe 'tournaments'
-tournamentVolunteers = Meteor.subscribe 'tournamentVolunteers'
+registrants = Meteor.subscribe 'registrants'
 
 setActiveTournament = (slug) ->
   tournament = Tournaments.findOne slug: slug
@@ -69,16 +69,16 @@ Meteor.Router.add
   '/tournament/:slug/teams': (slug) ->
     unless isAdmin() then return 'notAuthorised'
     return setActiveTournament(slug) or 'setupTeams' 
-  '/tournament/:slug/members': (slug) ->
+  '/tournament/:slug/registrants': (slug) ->
     unless isAdmin() then return 'notAuthorised'
-    return setActiveTournament(slug) or 'setupMembers' 
+    return setActiveTournament(slug) or 'setupRegistrants' 
   '/tournament/:slug/shifts': ->
     unless isAdmin() then return 'notAuthorised'
     return setActiveTournament(slug) or 'setupShifts' 
   '/tournament/:slug': (slug) ->
     return setActiveTournament(slug) or 'tournamentDetails'
-  '/tournament/:slug/signup': (slug) ->
-    return setActiveTournament(slug) or 'tournamentVolunteerSignup'
+  '/tournament/:slug/register': (slug) ->
+    return setActiveTournament(slug) or 'registration'
   '*': 'notFound'
 
 Template.activeTournament.tournament = ->
