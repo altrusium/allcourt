@@ -13,7 +13,7 @@ Meteor.methods
         slug: options.firstName + options.lastName
     Accounts.createUser newUser
 
-  updateUser: (options, callback) ->
+  updateUser: (options) ->
     firstName = options.firstName
     lastName = options.lastName
     Meteor.users.update options._id, $set: profile: {
@@ -24,9 +24,9 @@ Meteor.methods
       photoFilename: options.photoFilename,
       gender: options.gender || 'female',
       slug: options.firstName + options.lastName,
-      }, callback
+      }
 
-  createNewVolunteer: (options, callback) ->
+  createNewVolunteer: (options) ->
     Volunteers.insert { 
       _id: options._id,
       birthdate: options.birthdate || '',
@@ -39,9 +39,9 @@ Meteor.methods
       suburb: options.suburb || '',
       postalCode: options.postalCode || '',
       notes: options.notes || ''
-    }, callback
+    }
 
-  updateVolunteer: (options, callback) ->
+  updateVolunteer: (options) ->
     Volunteers.update _id: options._id, { 
       shirtSize: options.shirtSize,
       birthdate: options.birthdate,
@@ -52,9 +52,9 @@ Meteor.methods
       suburb: options.suburb,
       postalCode: options.postalCode,
       notes: options.notes
-    }, callback
+    }
 
-  saveTournament: (options, callback) ->
+  saveTournament: (options) ->
     # Todo: Need to make sure slug is unique (bug #1)
     Tournaments.insert {
       tournamentName: options.tournamentName,
@@ -64,13 +64,13 @@ Meteor.methods
       teams: [],
       shifts: [],
       shiftDefs: []
-    }, callback
+    }
 
-  addShift: (options, callback) ->
+  addShift: (options) ->
     tournament = Tournaments.findOne options.tournamentId
     newShiftDef = 
       shiftDefId: Meteor.uuid()
-      roleId: options.roleId
+      teamId: options.teamId
       shiftName: options.shiftName
       startTime: options.startTime
       endTime: options.endTime
@@ -80,7 +80,7 @@ Meteor.methods
         day: day
         count: options.count
         shiftId: Meteor.uuid()
-        roleId: newShiftDef.roleId
+        teamId: newShiftDef.teamId
         endTime: newShiftDef.endTime
         startTime: newShiftDef.startTime
         shiftDefId: newShiftDef.shiftDefId

@@ -419,9 +419,14 @@ Template.setupRegistrants.events
 
 
 
+Template.setupShifts.created = ->
+  for role in Session.get('active-tournament').roles
+    if role.roleName is 'Volunteer'
+      Session.set 'volunteer-role-id', role.roleId
+      return
+
 Template.setupShifts.rendered = ->
-  setActiveTournament()
-  setActiveRole()
+  setActiveTeam()
   # This is a terrible hack, but it works until I can figure out
   # why subsequent renders are preventing this control from showing
   $('.timepicker-default').each ->
@@ -430,36 +435,24 @@ Template.setupShifts.rendered = ->
   $('.timepicker-default').timepicker minuteStep: 30, showInputs: false
   $('.icon-info-sign').popover()
 
-Template.setupShifts.activeTournamentName = ->
-  Session.get('active-tournament').tournamentName
+Template.setupShifts.activeTeamName = ->
+  Session.get('active-team')?.teamName
 
-Template.setupShifts.activeRoleName = ->
-  Session.get('active-role').roleName
-
-Template.setupShifts.noRolesYet = ->
-  id = Session.get('active-tournament')._id
-  tournament = Tournaments.findOne id, fields: roles: 1
-  tournament && tournament.roles.length is 0
-
-Template.setupShifts.shiftsToShow = ->
-  Session.get('active-tournament')._id && Session.get('active-role').roleId
-
-Template.setupShifts.markSelectedTournament = ->
-  if this._id is Session.get('active-tournament')._id
+Template.setupShifts.markSelectedTeam = ->
+  if this.teamName is Session.get('active-team').teamName
     return 'selected=selected'
 
-Template.setupShifts.markSelectedRole = ->
-  if this.roleName is Session.get('active-role').roleName
-    return 'selected=selected'
+Template.setupShifts.activeTournamentSlug = ->
+  Session.get('active-tournament').slug
 
-Template.setupShifts.tournaments = ->
-  getSortedTournaments()
-
-Template.setupShifts.roles = ->
-  id = Session.get('active-tournament')._id
-  if id
-    tournament = Tournaments.findOne(id, fields: roles: 1)
-    return tournament && tournament.roles
+Template.setupShifts.teams = ->
+  teams = []
+  tId = Session.get('active-tournament')._id
+  tournament = Tournaments.findOne(tId, fields: teams: 1)
+  for team in tournament.teams
+    if team.roleId is Session.get 'volunteer-role-id'
+      teams.push team
+  teams
 
 Template.setupShifts.editingShift = ->
   this.shiftId is Session.get 'editing-shift-id'
@@ -469,10 +462,10 @@ Template.setupShifts.zeroClass = ->
  
 Template.setupShifts.shiftDefs = ->
   tId = Session.get('active-tournament')._id
-  rId = Session.get('active-role').roleId
-  if tId
+  teamId = Session.get('active-team').teamId
+  if tId and teamId
     tournament = Tournaments.findOne tId, {fields: {shiftDefs: 1}, sort: {shiftDefs: startTime: 1}}
-    shiftDefs = for def in tournament.shiftDefs when def.roleId is rId
+    shiftDefs = for def in tournament.shiftDefs when def.teamId is teamId
       def.startTime = moment(def.startTime).format('h:mm a')
       def.endTime = moment(def.endTime).format('h:mm a')
       def
@@ -480,9 +473,7 @@ Template.setupShifts.shiftDefs = ->
 Template.setupShifts.shifts = ->
   # TODO: This needs refactoring
   tId = Session.get('active-tournament')._id
-  rId = Session.get('active-role').roleId
-  unless tId
-    return
+  teamId = Session.get('active-team').teamId
   tournament = Tournaments.findOne tId, {fields: shiftDefs: 1, shifts: 1, days: 1}
   # sortAllShiftDefinitions
   sortedShiftDefs = tournament.shiftDefs.sort (def1, def2) ->
@@ -492,14 +483,14 @@ Template.setupShifts.shifts = ->
     if date1 < date2 then return -1
     return 0
   # formatShiftDefinitionTimes
-  shiftDefs = for def in sortedShiftDefs when def.roleId is rId
+  shiftDefs = for def in sortedShiftDefs when def.teamId is teamId
     def.startTime = moment(def.startTime).format('h:mm a')
     def.endTime = moment(def.endTime).format('h:mm a')
     def
-  # getShiftsForRole
-  roleShifts = (shift for shift in tournament.shifts when shift.roleId is rId)
+  # getShiftsForTeam
+  teamShifts = (shift for shift in tournament.shifts when shift.teamId is teamId)
   # sortShifts
-  sortedShifts = roleShifts.sort (shift1, shift2) ->
+  sortedShifts = teamShifts.sort (shift1, shift2) ->
     date1 = new Date(shift1.startTime)
     date2 = new Date(shift2.startTime)
     if date1 > date2 then return 1
@@ -520,14 +511,10 @@ Template.setupShifts.shifts = ->
     days: shiftDays
 
 Template.setupShifts.events
-  'change #tournament': (evnt, template) ->
-    setActiveTournament()
-  'change #role': (evnt, template) ->
-    setActiveRole()
   'click #addShift': (evnt, template) ->
     options = 
-      tournamentId: $('#tournament option:selected').val()
-      roleId: $('#role option:selected').val()
+      tournamentId: Session.get('active-tournament')._id
+      teamId: $('#team option:selected').val()
       startTime: moment($('#setupShiftsStartTime').val(), 'h:m a').toDate()
       endTime: moment($('#setupShiftsEndTime').val(), 'h:m a').toDate()
       shiftName: $('#shiftName').val()
@@ -542,27 +529,27 @@ Template.setupShifts.events
     id = $(evnt.currentTarget).closest('[data-shift-id]').data 'shift-id'
     Session.set 'editing-shift-id', id
   'click [data-save-shift-count]': (evnt, template) ->
-    id = Session.get('active-tournament')._id
+    tournament = Session.get('active-tournament')
+    id = tournament._id
     shiftId = $(evnt.currentTarget).closest('[data-shift-id]').data 'shift-id'
     count = $(evnt.currentTarget).closest('div').find('input').val()
-    tournament = Tournaments.findOne id, fields: shifts: 1
     targetShift = (shift for shift in tournament.shifts when shift.shiftId is shiftId)[0]
     targetShift.count = count
     Tournaments.update id, $pull: shifts: shiftId: shiftId
     Tournaments.update id, $push: shifts: targetShift
     Session.set 'editing-shift-id', ''
   'click td [data-deactivate-shift-id]': (evnt, template) ->
-    id = Session.get('active-tournament').id
+    tournament = Session.get('active-tournament')
+    id = tournament._id
     shiftId = $(evnt.currentTarget).data 'deactivate-shift-id'
-    tournament = Tournaments.findOne id, fields: shifts: 1
     targetShift = (shift for shift in tournament.shifts when shift.shiftId is shiftId)[0]
     targetShift.active = false
     Tournaments.update id, $pull: shifts: shiftId: shiftId
     Tournaments.update id, $push: shifts: targetShift
   'click td [data-activate-shift-id]': (evnt, template) ->
-    id = Session.get('active-tournament')._id
+    tournament = Session.get('active-tournament')
+    id = tournament._id
     shiftId = $(evnt.currentTarget).data 'activate-shift-id'
-    tournament = Tournaments.findOne id, fields: shifts: 1
     targetShift = (shift for shift in tournament.shifts when shift.shiftId is shiftId)[0]
     targetShift.active = true
     Tournaments.update id, $pull: shifts: shiftId: shiftId

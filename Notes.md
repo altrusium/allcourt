@@ -74,18 +74,18 @@ Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicke
   - publicCanSignup: Boolean ------- todo
 - shiftDefs: Array
   - shiftDefId: UUID
-  - roleId: UUID
+  - teamId: UUID
+  - startTime: Date
+  - endTime: Date
   - shiftName: String
-  - startTime: Date
-  - endTime: Date
 - shifts: Array
-  - day: Date
-  - count: Number
-  - shiftDefId: UUID
   - shiftId: UUID
-  - roleId: UUID
+  - shiftDefId: UUID
+  - teamId: UUID
+  - day: Date
   - startTime: Date
   - endTime: Date
+  - count: Number
 
 ### Volunteers 
 - birthdate

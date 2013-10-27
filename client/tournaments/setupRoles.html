@@ -2,9 +2,11 @@
   {{> tabs}}
   {{setTab 'tournaments'}}
   <ul class="breadcrumb">
+    <li><a href="/tournament/{{activeTournamentSlug}}">Details</a> <span class="divider">|</span></li>
     <li class="active">Roles <span class="divider">|</span></li>
     <li><a href="/tournament/{{activeTournamentSlug}}/teams">Teams</a> <span class="divider">|</span></li>
-    <li><a href="/tournament/{{activeTournamentSlug}}/registrants">Registrants</a></li>
+    <li><a href="/tournament/{{activeTournamentSlug}}/registrants">Registrants</a> <span class="divider">|</span></li>
+    <li><a href="/tournament/{{activeTournamentSlug}}/shifts">Volunteer Shifts</a></li>
   </ul>
   {{> userMessages}}
   {{#if noTournamentsYet}}
@@ -58,6 +60,5 @@
       {{/if}}
     </div>
   </div>
-  <p>Next: <a href="/tournament/{{activeTournamentSlug}}/teams">Setup teams</a></p>
   {{/if}}
 </template>

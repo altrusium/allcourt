@@ -2,80 +2,67 @@
   {{> tabs}}
   {{setTab 'tournaments'}}
   <ul class="breadcrumb">
-    <li><a href="/tournaments">Tournaments</a> <span class="divider">/</span></li>
-    <li class="active">Shifts</li>
+    <li><a href="/tournament/{{activeTournamentSlug}}">Details</a> <span class="divider">|</span></li>
+    <li><a href="/tournament/{{activeTournamentSlug}}/roles">Roles</a> <span class="divider">|</span></li>
+    <li><a href="/tournament/{{activeTournamentSlug}}/teams">Teams</a> <span class="divider">|</span></li>
+    <li><a href="/tournament/{{activeTournamentSlug}}/registrants">Registrants</a> <span class="divider">|</span></li>
+    <li class="active">Volunteer Shifts <span class="divider">|</span></li>
   </ul>
   {{> userMessages}}
   <div class="row">
     <div class="span5">
-      <h2 class="column-header"><small>Manage shifts by role</small></h2> 
+      <h2 class="column-header"><small>Manage volunteer shifts</small></h2> 
       <div class="row"><div class="span6"></div></div>
       <form class="form-vertical">
         <div class="control-group">
-          <label for="tournament" class="control-label">Tournament</label>
+          <label for="team" class="control-label">Team</label>
           <div class="controls">
-            <select id="tournament" class="span3">
-              {{#each tournaments}}
-              <option value="{{_id}}" {{markSelectedTournament}}>{{tournamentName}}</option>
+            <select id="team" class="span3">
+              {{#each teams}}
+              <option value="{{teamId}}" {{markSelectedTeam}}>{{teamName}}</option>
               {{/each}}
             </select>
           </div>
         </div>
-        {{#if noRolesYet}}
-          <p>You must first setup at least one role <a href="/tournament/roles">here</a>.</p>
-        {{else}}
-          <div class="control-group">
-            <label for="role" class="control-label">Role</label>
-            <div class="controls">
-              <select id="role" class="span3">
-                {{#each roles}}
-                <option value="{{roleId}}" {{markSelectedRole}}>{{roleName}}</option>
-                {{/each}}
-              </select>
+        <div class="control-group">
+          <label for="setupShiftsStartTime" class="control-label">Start time</label>
+          <div class="controls">
+            <div class="input-append bootstrap-timepicker-component">
+              <input type="text" class="span2 timepicker-default" id="setupShiftsStartTime">
+              <span class="add-on"><i class="icon-time"></i></span>
             </div>
           </div>
-          <div class="control-group">
-            <label for="setupShiftsStartTime" class="control-label">Start time</label>
-            <div class="controls">
-              <div class="input-append bootstrap-timepicker-component">
-                <input type="text" class="span2 timepicker-default" id="setupShiftsStartTime">
-                <span class="add-on"><i class="icon-time"></i></span>
-              </div>
+        </div>
+        <div class="control-group">
+          <label for="setupShiftsEndTime" class="control-label">End time</label>
+          <div class="controls">
+            <div class="input-append bootstrap-timepicker-component">
+              <input type="text" class="span2 timepicker-default" id="setupShiftsEndTime">
+              <span class="add-on"><i class="icon-time"></i></span>
             </div>
           </div>
-          <div class="control-group">
-            <label for="setupShiftsEndTime" class="control-label">End time</label>
-            <div class="controls">
-              <div class="input-append bootstrap-timepicker-component">
-                <input type="text" class="span2 timepicker-default" id="setupShiftsEndTime">
-                <span class="add-on"><i class="icon-time"></i></span>
-              </div>
-            </div>
+        </div>
+        <div class="control-group">
+          <label for="shiftName" class="control-label">Name</label>
+          <div class="controls">
+            <input type="text" class="span2" id="shiftName" placeholder="AM1, PM1, etc.">
           </div>
-          <div class="control-group">
-            <label for="shiftName" class="control-label">Name</label>
-            <div class="controls">
-              <input type="text" class="span2" id="shiftName" placeholder="AM1, PM1, etc.">
-            </div>
+        </div>
+        <div class="control-group">
+          <label for="shiftCount" class="control-label">Required volunteer count</label>
+          <div class="controls">
+            <input type="text" class="span1" id="shiftCount" placeholder="6">
           </div>
-          <div class="control-group">
-            <label for="shiftCount" class="control-label">Required volunteer count</label>
-            <div class="controls">
-              <input type="text" class="span1" id="shiftCount" placeholder="6">
-            </div>
+        </div>
+        <div class="control-group">
+          <div class="controls">
+            <button type="button" id="addShift" class="btn btn-primary">Add Shift</button>
           </div>
-          <div class="control-group">
-            <div class="controls">
-              <button type="button" id="addShift" class="btn btn-primary">Add Shift</button>
-            </div>
-          </div>
-          <p>Next: <a href="">Add volunteers</a> or <a href="">assign them shifts</a></p>
-        {{/if}}
+        </div>
       </form>
     </div>
     <div class="span7">
-      {{#if shiftsToShow}}
-      <h2 class="column-header"><small>{{activeRoleName}} Shifts</small></h2>
+      <h2 class="column-header"><small>{{activeTeamName}} Shifts</small></h2>
       <p></p>
       <table class="table table-striped table-condensed">
         <thead>
@@ -114,7 +101,6 @@
           {{/each}}
         </tbody>
       </table>
-      {{/if}}
     </div>
   </div>
 </template>
