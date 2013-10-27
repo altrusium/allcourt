@@ -112,6 +112,11 @@ Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicke
 - shifts: Array
   - shiftId
 
+### Schedule
+- tournamentId
+- teamId ?
+- shiftId
+- registrantId
 
 
 

@@ -1,6 +1,7 @@
 <template name="setupRoles">
   {{> tabs}}
   {{setTab 'tournaments'}}
+  {{#if isAdmin}}
   <ul class="breadcrumb">
     <li><a href="/tournament/{{activeTournamentSlug}}">Details</a> <span class="divider">|</span></li>
     <li class="active">Roles <span class="divider">|</span></li>
@@ -8,6 +9,7 @@
     <li><a href="/tournament/{{activeTournamentSlug}}/registrants">Registrants</a> <span class="divider">|</span></li>
     <li><a href="/tournament/{{activeTournamentSlug}}/shifts">Volunteer Shifts</a></li>
   </ul>
+  {{/if}}
   {{> userMessages}}
   {{#if noTournamentsYet}}
     <p>You must first setup at least one tournament <a href="/tournament/create">here</a>.</p>
@@ -30,7 +32,7 @@
         <div class="control-group">
           <label for="roleName" class="control-label">Role name</label>
           <div class="controls">
-            <input type="text" id="roleName" placeholder="Volunteer">
+            <input type="text" id="roleName" placeholder="Sponsor">
             <button type="button" id="addRole" class="btn btn-primary">Add</button>
           </div>
         </div>

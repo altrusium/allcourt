@@ -1,6 +1,7 @@
 <template name="tournamentDetails">
   {{> tabs}}
   {{setTab 'tournaments'}}
+  {{#if isAdmin}}
   <ul class="breadcrumb">
     <li class="active">Details <span class="divider">|</span></li>
     <li><a href="/tournament/{{activeTournamentSlug}}/roles">Roles</a> <span class="divider">|</span></li>
@@ -8,6 +9,7 @@
     <li><a href="/tournament/{{activeTournamentSlug}}/registrants">Registrants</a> <span class="divider">|</span></li>
     <li><a href="/tournament/{{activeTournamentSlug}}/shifts">Volunteer Shifts</a></li>
   </ul>
+  {{/if}}
   {{> userMessages}}
   <p>
     <em>Details and analytics forthcoming</em>

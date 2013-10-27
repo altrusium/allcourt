@@ -9,6 +9,16 @@ getSortedTournaments = ->
     return 0
   return list
 
+getMyTournaments = ->
+  results = []
+  myId = Meteor.userId()
+  myTournamentIds = Registrants.find({ 'userId': myId }, fields: 'tournamentId': 1).fetch()
+  getSortedTournaments().forEach (tournament) ->
+    myTournamentIds.forEach (my) ->
+      if my.tournamentId is tournament._id
+        results.push tournament
+  results
+
 getActiveTournaments = ->
   list = getSortedTournaments()
   result = (t for t in list when new Date(t.days[t.days.length-1]) > new Date())
@@ -47,6 +57,9 @@ Template.tournaments.created = ->
 Template.tournaments.isAdmin = ->
   Meteor.user().profile.admin
 
+Template.tournaments.myTournaments = ->
+  getMyTournaments()
+
 Template.tournaments.activeTournaments = ->
   getActiveTournaments()
 
@@ -58,6 +71,9 @@ Template.tournaments.previousTournaments = ->
 
 Template.tournamentDetails.activeTournamentSlug = ->
   return Session.get('active-tournament').slug
+
+Template.tournamentDetails.isAdmin = ->
+  Meteor.user().profile.admin
 
 
 
@@ -84,7 +100,7 @@ Template.createTournament.events
       slug: template.find('#tournamentName').value.replace(/\s/g, '')
       firstDay: firstDay.toDate()
       lastDay: lastDay.toDate()
-      days: for count in [1..length + 1]
+      days: for count in [0..length]
         moment(firstDay).add('days', count).toDate()
     Meteor.call 'saveTournament', options, (err, id) ->
         $('#tournamentName').val ''
@@ -103,6 +119,9 @@ Template.setupRoles.tournaments = ->
 
 Template.setupRoles.activeTournaments = ->
   getActiveTournaments()
+
+Template.setupRoles.isAdmin = ->
+  Meteor.user().profile.admin
 
 Template.setupRoles.activeTournamentSlug = ->
   Session.get('active-tournament').slug
@@ -171,6 +190,9 @@ Template.setupTeams.rendered = ->
 
 Template.setupTeams.activeTournaments = ->
   getActiveTournaments()
+
+Template.setupTeams.isAdmin = ->
+  Meteor.user().profile.admin
 
 Template.setupTeams.activeTournamentSlug = ->
   Session.get('active-tournament').slug
@@ -277,6 +299,9 @@ Template.setupRegistrants.created = ->
 Template.setupRegistrants.rendered = ->
   setActiveRole()
   setActiveTeam()
+
+Template.setupRegistrants.isAdmin = ->
+  Meteor.user().profile.admin
 
 Template.setupRegistrants.activeTournaments = ->
   getActiveTournaments()
@@ -435,11 +460,14 @@ Template.setupShifts.rendered = ->
   $('.timepicker-default').timepicker minuteStep: 30, showInputs: false
   $('.icon-info-sign').popover()
 
+Template.setupShifts.isAdmin = ->
+  Meteor.user().profile.admin
+
 Template.setupShifts.activeTeamName = ->
   Session.get('active-team')?.teamName
 
 Template.setupShifts.markSelectedTeam = ->
-  if this.teamName is Session.get('active-team').teamName
+  if this.teamName is Session.get('active-team')?.teamName
     return 'selected=selected'
 
 Template.setupShifts.activeTournamentSlug = ->
@@ -459,7 +487,7 @@ Template.setupShifts.editingShift = ->
 
 Template.setupShifts.zeroClass = ->
   'zero' if this.count is '0'
- 
+
 Template.setupShifts.shiftDefs = ->
   tId = Session.get('active-tournament')._id
   teamId = Session.get('active-team').teamId
@@ -473,7 +501,7 @@ Template.setupShifts.shiftDefs = ->
 Template.setupShifts.shifts = ->
   # TODO: This needs refactoring
   tId = Session.get('active-tournament')._id
-  teamId = Session.get('active-team').teamId
+  teamId = Session.get('active-team')?.teamId
   tournament = Tournaments.findOne tId, {fields: shiftDefs: 1, shifts: 1, days: 1}
   # sortAllShiftDefinitions
   sortedShiftDefs = tournament.shiftDefs.sort (def1, def2) ->

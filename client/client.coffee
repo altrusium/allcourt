@@ -59,8 +59,7 @@ Meteor.Router.add
   '/volunteer/:slug': (slug) ->
     unless isAdmin() then return 'notAuthorised'
     return setActiveVolunteer(slug) or 'volunteerDetails'
-  '/tournaments': ->
-    return if isAdmin() then 'tournaments' else 'notAuthorised'
+  '/tournaments': 'tournaments' 
   '/tournament/create': ->
     return if isAdmin() then 'createTournament' else 'notAuthorised'
   '/tournament/:slug/roles': (slug) ->
@@ -77,8 +76,10 @@ Meteor.Router.add
     return setActiveTournament(slug) or 'setupShifts' 
   '/tournament/:slug': (slug) ->
     return setActiveTournament(slug) or 'tournamentDetails'
-  '/tournament/:slug/register': (slug) ->
-    return setActiveTournament(slug) or 'registration'
+  '/tournament/:slug/preferences': (slug) ->
+    return setActiveTournament(slug) or 'preferences'
+  '/tournament/:slug/schedule': (slug) ->
+    return setActiveTournament(slug) or 'schedule'
   '*': 'notFound'
 
 Template.activeTournament.tournament = ->

@@ -1,6 +1,7 @@
 <template name="setupTeams">
   {{> tabs}}
   {{setTab 'tournaments'}}
+  {{#if isAdmin}}
   <ul class="breadcrumb">
     <li><a href="/tournament/{{activeTournamentSlug}}">Details</a> <span class="divider">|</span></li>
     <li><a href="/tournament/{{activeTournamentSlug}}/roles">Roles</a> <span class="divider">|</span></li>
@@ -8,6 +9,7 @@
     <li><a href="/tournament/{{activeTournamentSlug}}/registrants">Registrants</a> <span class="divider">|</span></li>
     <li><a href="/tournament/{{activeTournamentSlug}}/shifts">Volunteer Shifts</a></li>
   </ul>
+  {{/if}}
   {{> userMessages}}
   {{#if noRolesYet}}
     <p>You must first setup at least one role <a href="/tournament/setupRoles">here</a>.</p>

@@ -1,8 +1,23 @@
-setActiveTeam = ->
-  id = $('#team option:selected').val()
-  name = $('#team option:selected').text()
-  Session.set 'active-team-id', id
-  Session.set 'active-team-name', name
+associateVolunteerWithTournament = ->
+  vId = Meteor.userId()
+  tId = Session.get('active-tournament')._id
+  signup = Registrants.findOne { tournamentId: tId, userId: vId }
+  if signup
+    Session.set 'signup-id', signup._id
+  else 
+    Registrants.insert { tournamentId: tId, userId: vId }, (err, id) ->
+      unless err
+        console.log 'new id is ' + id
+        Session.set 'signup-id', id
+        Template.userMessages.showMessage
+          type: 'info'
+          title: 'Success:'
+          message: 'You have successfully registered. Thank you!'
+      else
+        Template.userMessages.showMessage
+          type: 'error'
+          title: 'Sign-up Failed:'
+          message: 'A registration error occurred. Please refresh your browser and let us know if this continues.'
 
 setAcceptedShifts = ->
   signupId = Session.get 'signup-id'
@@ -14,26 +29,11 @@ getTeamPreferences = ->
   signup = Registrants.findOne { _id: signupId }
   signup and signup.teams or []
 
-associateVolunteerWithTournament = ->
-  vId = Meteor.userId()
-  tId = Session.get('active-tournament')._id
-  signup = Registrants.findOne { tournamentId: tId, volunteerId: vId }
-  if signup
-    Session.set 'signup-id', signup._id
-  else 
-    Registrants.insert { tournamentId: tId, volunteerId: vId }, (err, id) ->
-      unless err
-        console.log 'new id is ' + id
-        Session.set 'signup-id', id
-        Template.userMessages.showMessage
-          type: 'info'
-          title: 'Success:'
-          message: 'You have been successfully signed up. Thank you!'
-      else
-        Template.userMessages.showMessage
-          type: 'error'
-          title: 'Sign-up Failed:'
-          message: 'An error occurred while signing you up. Please refresh your browser and let us know if this continues.'
+setActiveTeam = ->
+  id = $('#team option:selected').val()
+  name = $('#team option:selected').text()
+  Session.set 'active-team-id', id
+  Session.set 'active-team-name', name
 
 saveTeamPreferences = (prefs) ->
   signupId = Session.get 'signup-id'
@@ -53,10 +53,11 @@ getVolunteerRoleId = ->
   role = (role for role in tournament.roles when role.roleName is 'Volunteer')
   role[0].roleId
 
-Template.registration.created = ->
+Template.preferences.created = ->
   associateVolunteerWithTournament()
+  setAcceptedShifts()
 
-Template.registration.rendered = ->
+Template.preferences.rendered = ->
   setActiveTeam()
   $('#sortableTeams').disableSelection()
   $('#sortableTeams').sortable 
@@ -65,7 +66,10 @@ Template.registration.rendered = ->
       teams = $('#sortableTeams').sortable('toArray').slice(0, 4)
       saveTeamPreferences teams
 
-Template.registration.days = ->
+Template.preferences.activeTournamentSlug = ->
+  Session.get('active-tournament').slug
+
+Template.preferences.days = ->
   id = Session.get('active-tournament')._id
   tournament = Tournaments.findOne id, fields: days: 1
   days = tournament.days
@@ -73,7 +77,7 @@ Template.registration.days = ->
     dayOfWeek: moment(day).format 'ddd'
     dayOfMonth: moment(day).format 'do'
 
-Template.registration.teams = ->
+Template.preferences.teams = ->
   sortedTeams = []
   teamPrefs = getTeamPreferences()
   id = Session.get('active-tournament')._id
@@ -92,18 +96,18 @@ Template.registration.teams = ->
       sortedTeams.push team
   sortedTeams
 
-Template.registration.acceptedShift = ->
+Template.preferences.acceptedShift = ->
   if _.contains Session.get('accepted-shifts'), this.shiftId
     return 'checked="checked"'
 
-Template.registration.activeTeamName = ->
+Template.preferences.activeTeamName = ->
   Session.get 'active-team-name'
 
-Template.registration.markSelectedTeam = ->
+Template.preferences.markSelectedTeam = ->
   if this.teamName is Session.get 'active-team-name'
     return 'selected=selected'
 
-Template.registration.shifts = ->
+Template.preferences.shifts = ->
   # TODO: This needs refactoring
   tId = Session.get('active-tournament')._id
   rId = Session.get 'active-team-id'
@@ -145,9 +149,10 @@ Template.registration.shifts = ->
     defs: shiftDefs
     days: shiftDays
 
-Template.registration.events
+Template.preferences.events
   'change #team': (evnt, template) ->
     setActiveTeam()
+
   'change #shiftTable [data-shift]': (evnt, template) ->
     input = $(evnt.currentTarget)
     id = input.data 'shift-id'
@@ -168,4 +173,7 @@ Template.registration.events
     setAcceptedShifts()
 
 
+
+Template.schedule.activeTournamentSlug = ->
+  Session.get('active-tournament').slug
 

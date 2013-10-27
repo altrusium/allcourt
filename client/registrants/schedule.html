@@ -1,0 +1,15 @@
+<template name="schedule">
+	{{> tabs}}
+	{{setTab 'tournaments'}}
+	<ul class="breadcrumb">
+		<li><a href="/tournament/{{activeTournamentSlug}}/preferences">Preferences</a> <span class="divider">|</span></li>
+		<li class="active">Schedule</li>
+	</ul>
+	{{> userMessages}}
+	<div class="row">
+		<div class="span12">
+			<p class="lead">The schedule has not yet been confirmed.</p>
+			<p>Please keep checking back.</p>
+		</div>
+	</div>
+</template>

@@ -1,6 +1,7 @@
 <template name="setupShifts">
   {{> tabs}}
   {{setTab 'tournaments'}}
+  {{#if isAdmin}}
   <ul class="breadcrumb">
     <li><a href="/tournament/{{activeTournamentSlug}}">Details</a> <span class="divider">|</span></li>
     <li><a href="/tournament/{{activeTournamentSlug}}/roles">Roles</a> <span class="divider">|</span></li>
@@ -8,6 +9,7 @@
     <li><a href="/tournament/{{activeTournamentSlug}}/registrants">Registrants</a> <span class="divider">|</span></li>
     <li class="active">Volunteer Shifts <span class="divider">|</span></li>
   </ul>
+  {{/if}}
   {{> userMessages}}
   <div class="row">
     <div class="span5">
