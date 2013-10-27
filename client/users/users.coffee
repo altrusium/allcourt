@@ -165,7 +165,6 @@ Template.userCreate.detail = ->
     volunteer.firstName = profile.firstName
     volunteer.lastName = profile.lastName
     volunteer.primaryEmail = profile.email
-    volunteer.role = profile.role
     volunteer.siteAdmin = if profile.admin then 'checked="checked"' else ''
   else
     volunteer.detail = {}

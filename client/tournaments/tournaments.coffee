@@ -237,6 +237,14 @@ setSearchableUserList = ->
   Session.set 'user-list', users
   emptySearchResults()
 
+getUserFormValues = (template) ->
+  values = 
+    firstName: template.find('#firstName').value
+    lastName: template.find('#lastName').value
+    email: template.find('#primaryEmail').value
+    photoFilename: template.find('#photoFilename').value
+    gender: template.find('input:radio[name=gender]:checked').value
+
 associateUserWithTournament = (userId) ->
   tId = Session.get('active-tournament')._id
   teamId = Session.get('active-team').teamId
@@ -299,8 +307,12 @@ Template.setupRegistrants.roles = ->
     return 0
 
 Template.setupRegistrants.registrantsExist = ->
+  show = true
   registrants = Template.setupRegistrants.registrants()
-  registrants.length > 0 and not Session.get('search-results')?
+  show = registrants.length > 0 
+  show = show and not Session.get('search-results')?
+  show = show and not Session.get('adding-new-user')?
+  show
 
 Template.setupRegistrants.registrants = ->
   registrants = []
@@ -309,14 +321,18 @@ Template.setupRegistrants.registrants = ->
   unless tId and teamId then return []
   Registrants.find({ tournamentId: tId }).forEach (reg) ->
     if _.contains reg.teams, teamId
-      registrants.push reg.userId
-  users = for id in registrants
-    user = Meteor.users.findOne({ _id: id })?.profile
-    user.id = id
+      registrants.push [reg.userId, reg.isTeamLead]
+  users = for reg in registrants
+    user = Meteor.users.findOne({ _id: reg[0] })?.profile
+    if reg[1] then user.teamLeadChecked = 'checked'
+    user.id = reg[0]
     user
 
 Template.setupRegistrants.searchResults = ->
   Session.get 'search-results'
+
+Template.setupRegistrants.addingNewUser = ->
+  Session.get 'adding-new-user'
 
 Template.setupRegistrants.activeTeamName = ->
   return Session.get('active-team').teamName
@@ -337,11 +353,36 @@ Template.setupRegistrants.events
     Tournaments.update(tId, $push: 'teams': newTeam)
     $('#teamName').val('').focus()
 
+  'click #addNewUser': (evnt, template) ->
+    Session.set 'adding-new-user', true
+    false
+
+  'click #cancelAddUser': (evnt, template) ->
+    Session.set 'adding-new-user', null
+    false
+
   'click [data-action=delete]': (evnt, template) ->
     tId = Session.get('active-tournament')._id
     uId = $(evnt.currentTarget).data 'user'
     reg = Registrants.findOne 'tournamentId': tId, 'userId': uId
     Registrants.update reg._id, $pull: teams: Session.get('active-team').teamId
+    false
+
+  'click [data-action=makeLead]': (evnt, template) ->
+    tId = Session.get('active-tournament')._id
+    uId = $(evnt.currentTarget).data 'user'
+    checked = $(evnt.currentTarget).prop 'checked'
+    reg = Registrants.findOne 'tournamentId': tId, 'userId': uId
+    if checked
+      Registrants.update reg._id, $set: isTeamLead: true
+    else
+      Registrants.update reg._id, $unset: isTeamLead: ''
+
+  'click [data-action=register]': (evnt, template) ->
+    userId = $(evnt.currentTarget).data 'id'
+    associateUserWithTournament userId
+    emptySearchResults()
+    false
 
   'keyup #search': (evnt, template) ->
     query = $(evnt.currentTarget).val()
@@ -353,10 +394,28 @@ Template.setupRegistrants.events
     results = searcher.search query
     Session.set 'search-results', results
 
-  'click [data-action=register]': (evnt, template) ->
-    userId = $(evnt.currentTarget).data 'id'
-    associateUserWithTournament userId
-    emptySearchResults()
+  'click #addUser': (event, template) ->
+    userOptions = getUserFormValues template
+    Meteor.call 'createNewUser', userOptions, (err, id) ->
+      if err
+        Template.userMessages.showMessage 
+          type: 'error',
+          title: 'Uh oh!',
+          message: 'The user was not saved. Reason: ' + err.reason
+      else
+        associateUserWithTournament id
+    Session.set 'adding-new-user', null
+
+  'change #hasProfileAccess': (evnt, template) ->
+    if $(evnt.currentTarget).prop('checked')
+      $('#primaryEmail').prop('disabled', false).val('')
+    else
+      $('#primaryEmail').prop('disabled', true).val('no.email@tennisauckland.co.nz')
+
+  'change input[name=gender]': (evnt, template) ->
+    $('.photo-placeholder').toggleClass 'male female'
+
+
 
 
 

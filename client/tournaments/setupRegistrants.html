@@ -32,12 +32,12 @@
           </div>
         </div>
         <div class="control-group">
-          <label for="search" class="control-label">Register existing user</label>
+          <label for="search" class="control-label">Register an existing user</label>
           <input id="search" type="text" placeholder="Partial name of user">
         </div>
         <div class="control-group">
           <label for="addUser" class="control-label">Looked and can't find them?</label>
-          <a id="addUser" href="#">Add new user</a>
+          <a id="addNewUser" href="#">Add new user</a>
         </div>
       </form>
     </div>
@@ -68,6 +68,7 @@
         <thead>
           <tr>
             <th>User</th>
+            <th>Team Lead</th>
             <th>Unregister</th>
           </tr>
         </thead>
@@ -76,12 +77,71 @@
           <tr>
             <td>{{fullName}}</td>
             <td>
+              <input type="checkbox" class="checkbox" data-action="makeLead" data-user="{{id}}" {{teamLeadChecked}}>
+            </td>
+            <td>
               <a href="#" data-action="delete" data-user="{{id}}"><i class="icon-remove"></i></a>
             </td>
           </tr>
           {{/each}}
         </tbody>
       </table>
+      {{/if}}
+      {{#if addingNewUser}}
+      <form class="form-horizontal">
+        <div id="photoPlaceholder" class="female empty photo-placeholder">
+          <img src="{{photoPath}}" id="photoImg">
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="photo">Photo</label>
+          <div class="controls">
+            <button id="pickPhoto" type="button" class="btn input-medium">Select File</button>
+            <input type="hidden" id="photoFilename" value="{{photoFilename}}">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="primaryEmail">Primary Email</label>
+          <div class="controls">
+            <input type="text" id="primaryEmail" value="{{primaryEmail}}" required>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="firstName">First Name</label>
+          <div class="controls">
+            <input type="text" id="firstName" class="input-medium" value="{{firstName}}" required>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="lastName">Last Name</label>
+          <div class="controls">
+            <input type="text" id="lastName" class="input-medium" value="{{lastName}}" required>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="gender">Gender</label>
+          <div class="controls">
+            <label class="radio inline">
+              <input type="radio" id="maleGender" name="gender" value="male"> male
+            </label>
+            <label class="radio inline">
+              <input type="radio" id="femaleGender" name="gender" value="female" checked> female
+            </label>
+          </div>
+        </div>
+        <div class="control-group">
+          <div class="controls">
+            <label class="checkbox">
+              <input type="checkbox" id="hasProfileAccess" checked> Can manage their own profile
+            </label>
+          </div>
+        </div>
+        <div class="control-group">
+          <div class="controls">
+            <button type="button" id="addUser" class="btn btn-primary">Add User</button>
+            &nbsp; <a href="#" id="cancelAddUser">cancel</a> 
+          </div>
+        </div>
+      </form>
       {{/if}}
     </div>
   </div>

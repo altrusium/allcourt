@@ -60,16 +60,18 @@ Template.signIn.events
 		unless registrationFormIsValid(evnt.currentTarget) then return
 		unless registrationPasswordsMatch(evnt.currentTarget) then return
 		email = template.find('#registerEmail').value
+		firstName = template.find('#firstName').value
+		lastName = template.find('#lastName').value
 		options = 
-			email: email,
-			username: email,
-			password: template.find('#registerPassword').value,
+			email: email
+			username: email
+			password: template.find('#registerPassword').value
 			profile: 
-				role: '',
-				email: email,
-				agreedToTerms: false,
-				firstName: template.find('#firstName').value,
-				lastName: template.find('#lastName').value
+				email: email
+				firstName: firstName
+				lastName: lastName
+				fullName: firstName + ' ' + lastName
+				slug: firstName + lastName 
 		Accounts.createUser options, (err) ->
 			if err
 				Template.userMessages.showMessage

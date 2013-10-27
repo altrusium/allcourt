@@ -72,7 +72,7 @@ Meteor.Router.add
   '/tournament/:slug/registrants': (slug) ->
     unless isAdmin() then return 'notAuthorised'
     return setActiveTournament(slug) or 'setupRegistrants' 
-  '/tournament/:slug/shifts': ->
+  '/tournament/:slug/shifts': (slug) ->
     unless isAdmin() then return 'notAuthorised'
     return setActiveTournament(slug) or 'setupShifts' 
   '/tournament/:slug': (slug) ->

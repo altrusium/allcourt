@@ -1,21 +1,17 @@
 Meteor.methods 
 
-  # Not being used yet
-  createNewUser: (options, callback) ->
+  createNewUser: (options) ->
     newUser = 
-      username: options.firstName + options.lastName,
-      email: options.primaryEmail,
-      password: new Meteor.Collection.ObjectID(),
+      email: options.email
       profile:
-        email: options.primaryEmail,
-        firstName: options.firstName,
-        lastName: options.lastName,
-        fullName: options.firstName + ' ' + options.lastName,
-        photoFilename: options.photoFilename,
-        gender: options.gender || 'female',
-        slug: options.firstName + options.lastName,
-        type: options.userType
-    Accounts.createUser newUser, callback
+        email: options.email
+        firstName: options.firstName
+        lastName: options.lastName
+        fullName: options.firstName + ' ' + options.lastName
+        photoFilename: options.photoFilename
+        gender: options.gender || 'female'
+        slug: options.firstName + options.lastName
+    Accounts.createUser newUser
 
   updateUser: (options, callback) ->
     firstName = options.firstName
@@ -28,7 +24,6 @@ Meteor.methods
       photoFilename: options.photoFilename,
       gender: options.gender || 'female',
       slug: options.firstName + options.lastName,
-      type: Meteor.user().profile.type
       }, callback
 
   createNewVolunteer: (options, callback) ->
@@ -60,7 +55,7 @@ Meteor.methods
     }, callback
 
   saveTournament: (options, callback) ->
-    # Todo: Need to make sure slug is unique
+    # Todo: Need to make sure slug is unique (bug #1)
     Tournaments.insert {
       tournamentName: options.tournamentName,
       slug: options.slug,
