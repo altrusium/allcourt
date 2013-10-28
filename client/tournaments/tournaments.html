@@ -20,20 +20,38 @@
 				</ul>
 	  	{{/if}}
 
-			{{#if activeTournaments}}
+			{{#if showActiveUserTournaments}}
 			<h2 class="column-header"><small>Active Tournaments</small></h2>
 				<ul>
 					{{#each activeTournaments}}
-					<li>{{tournamentName}} (<a href="/tournament/{{slug}}/preferences">register</a>)</li>
+					<li>{{tournamentName}} (<a href="/tournament/{{slug}}/register">register</a>)</li>
 					{{/each}}
 				</ul>
 			{{/if}}
 
-			{{#if previousTournaments}}
+			{{#if showActiveAdminTournaments}}
+			<h2 class="column-header"><small>Active Tournaments</small></h2>
+				<ul>
+					{{#each activeTournaments}}
+					<li><a href="/tournament/{{slug}}">{{tournamentName}}</a></li>
+					{{/each}}
+				</ul>
+			{{/if}}
+
+			{{#if showPreviousUserTournaments}}
 			<h2 class="column-header"><small>Previous Tournaments</small></h2>
 				<ul>
 					{{#each previousTournaments}}
 					<li>{{tournamentName}}</li>
+					{{/each}}
+				</ul>
+			{{/if}}
+
+			{{#if showPreviousAdminTournaments}}
+			<h2 class="column-header"><small>Previous Tournaments</small></h2>
+				<ul>
+					{{#each previousTournaments}}
+					<li><a href="/tournament/{{slug}}">{{tournamentName}}</a></li>
 					{{/each}}
 				</ul>
 			{{/if}}

@@ -114,9 +114,9 @@ Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicke
 
 ### Schedule
 - tournamentId
-- teamId ?
-- shiftId
 - registrantId
+- shiftId
+- teamId
 
 
 

@@ -12,7 +12,7 @@ Meteor.users.allow
 
 Volunteers.allow
   insert: (userId, doc) ->
-    Meteor.user().profile.admin
+    Meteor.userId() is doc._id or Meteor.user().profile.admin
   update: (userId, doc) ->
     Meteor.userId() is doc._id or Meteor.user().profile.admin
   remove: (userId, doc) ->

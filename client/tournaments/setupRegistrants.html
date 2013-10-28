@@ -92,7 +92,10 @@
       </table>
       {{/if}}
       {{#if addingNewUser}}
-      <form class="form-horizontal">
+      <!-- <form class="form-horizontal"> -->
+      <form class="form-vertical">
+        <h2 class="column-header"><small>New User</small></h2>
+        <!--
         <div id="photoPlaceholder" class="female empty photo-placeholder">
           <img src="{{photoPath}}" id="photoImg">
         </div>
@@ -100,25 +103,26 @@
           <label class="control-label" for="photo">Photo</label>
           <div class="controls">
             <button id="pickPhoto" type="button" class="btn input-medium">Select File</button>
-            <input type="hidden" id="photoFilename" value="{{photoFilename}}">
+            <input type="hidden" id="photoFilename">
           </div>
         </div>
+        -->
         <div class="control-group">
           <label class="control-label" for="primaryEmail">Primary Email</label>
           <div class="controls">
-            <input type="text" id="primaryEmail" value="{{primaryEmail}}" required>
+            <input type="text" id="primaryEmail" required>
           </div>
         </div>
         <div class="control-group">
           <label class="control-label" for="firstName">First Name</label>
           <div class="controls">
-            <input type="text" id="firstName" class="input-medium" value="{{firstName}}" required>
+            <input type="text" id="firstName" class="input-medium" required>
           </div>
         </div>
         <div class="control-group">
           <label class="control-label" for="lastName">Last Name</label>
           <div class="controls">
-            <input type="text" id="lastName" class="input-medium" value="{{lastName}}" required>
+            <input type="text" id="lastName" class="input-medium" required>
           </div>
         </div>
         <div class="control-group">

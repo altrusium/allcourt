@@ -32,7 +32,6 @@ Meteor.methods
       birthdate: options.birthdate || '',
       shirtSize: options.shirtSize || '',
       homePhone: options.homePhone || '',
-      workPhone: options.workPhone || '',
       mobilePhone: options.mobilePhone || '',
       address: options.address || '',
       city: options.city || '',
@@ -43,8 +42,8 @@ Meteor.methods
 
   updateVolunteer: (options) ->
     Volunteers.update _id: options._id, { 
-      shirtSize: options.shirtSize,
       birthdate: options.birthdate,
+      shirtSize: options.shirtSize,
       homePhone: options.homePhone,
       mobilePhone: options.mobilePhone,
       address: options.address,
@@ -56,12 +55,13 @@ Meteor.methods
 
   saveTournament: (options) ->
     # Todo: Need to make sure slug is unique (bug #1)
+    newId = Meteor.uuid()
     Tournaments.insert {
       tournamentName: options.tournamentName,
       slug: options.slug,
       days: options.days,
-      roles: [ roleId: Meteor.uuid(), roleName: 'Volunteer'],
-      teams: [],
+      roles: [ roleId: newId, roleName: 'Volunteer'],
+      teams: [ teamId: newId, roleId: newId, teamName: 'Default Volunteer Team'],
       shifts: [],
       shiftDefs: []
     }

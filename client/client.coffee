@@ -76,6 +76,8 @@ Meteor.Router.add
     return setActiveTournament(slug) or 'setupShifts' 
   '/tournament/:slug': (slug) ->
     return setActiveTournament(slug) or 'tournamentDetails'
+  '/tournament/:slug/register': (slug) ->
+    return setActiveTournament(slug) or 'register'
   '/tournament/:slug/preferences': (slug) ->
     return setActiveTournament(slug) or 'preferences'
   '/tournament/:slug/schedule': (slug) ->
