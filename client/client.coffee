@@ -39,8 +39,6 @@ Meteor.Router.add
     return if isAdmin() then 'users' else 'notAuthorised'
   '/user/create': ->
     return if isAdmin() then 'userCreate' else 'notAuthorised'
-  '/user/list': ->
-    return if isAdmin() then 'userList' else 'notAuthorised'
   '/user/edit/:slug': (slug) ->
     unless isAdmin() then return 'notAuthorised'
     return setActiveUser(slug) or 'userCreate'

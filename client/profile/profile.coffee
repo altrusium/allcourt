@@ -72,6 +72,9 @@ getVolunteerFormValues = (template) ->
     city: template.find('#city').value
     postalCode: template.find('#postalCode').value
 
+
+
+
 Template.profileDetails.details = ->
   user = Meteor.user()
   details = user.profile || {}

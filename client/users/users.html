@@ -2,272 +2,40 @@
 	{{> tabs}}
 	{{setTab 'users'}}
 	<ul class="breadcrumb">
-		<li><a href="/user/create">Create</a> <span class="divider">|</span></li>
-		<li><a href="/volunteer/list">List Volunteers</a></li>
+		<li><a href="/user/create">Create new user</a></li>
 	</ul>
 	{{> userMessages}}
-	<form class="navbar-search pull-right">
-		<input type="text" class="search-query" placeholder="Find existing registrants" data-provide="typeahead">
-	</form>
-</template>
-
-<template name="userCreate">
-	{{> tabs}}
-	{{setTab 'users'}}
-	<ul class="breadcrumb">
-		<li><a href="/users">Users</a> <span class="divider">/</span></li>
-		<li class="active">{{#if detail.isNew}}Create{{else}}Edit{{/if}}</li>
-	</ul>
-	{{> userMessages}}
-	<div class="row">
-		<form method="post">
-		{{#with detail}}
-		<div class="span5">
-			<form class="form-horizontal">
-				<div id="photoPlaceholder" class="{{#if isMale}}male{{else}}female{{/if}} empty photo-placeholder">
-					<img src="{{photoPath}}" id="photoImg">
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="photo">Photo</label>
-					<div class="controls">
-						<button id="pickPhoto" type="button" class="btn input-medium">Select File</button>
-						<input type="hidden" id="photoFilename" value="{{photoFilename}}">
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="primaryEmail">Primary Email</label>
-					<div class="controls">
-						<input type="text" id="primaryEmail" value="{{primaryEmail}}" {{emailDisabled}} required>
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="firstName">First Name</label>
-					<div class="controls">
-						<input type="text" id="firstName" class="input-medium" value="{{firstName}}" required>
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="lastName">Last Name</label>
-					<div class="controls">
-						<input type="text" id="lastName" class="input-medium" value="{{lastName}}" required>
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="gender">Gender</label>
-					<div class="controls">
-						<label class="radio inline">
-							<input type="radio" id="maleGender" name="gender" value="male" {{#if isMale}}checked{{/if}}> male
-						</label>
-						<label class="radio inline">
-							<input type="radio" id="femaleGender" name="gender" value="female" {{#unless isMale}}checked{{/unless}}> female
-						</label>
-					</div>
-				</div>
-				<div class="control-group">
-					<div class="controls">
-						<label class="checkbox">
-							<input type="checkbox" id="hasProfileAccess" {{hasProfileAccess}}> Can manage their profile
-						</label>
-					</div>
-				</div>
-				<div class="control-group">
-					<div class="controls">
-						<label class="checkbox">
-							<input type="checkbox" id="siteAdmin" {{siteAdmin}} {{emailDisabled}}> Site Administrator
-						</label>
-					</div>
-				</div>
-				<div class="control-group">
-					<div class="controls">
-						<button type="button" id="saveProfile" class="btn btn-primary">Save Profile</button>
-					</div>
-				</div>
-			</form>
+	<div class="container user-list">
+		<div class="search row">
+			<div class="span12">
+				<form class="navbar-search">
+					<input type="text" class="search-query" placeholder="Find user">
+				</form>
+			</div>
 		</div>
-		<div class="span5">
-			<form class="form-horizontal">
-				<div class="control-group">
-					<label class="control-label" for="shirtSize">Shirt Size</label>
-					<div class="controls">
-						<select id="shirtSize" class="input-small">
-							{{#select shirtSize}}
-							<option value=""></option>
-							<option value="3XS">3XS</option>
-							<option value="2XS">2XS</option>
-							<option value="XS">XS</option>
-							<option value="S">S</option>
-							<option value="M">M</option>
-							<option value="L">L</option>
-							<option value="XL">XL</option>
-							<option value="2XL">2XL</option>
-							<option value="3XL">3XL</option>
-							<option value="4XL">4XL</option>
-							{{/select}}
-						</select>
-					</div>
-				</div>
-				<div class="control-group">
-					<label for="birthdate" class="control-label">Birthdate</label>
-					<div class="controls">
-						<div class="input-append">
-							<input type="text" class="birthDatepicker input-small" id="birthdate" data-date-format="dd/mm/yyyy" value="{{birthdate}}" required>
-							<span class="add-on" id="birthdateIcon"><i class="icon-calendar"></i></span>
-						</div>
-						<span class="help-block">Not a valid date</span>
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="homePhone">Home Phone</label>
-					<div class="controls">
-						<input type="text" id="homePhone" value="{{homePhone}}">
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="mobilePhone">Mobile Phone</label>
-					<div class="controls">
-						<input type="text" id="mobilePhone" value="{{mobilePhone}}">
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="address">Address</label>
-					<div class="controls">
-						<input type="text" id="address" value="{{address}}">
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="suburb">Suburb</label>
-					<div class="controls">
-						<input type="text" id="suburb" value="{{suburb}}">
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="city">City</label>
-					<div class="controls">
-						<input type="text" id="city" value="{{city}}">
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="postalCode">Postal Code</label>
-					<div class="controls">
-						<input type="text" id="postalCode" value="{{postalCode}}" class="input-small">
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="notes">Notes</label>
-					<div class="controls">
-						<textarea id="notes" class="input-large">{{notes}}</textarea>
-					</div>
-				</div>
-			</form>
-		</div>
-		{{/with}}
-		</form>
-	</div>
-</template>
-
-
-
-
-<template name="userList">
-	{{> tabs}}
-	{{setTab 'users'}}
-	<ul class="breadcrumb">
-		<li><a href="/users">Users</a> <span class="divider">/</span></li>
-		<li class="active">List</li>
-	</ul>
-	{{> userMessages}}
-	<div class="container volunteer-list">
 		{{#each users}}
-		<div class="row">
-			<div class="span1">
-				<a href="/volunteer/{{slug}}">
-					{{#if photoFilename}}
-						<img src="{{photoRoot}}{{photoFilename}}"><br>
-					{{else}}
-						<div class="small {{#if isMale}}male{{else}}female{{/if}} photo-placeholder"></div>
-					{{/if}}}
-				</a>
+			<div class="container-fluid">
+				<div class="row-fluid">
+					<div class="span2">
+						<a href="/user/{{slug}}">
+							{{#if photoFilename}}
+								<img src="{{photoRoot}}{{photoFilename}}" class="user-photo">
+							{{else}}
+								{{#if isMale}}
+									<img src="/img/no-male-photo.jpg" class="user-photo">
+								{{else}}
+									<img src="/img/no-female-photo.jpg" class="user-photo">
+								{{/if}}
+							{{/if}}}
+						</a>
+					</div>
+					<div class="span10 user-info">
+						<a href="/user/{{slug}}" class="user-name">{{firstName}} {{lastName}}</a><br>
+						<span class="user-phone">Mobile: {{mobilePhone}}</span><br>
+						<span class="user-email">Email: <a href="mailto:{{email}}">{{email}}</a>
+					</div>
+				</div>
 			</div>
-			<div class="span5 volunteer-info">
-				<a href="/volunteer/{{slug}}" class="volunteer-name">{{firstName}} {{lastName}}</a><br>
-				<span class="volunteer-phone">Mobile: {{mobilePhone}}</span><br>
-				<span class="volunteer-email">Email: <a href="mailto:{{email}}">{{email}}</a>
-			</div>
-		</div>
 		{{/each}}
 	</div>
 </template>
-
-
-
-
-<template name="userDetails">
-	{{> tabs}}
-	{{setTab 'users'}}
-	<ul class="breadcrumb">
-		<li><a href="/users">Users</a> <span class="divider">/</span></li>
-		<li class="active">Details</li>
-	</ul>
-	{{> userMessages}}
-	<div class="row">
-		{{#with detail}}
-		<div class="span3">
-				{{#if photoFilename}}
-					<img class="volunteer-photo" src="{{photoRoot}}{{detail.photoFilename}}"><br>
-				{{else}}
-					<div class="{{#if isMale}}male{{else}}female{{/if}} photo-placeholder"></div>
-				{{/if}}}
-				<p><button id="editProfile" class="btn" data-volunteer-id="{{_id}}">Edit Profile</button></p>
-				<p><button id="deleteVolunteer" class="btn btn-link" data-volunteer-id="{{_id}}">Delete Volunteer</button></p>
-		</div>
-		<div class="volunteer-details span4">
-			<h3>{{firstName}} {{lastName}}</h3>
-			<p>
-				{{#if primaryEmail}}<a href="mailto:{{primaryEmail}}">{{primaryEmail}}</a><br>{{/if}}
-				{{#if secondaryEmail}}<a href="mailto:{{secondaryEmail}}">{{secondaryEmail}}</a>{{/if}}
-			</p>
-			<p>
-				{{#if homePhone}}Home phone: {{homePhone}}<br>{{/if}}
-				{{#if workPhone}}Work phone: {{workPhone}}<br>{{/if}}
-				{{#if mobilePhone}}Mobile phone: {{mobilePhone}}{{/if}}
-			</p>
-			<address>
-				{{#if address}}{{address}}<br>{{/if}}
-				{{#if city}}{{city}}<br>{{/if}}
-				{{#if suburb}}{{suburb}}<br>{{/if}}
-				{{#if postalCode}}{{postalCode}}<br>{{/if}}
-			</address>
-		</div>
-		{{/with}}
-		<div class="volunteer-details span5">
-			{{#if myTournamentsExist}}
-			<h3>My Tournaments</h3>
-			{{#each myTournaments}}
-			<div class="media">
-				<a class="pull-left" href="#">
-					<img class="media-object" data-src="">
-				</a>
-				<div class="media-body">
-					<h4 class="media-heading"><a href="/tournament/{{_id}}">{{tournamentName}}</a></h4>
-				</div>
-			</div>
-			{{/each}}
-			{{/if}}
-		</div>
-	</div>
-	<div id="deleteModal" class="modal hide fade">
-	  <div class="modal-header">
-	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	    <h3>Deleting a volunteer</h3>
-	  </div>
-	  <div class="modal-body">
-	    <p>Are you sure you wish to delete this volunteer? This can not be undone.</p>
-	  </div>
-	  <div class="modal-footer">
-	    <a href="#" class="btn link" id="deleteConfirmed" data-dismiss="modal">Delete volunteer</a>
-	    <a href="#" class="btn btn-primary" id="deleteCancelled" data-dismiss="modal">Do not delete</a>
-	  </div>
-	</div>
-</template>
-
-

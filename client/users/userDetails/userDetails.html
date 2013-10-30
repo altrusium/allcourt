@@ -1,0 +1,69 @@
+<template name="userDetails">
+  {{> tabs}}
+  {{setTab 'users'}}
+  <ul class="breadcrumb">
+    <li><a href="/users">Users</a> <span class="divider">/</span></li>
+    <li class="active">Details</li>
+  </ul>
+  {{> userMessages}}
+  <div class="row">
+    {{#with detail}}
+    <div class="span3">
+        {{#if photoFilename}}
+          <img class="volunteer-photo" src="{{photoRoot}}{{detail.photoFilename}}"><br>
+        {{else}}
+          <div class="{{#if isMale}}male{{else}}female{{/if}} photo-placeholder"></div>
+        {{/if}}}
+        <p><button id="editProfile" class="btn" data-volunteer-id="{{_id}}">Edit Profile</button></p>
+        <p><button id="deleteVolunteer" class="btn btn-link" data-volunteer-id="{{_id}}">Delete Volunteer</button></p>
+    </div>
+    <div class="volunteer-details span4">
+      <h3>{{firstName}} {{lastName}}</h3>
+      <p>
+        {{#if primaryEmail}}<a href="mailto:{{primaryEmail}}">{{primaryEmail}}</a><br>{{/if}}
+        {{#if secondaryEmail}}<a href="mailto:{{secondaryEmail}}">{{secondaryEmail}}</a>{{/if}}
+      </p>
+      <p>
+        {{#if homePhone}}Home phone: {{homePhone}}<br>{{/if}}
+        {{#if workPhone}}Work phone: {{workPhone}}<br>{{/if}}
+        {{#if mobilePhone}}Mobile phone: {{mobilePhone}}{{/if}}
+      </p>
+      <address>
+        {{#if address}}{{address}}<br>{{/if}}
+        {{#if city}}{{city}}<br>{{/if}}
+        {{#if suburb}}{{suburb}}<br>{{/if}}
+        {{#if postalCode}}{{postalCode}}<br>{{/if}}
+      </address>
+    </div>
+    {{/with}}
+    <div class="volunteer-details span5">
+      {{#if myTournamentsExist}}
+      <h3>My Tournaments</h3>
+      {{#each myTournaments}}
+      <div class="media">
+        <a class="pull-left" href="#">
+          <img class="media-object" data-src="">
+        </a>
+        <div class="media-body">
+          <h4 class="media-heading"><a href="/tournament/{{_id}}">{{tournamentName}}</a></h4>
+        </div>
+      </div>
+      {{/each}}
+      {{/if}}
+    </div>
+  </div>
+  <div id="deleteModal" class="modal hide fade">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h3>Deleting a volunteer</h3>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you wish to delete this volunteer? This can not be undone.</p>
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="btn link" id="deleteConfirmed" data-dismiss="modal">Delete volunteer</a>
+      <a href="#" class="btn btn-primary" id="deleteCancelled" data-dismiss="modal">Do not delete</a>
+    </div>
+  </div>
+</template>
+

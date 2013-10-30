@@ -1,0 +1,23 @@
+.volunteer-photo {
+  width: 200px;
+  margin-bottom: 10px;
+  border: 1px solid silver;
+}
+
+.volunteer-list .volunteer-info {
+  line-height: 18px;
+  height: 57px;
+}
+.volunteer-list .volunteer-info .volunteer-name {
+  font-size: 24px;
+}
+.volunteer-list .volunteer-info .volunteer-phone {
+  font-size: 12px;
+}
+.volunteer-list .volunteer-info .volunteer-email {
+  font-size: 12px;
+}
+.volunteer-list .row {
+  margin-bottom: 20px;
+}
+

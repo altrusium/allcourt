@@ -1,0 +1,27 @@
+.search.row {
+  margin-bottom: 20px;
+}
+
+.user-photo {
+  width: 100%;
+  max-width: 150px;
+  margin-bottom: 10px;
+  border: 1px solid silver;
+}
+
+.user-list .row {
+  margin-top: 20px;
+}
+.user-list .user-info .user-name {
+  font-size: 24px;
+}
+.user-list .user-info .user-phone {
+  font-size: 12px;
+}
+.user-list .user-info .user-email {
+  font-size: 12px;
+}
+
+.user-info {
+  margin-bottom: 20px;
+}

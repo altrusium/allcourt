@@ -1,0 +1,97 @@
+<template name="register">
+  {{> tabs}}
+  {{setTab 'tournaments'}}
+  {{> userMessages}}
+  <div class="row">
+    <div class="span8">
+      <p class="lead">Please select your role and team, and agree to the terms.</p>
+
+      <div class="span8">
+        <div class="span3">
+          <form class="form-vertical">
+            <div class="control-group">
+              <label for="role" class="control-label">Role</label>
+              <div class="controls">
+                <select id="role">
+                  {{#each roles}}
+                  <option value="{{roleId}}">{{roleName}}</option>
+                  {{/each}}
+                </select>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="span3">
+          <form class="form-vertical">
+            <div class="control-group">
+              <label for="team" class="control-label">Team</label>
+              <div class="controls">
+                <select id="team">
+                  {{#each teams}}
+                  <option value="{{teamId}}">{{teamName}}</option>
+                  {{/each}}
+                </select>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <p>Applications for accreditation to the 2014 ASB Classic and Heineken Open must be approved by an Official Tennis Auckland Tournament Representative. Accreditation approval is subject to your acceptance of the terms and conditions set out below. Failure to adhere to these terms and conditions will result in accreditation being revoked.</p>
+
+      <p>Accredited entry into ASB Tennis Arena (Venue) for The Events is subject to the Tennis Auckland’s (TA) Ticket Conditions of Sale and Entry and these Terms and Conditions of Accreditation.</p>
+
+      <ol>
+        <li>TA reserves its right to withdraw accreditation at any time.
+        <li>Accreditation passes are non-transferable and must be worn correctly at all times with your photo clearly visible.
+        <li>Your access to restricted areas within The Venue is limited to that necessary to perform activities directly relevant to the reason for your accreditation.
+        <li>You must abide by all directions from TA officials at all times.
+        <li>You must not take unauthorised photos, video stills or video footage within restricted areas of the venue or request autographs from players.
+        <li>You must not leave any dependent children unsupervised at any time.
+        <li>You must comply with all the provisions of the Uniform Tennis Anti-Corruption Program including but not limited to adhering to the prohibitions on gambling and betting outlined below and reporting any knowledge or suspicion of such behaviour to the Tennis Integrity Unit as soon as possible.
+        <li>Players, “Related Persons” and “Tournament Support Personnel“ must not directly or indirectly:
+
+        <ul>
+          <li>wager or attempt to wager on the outcome or any other aspect of any tennis match or competition;
+          <li>provide for consideration information concerning the condition or status of players;
+          <li>solicit or facilitate any other person to wager on the outcome or any other aspect of any tennis match 
+          <li>contrive or attempt to contrive the outcome or any other aspect of an event; or
+          <li>solicit or facilitate any Player to not use his or her best efforts in an event.
+        </ul>
+
+        <p>A ‘<em>Related Person</em>’ is ‘any coach, trainer, therapist, physician, management representative, agent, family member, tournament guest, business associate or other affiliate or associate of any Player, or any other person who receives accreditation at an Event at the request of the Player or any other Related Person.’
+
+        <p>‘<em>Tournament Support Personnel</em>’ is ‘any tournament director, owner, operator, employee, agent, contractor or any similarly situated person at any Event and any other person who receives accreditation at an Event at the request of Tournament Support Personnel.’
+
+        <li>If you are an employee, agent, contractor or sub-contractor of TA or the ASB Classic and/or Heineken Open you must abide by the:
+
+        <ul>
+          <li>TA Social Media Policy (unless you are an accredited media or broadcast representative, player or a
+          <li>TA Media Spokesperson Policy;
+          <li>ASB Classic and Heineken Open OH&S rules; and
+          <li>any other TA policies and procedures as advised by TA from time to time.
+        </ul>
+
+        <li>You must adhere to ASB Tennis Arena Emergency Procedures at all times.
+
+        <li>If requested by TA, you must provide evidence of background checks, including but not limited to national police checks.
+
+        <li>Guest passes are available to players’ legitimate guests (in good faith) and are subject to the WTF and ATP Rules. A player must not receive any direct financial or other benefit as consideration for nominating a guest for accreditation.
+
+        <li>TA may alter these terms and conditions at any time if such changes are reasonably necessary to address safety issues or otherwise protect legitimate interests of TA.
+
+      </ol>
+
+      <form class="register form-inline pull-right">
+        <label class="checkbox">
+          <input id="agreed" type="checkbox"> I agree to the terms above
+        </label>
+        <button id="registerButton" class="register btn btn-primary">Register</button>
+      </form>
+
+    </div>
+    <div class="span3 offset1">
+      <img src="/img/ta-logo.png" alt="Tennis Auckland Logo">
+    </div>
+  </div>
+</template>
