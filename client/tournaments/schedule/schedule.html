@@ -10,7 +10,6 @@
 		<li class="active">Volunteer Schedule</li>
 	</ul>
 	{{> userMessages}}
-	<div class="span12">
   <div class="row">
     <div class="span4">
       <h2 class="column-header"><small>Manage team schedules</small></h2>
@@ -111,7 +110,7 @@
         <tbody>
           <tr>
             <td></td>
-            {{#each dayShifts}}
+            {{#each dayVolunteers}}
             <td>
 	            {{#each confirmed}}
               <p class="confirmed" data-volunteer-id="{{userId}}">{{fullName}}</p>
@@ -130,35 +129,31 @@
     {{/if}}
 
     {{#if showingOneShift}}
-    <div class="span8">
-      <h2 class="column-header"><small>{{activeShiftName}} {{activeTeamName}} Shift for {{activeDate}} {{activeShiftTimes}}</small></h2>
+    <div class="one-shift span8">
+      <h2 class="column-header"><small>{{activeTeamName}} Shift for {{activeDate}} {{activeShiftTimes}}</small></h2>
       <p></p>
     	<div class="row">
     		<div class="span4">
           {{#each shiftVolunteers}}
             {{#each confirmed}}
-            <p data-volunteer-id="{{userId}}" data-action="remove">
-            	<i class="icon-remove"></i> <span class="confirmed">{{fullName}}</span>
+            <p data-user-id="{{userId}}" data-action="remove">
+            	<i class="action icon-remove" title="Remove"></i> 
+            	<span class="confirmed">{{fullName}}</span>
             </p>
             {{/each}}
             {{#each backedOut}}
-            <p data-volunteer-id="{{userId}}" data-action="confirmRemove">
-            	<i class="icon-ok"></i> <span class="backed-out">{{fullName}}</span>
+            <p data-user-id="{{userId}}" data-action="confirmRemove">
+            	<i class="action icon-ok" title="Confirm"></i> 
+            	<span class="backed-out">{{fullName}}</span>
             </p>
             {{/each}}
             {{#each keen}}
-            <p data-volunteer-id="{{userId}}" data-action="confirmAdd">
-            	<i class="icon-ok"></i> <span class="keen">{{fullName}}</span>
+            <p data-user-id="{{userId}}" data-action="confirmAdd">
+            	<i class="action icon-ok" title="Confirm"></i> 
+            	<span class="keen">{{fullName}}</span>
             </p>
             {{/each}}
           {{/each}}
-          <!--
-    			<p><i class="icon-remove"></i> <span class="confirmed">Joe Blow</span></p>
-    			<p><i class="icon-remove"></i> <span class="confirmed">Foo Bar</span></p>
-    			<p><i class="icon-ok"></i> <span class="backed-out">Jonathan Constantanople</span></p>
-    			<p><i class="icon-ok"></i> <span class="keen">Don Smith</span></p>
-    			<p><i class="icon-ok"></i> <span class="keen">Bar Baz</span></p>
-	    		-->
         </div>
         <div class="span4">
         	<!--
@@ -175,6 +170,5 @@
     {{/if}}
 
     </div>
-  </div>
 	</div>
 </template>

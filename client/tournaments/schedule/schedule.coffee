@@ -1,3 +1,6 @@
+unsetActiveShift = ->
+  Session.set 'active-shift', null
+
 setActiveTeam = ->
   tId = $('#team option:selected').val()
   tournament = Session.get 'active-tournament'
@@ -10,21 +13,19 @@ setActiveDay = ->
   activeDay = $('#day option:selected').val()
   Session.set 'active-day', activeDay
 
-unsetActiveDay = ->
-  Session.set 'active-day', null
-
 setActiveShift = ->
   tournament = Session.get('active-tournament')
   activeShiftDefId = $('#shift option:selected').val()
-  activeShiftDef = (def for def in tournament.shiftDefs when def.shiftDefId is activeShiftDefId)[0]
-  Session.set 'active-shift', activeShiftDef
+  activeDay = moment(Session.get('active-day')).toISOString()
+  activeShift = (shift for shift in tournament.shifts when shift.shiftDefId is activeShiftDefId and moment(shift.day).toISOString() is activeDay)[0]
+  Session.set 'active-shift', activeShift
 
-getShiftStatus = (needed, confirmed) ->
+getShiftStatus = (confirmed, needed) ->
   status = 'good'
-  ratio = needed/confirmed
+  ratio = confirmed/needed
   if needed is 0 then return
-  if confirmed is 0 or ratio < 0.5 then status = 'bad'
   if ratio < 0.8 then status = 'almost'
+  if confirmed is 0 or ratio < 0.5 then status = 'bad'
   status
 
 getSortedShiftDefsForTeam = (tournament, teamId) ->
@@ -66,12 +67,55 @@ augmentDayShiftsWithConfirmedCount = (days, shifts, confirmed) ->
   shiftDays = for day in days
     day.activeShifts = for shift in shifts when moment(shift.day).toISOString() is moment(day.date).toISOString()
       shift.confirmedCount = (c for c in confirmed when shift.shiftId is c.shiftId).length
-      shift.status = getShiftStatus shift.count, shift.confirmedCount
+      shift.status = getShiftStatus shift.confirmedCount, shift.count
       shift
     day
 
 getFullName = (id) ->
   Meteor.users.findOne(id).profile.fullName
+
+getVolunteers = (id, idType) ->
+  activeDay = Session.get('active-day')
+  tournament = Session.get('active-tournament')
+  tId = tournament._id
+  activeTeamId = Session.get('active-team').teamId
+  schedule = Schedule.find(tournamentId: tId).fetch()
+  registrants = Registrants.find(tournamentId: tId).fetch()
+  shifts = (shift for shift in tournament.shifts when moment(shift.day).toISOString() is moment(activeDay).toISOString() and shift[idType] is id)
+  for shift in shifts 
+    confirmed = for user in schedule when user.shiftId is shift.shiftId
+      user.fullName = getFullName user.userId
+      user
+    keen = for user in registrants when _.contains(user.shifts, shift.shiftId)
+      user.fullName = getFullName user.userId
+      user
+    # keep only the ones who have not backed out (those no longer keen)
+    shift.confirmed = _.filter confirmed, (reg) ->
+      _.contains _.pluck(keen, 'userId'), reg.userId
+    # remove the ones who have backed out (those no longer keen)
+    shift.backedOut = _.reject confirmed, (reg) ->
+      _.contains _.pluck(keen, 'userId'), reg.userId
+    # remove duplicates that have already been confirmed (in the schedule)
+    shift.keen = _.reject keen, (reg) ->
+      _.contains _.pluck(schedule, 'userId'), reg.userId
+
+  shifts.sort (a, b) ->
+    moment(a.startTime).toDate() - moment(b.startTime).toDate()
+
+addUserToActiveShift = (userId) ->
+  Schedule.insert {
+    tournamentId: Session.get('active-tournament')._id,
+    shiftId: Session.get('active-shift').shiftId,
+    userId: userId
+  }
+
+removeUserFromShift = (userId) ->
+  schedule = Schedule.findOne(
+    tournamentId: Session.get('active-tournament')._id
+    shiftId: Session.get('active-shift').shiftId
+    userId: userId
+  )
+  Schedule.remove schedule._id
 
 
 
@@ -88,8 +132,8 @@ Template.schedule.activeTournamentSlug = ->
 Template.schedule.activeTeamName = ->
   Session.get('active-team')?.teamName
 
-Template.schedule.activeShiftName = ->
-  Session.get('active-shift').shiftName
+# Template.schedule.activeShiftName = ->
+#   Session.get('active-shift').shiftName
 
 Template.schedule.showingAllDays = ->
   not Session.get('active-day')
@@ -137,48 +181,19 @@ Template.schedule.shifts = ->
   shiftDefs = getSortedShiftDefsForTeam tournament, teamId
   shifts = getSortedShiftsForTeam tournament, teamId
   days = getSortedTournamentDays tournament
-  # shiftDays = augmentDaysWithShifts days, shifts 
   shiftDays = augmentDayShiftsWithConfirmedCount days, shifts, confirmed
 
   result = 
     defs: shiftDefs
     days: shiftDays
 
-Template.schedule.dayShifts = ->
-  activeDay = Session.get('active-day')
-  tournament = Session.get('active-tournament')
-  tId = tournament._id
+Template.schedule.dayVolunteers = ->
   activeTeamId = Session.get('active-team').teamId
-  schedule = Schedule.find(tournamentId: tId).fetch()
-  registrants = Registrants.find(tournamentId: tId).fetch()
-  shifts = (shift for shift in tournament.shifts when moment(shift.day).toISOString() is moment(activeDay).toISOString() and shift.teamId is activeTeamId)
-  for shift in shifts 
-    shift.confirmed = for user in schedule when user.shiftId is shift.shiftId
-      user.fullName = getFullName user.userId
-      user
-    shift.keen = for user in registrants when _.contains(user.shifts, shift.shiftId)
-      user.fullName = getFullName user.userId
-      user
-  shifts.sort (a, b) ->
-    moment(a.startTime).toDate() - moment(b.startTime).toDate()
+  getVolunteers activeTeamId, 'teamId'
 
 Template.schedule.shiftVolunteers = ->
-  activeDay = Session.get('active-day')
-  tournament = Session.get('active-tournament')
-  tId = tournament._id
   shiftDefId = Session.get('active-shift').shiftDefId
-  schedule = Schedule.find(tournamentId: tId).fetch()
-  registrants = Registrants.find(tournamentId: tId).fetch()
-  shifts = (shift for shift in tournament.shifts when moment(shift.day).toISOString() is moment(activeDay).toISOString() and shift.shiftDefId is shiftDefId)
-  for shift in shifts 
-    shift.confirmed = for user in schedule when user.shiftId is shift.shiftId
-      user.fullName = getFullName user.userId
-      user
-    shift.keen = for user in registrants when _.contains(user.shifts, shift.shiftId)
-      user.fullName = getFullName user.userId
-      user
-  shifts.sort (a, b) ->
-    moment(a.startTime).toDate() - moment(b.startTime).toDate()
+  getVolunteers shiftDefId, 'shiftDefId'
 
 Template.schedule.events
   'change #team': (evnt, template) ->
@@ -186,7 +201,18 @@ Template.schedule.events
 
   'change #day': (evnt, template) ->
     setActiveDay()
+    if not Session.get('active-day') then unsetActiveShift()
 
   'change #shift': (evnt, template) ->
     setActiveShift()
+
+  'click .one-shift .action': (evnt, template) ->
+    parent = $(evnt.currentTarget).parent()
+    userId = parent.data 'user-id'
+    action = parent.data 'action'
+    if action is 'confirmAdd'
+      addUserToActiveShift userId
+    else
+      removeUserFromShift userId
+
 

@@ -17,6 +17,10 @@
   background-color: red;
 }
 
+.one-shift .action {
+  cursor: pointer;
+}
+
 .confirmed {
 
 }
