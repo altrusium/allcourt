@@ -13,9 +13,10 @@
   <div class="row">
     <div class="span4">
       <h2 class="column-header"><small>Manage team schedules</small></h2>
+
       <form class="form-vertical">
         <div class="control-group">
-          <label for="team" class="control-label">Team</label>
+          <!-- <label for="team" class="control-label">Team</label> -->
           <div class="controls">
             <select id="team">
               {{#each teams}}
@@ -24,29 +25,27 @@
             </select>
           </div>
         </div>
-        <div class="control-group">
-          <label for="day" class="control-label">Day</label>
-          <div class="controls">
-            <select id="day">
-              <option value="">All Days</option>
-              {{#each shifts.days}}
-              <option value="{{date}}" {{markSelectedDay}}>{{dayOfWeek}}, {{dayOfMonth}}</option>
-              {{/each}}
-            </select>
-          </div>
-        </div>
-        <div class="control-group">
-          <label for="shift" class="control-label">Shift</label>
-          <div class="controls">
-            <select id="shift">
-              <option value="">All Shifts</option>
-              {{#each shifts.defs}}
-              <option value="{{shiftDefId}}" {{markSelectedShift}}>{{shiftName}}</option>
-              {{/each}}
-            </select>
-          </div>
-        </div>
       </form>
+
+      <ul class="nav nav-list span3">
+
+	      <li class="nav-header">Day</p>
+      	<li data-day="" class="{{markSelectedDay}}"><a href="#">All Days</a></li>
+        {{#each shifts.days}}
+        <li data-day="{{date}}" class="{{markSelectedDay}}">
+        	<a href="#">{{dayOfWeek}}, {{dayOfMonth}}</a>
+        </li>
+        {{/each}}
+
+	      <li class="nav-header">Shift</p>
+      	<li data-shift="" class="{{markSelectedShift}}"><a href="#">All Shifts</a></li>
+        {{#each shifts.defs}}
+        <li data-shift="{{shiftDefId}}" class="{{markSelectedShift}}">
+        	<a href="#">{{shiftName}}</a>
+        </li>
+        {{/each}}
+
+      </ul>
     </div>
 
     {{#if showingAllDays}}

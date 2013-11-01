@@ -9,14 +9,12 @@ setActiveTeam = ->
     if team.teamId is tId then return team
   Session.set 'active-team', activeTeam
 
-setActiveDay = ->
-  activeDay = $('#day option:selected').val()
+setActiveDay = (activeDay) ->
   Session.set 'active-day', activeDay
 
-setActiveShift = ->
+setActiveShift = (activeShiftDefId) ->
   tournament = Session.get('active-tournament')
-  activeShiftDefId = $('#shift option:selected').val()
-  activeDay = moment(Session.get('active-day')).toISOString()
+  activeDay = moment(Session.get('active-day'))?.toISOString()
   activeShift = (shift for shift in tournament.shifts when shift.shiftDefId is activeShiftDefId and moment(shift.day).toISOString() is activeDay)[0]
   Session.set 'active-shift', activeShift
 
@@ -162,12 +160,13 @@ Template.schedule.markSelectedTeam = ->
     return 'selected=selected'
 
 Template.schedule.markSelectedDay = ->
+  this.date = this.date or ''
   if this.date is Session.get 'active-day'
-    return 'selected=selected'
+    return 'active'
 
 Template.schedule.markSelectedShift = ->
   if this.shiftDefId is Session.get('active-shift')?.shiftDefId
-    return 'selected=selected'
+    return 'active'
 
 Template.schedule.shifts = ->
   tournament = Session.get 'active-tournament'
@@ -195,12 +194,14 @@ Template.schedule.events
   'change #team': (evnt, template) ->
     setActiveTeam()
 
-  'change #day': (evnt, template) ->
-    setActiveDay()
+  'click li[data-day]': (evnt, template) ->
+    setActiveDay $(evnt.currentTarget).data('day')
     if not Session.get('active-day') then unsetActiveShift()
+    false
 
-  'change #shift': (evnt, template) ->
-    setActiveShift()
+  'click li[data-shift]': (evnt, template) ->
+    setActiveShift $(evnt.currentTarget).data('shift')
+    false
 
   'click .one-shift .action': (evnt, template) ->
     parent = $(evnt.currentTarget).parent()
