@@ -15,6 +15,9 @@ allcourt.co.nz"
 Meteor.publish null, ->
   return Meteor.users.find {}, fields: username: 1, email: 1, profile: 1
 
+Meteor.publish 'schedule', ->
+  return Schedule.find()
+  
 Meteor.publish 'volunteers', ->
 	return Volunteers.find()
 	

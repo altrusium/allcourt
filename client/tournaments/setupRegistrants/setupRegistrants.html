@@ -7,12 +7,13 @@
     <li><a href="/tournament/{{activeTournamentSlug}}/roles">Roles</a> <span class="divider">|</span></li>
     <li><a href="/tournament/{{activeTournamentSlug}}/teams">Teams</a> <span class="divider">|</span></li>
     <li class="active">Registrants <span class="divider">|</span></li>
-    <li><a href="/tournament/{{activeTournamentSlug}}/shifts">Volunteer Shifts</a></li>
+    <li><a href="/tournament/{{activeTournamentSlug}}/shifts">Volunteer Shifts</a> <span class="divider">|</span></li>
+    <li><a href="/tournament/{{activeTournamentSlug}}/schedule">Volunteer Schedule</a></li>
   </ul>
   {{/if}}
   {{> userMessages}}
   <div class="row">
-    <div class="span5">
+    <div class="span4">
       <h2 class="column-header"><small>Manage team registrants</small></h2>
       <form class="form-vertical">
         <div class="control-group">
@@ -45,7 +46,7 @@
         </div>
       </form>
     </div>
-    <div class="span6">
+    <div class="span8">
       {{#if searchResults}}
       <h2 class="column-header"><small>Possible user matches</small></h2>
       <table class="table table-hover table-striped">
@@ -72,14 +73,18 @@
         <thead>
           <tr>
             <th>User</th>
+            <th>Approved</th>
             <th>Team Lead</th>
-            <th>Unregister</th>
+            <th>Remove</th>
           </tr>
         </thead>
         <tbody>
           {{#each registrants}}
           <tr>
             <td>{{fullName}}</td>
+            <td>
+              <input type="checkbox" class="checkbox" data-action="approve" data-user="{{id}}" {{approved}}>
+            </td>
             <td>
               <input type="checkbox" class="checkbox" data-action="makeLead" data-user="{{id}}" {{teamLeadChecked}}>
             </td>

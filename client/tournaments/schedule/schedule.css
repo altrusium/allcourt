@@ -1,0 +1,30 @@
+.shift-status {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.status-marker {
+  width: 46px;
+  height: 5px;
+}
+.status-marker.good {
+  background-color: green;
+}
+.status-marker.almost {
+  background-color: yellow;
+}
+.status-marker.bad {
+  background-color: red;
+}
+
+.confirmed {
+
+}
+
+.backed-out {
+  text-decoration: line-through;
+}
+
+.keen {
+  color: silver;
+}

@@ -1,3 +1,4 @@
+schedule = Meteor.subscribe 'schedule'
 volunteers = Meteor.subscribe 'volunteers'
 tournaments = Meteor.subscribe 'tournaments'
 registrants = Meteor.subscribe 'registrants'
