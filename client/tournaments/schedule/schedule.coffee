@@ -78,7 +78,6 @@ getVolunteers = (id, idType) ->
   activeDay = Session.get('active-day')
   tournament = Session.get('active-tournament')
   tId = tournament._id
-  activeTeamId = Session.get('active-team').teamId
   schedule = Schedule.find(tournamentId: tId).fetch()
   registrants = Registrants.find(tournamentId: tId).fetch()
   shifts = (shift for shift in tournament.shifts when moment(shift.day).toISOString() is moment(activeDay).toISOString() and shift[idType] is id)
@@ -97,7 +96,7 @@ getVolunteers = (id, idType) ->
       _.contains _.pluck(keen, 'userId'), reg.userId
     # remove duplicates that have already been confirmed (in the schedule)
     shift.keen = _.reject keen, (reg) ->
-      _.contains _.pluck(schedule, 'userId'), reg.userId
+      _.contains _.pluck(confirmed, 'userId'), reg.userId
 
   shifts.sort (a, b) ->
     moment(a.startTime).toDate() - moment(b.startTime).toDate()
@@ -131,9 +130,6 @@ Template.schedule.activeTournamentSlug = ->
 
 Template.schedule.activeTeamName = ->
   Session.get('active-team')?.teamName
-
-# Template.schedule.activeShiftName = ->
-#   Session.get('active-shift').shiftName
 
 Template.schedule.showingAllDays = ->
   not Session.get('active-day')
