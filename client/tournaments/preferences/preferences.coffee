@@ -47,6 +47,7 @@ Template.preferences.created = ->
   setAcceptedShifts()
 
 Template.preferences.rendered = ->
+  setActiveTeam()
   $('#sortableTeams').disableSelection()
   $('#sortableTeams').sortable 
     forcePlaceholderSize: true 
