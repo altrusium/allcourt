@@ -151,3 +151,6 @@ Template.preferences.events
       Registrants.update { _id: signupId }, { $pull: shifts: id }, (err) ->
         unless err then showSaved 'Removed'
     setAcceptedShifts()
+
+  'click #continueButton': (evnt, template) ->
+    Meteor.Router.to '/profile/edit'

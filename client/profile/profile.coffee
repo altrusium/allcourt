@@ -135,7 +135,7 @@ Template.profileEdit.events
         type: 'info',
         title: 'Success!',
         message: 'Your profile details were saved successfully.'
-    Meteor.call 'updateVolunteerProfile', volunteerOptions, (err) ->
+    Meteor.call 'updateVolunteer', volunteerOptions, (err) ->
       Template.userMessages.showMessage 
         type: 'info',
         title: 'Success!',

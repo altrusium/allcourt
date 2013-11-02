@@ -1,0 +1,21 @@
+<template name="volunteerDetailsPartial">
+  <div class="span3">
+  {{#with details}}
+    <p>
+      Home phone: <strong>{{homePhone}}</strong><br>
+      Mobile phone: <strong>{{mobilePhone}}</strong>
+    </p>
+    Address:<br>
+    <address>
+      <strong>
+      {{address}}<br>
+      {{city}}<br>
+      {{suburb}}<br>
+      {{postalCode}}<br>
+      </strong>
+    </address>
+    Birthdate: <strong>{{birthdate}}</strong><br>
+    Shirt size: <strong>{{shirtSize}}</strong>
+  {{/with}}
+  </div>
+</template>

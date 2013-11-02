@@ -11,50 +11,21 @@
 	  <div class="span8">
 	  	<p class="lead">Please select a tournament to continue.</p>
 
-	  	{{#if myTournaments}}
-			<h2 class="column-header"><small>My Tournaments</small></h2>
-				<ul>
-					{{#each myTournaments}}
-					<li><a href="/tournament/{{slug}}/preferences">{{tournamentName}}</a></li>
-					{{/each}}
-				</ul>
+		  {{#if showMyTournaments}}
+		  	{{> myTournamentList}}
 	  	{{/if}}
 
-			{{#if showActiveUserTournaments}}
-			<h2 class="column-header"><small>Active Tournaments</small></h2>
-				<ul>
-					{{#each activeTournaments}}
-					<li>{{tournamentName}} (<a href="/tournament/{{slug}}/register">register</a>)</li>
-					{{/each}}
-				</ul>
-			{{/if}}
+		  {{#if showActiveUserTournaments}}
+		  	{{> activeUserTournamentList}}
+	  	{{/if}}
 
-			{{#if showActiveAdminTournaments}}
-			<h2 class="column-header"><small>Active Tournaments</small></h2>
-				<ul>
-					{{#each activeTournaments}}
-					<li><a href="/tournament/{{slug}}">{{tournamentName}}</a></li>
-					{{/each}}
-				</ul>
-			{{/if}}
+		  {{#if showActiveAdminTournaments}}
+		  	{{> activeAdminTournamentList}}
+		  {{/if}}
 
-			{{#if showPreviousUserTournaments}}
-			<h2 class="column-header"><small>Previous Tournaments</small></h2>
-				<ul>
-					{{#each previousTournaments}}
-					<li>{{tournamentName}}</li>
-					{{/each}}
-				</ul>
-			{{/if}}
-
-			{{#if showPreviousAdminTournaments}}
-			<h2 class="column-header"><small>Previous Tournaments</small></h2>
-				<ul>
-					{{#each previousTournaments}}
-					<li><a href="/tournament/{{slug}}">{{tournamentName}}</a></li>
-					{{/each}}
-				</ul>
-			{{/if}}
+		  {{#if showPreviousAdminTournaments}}
+		  	{{> previousAdminTournamentList}}
+		  {{/if}}
 
 		</div>
 	  <div class="span3 offset1">

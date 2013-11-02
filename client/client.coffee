@@ -80,7 +80,8 @@ Meteor.Router.add
   '/tournament/:slug/preferences': (slug) ->
     return setActiveTournament(slug) or 'preferences'
   '/tournament/:slug/schedule': (slug) ->
-    return setActiveTournament(slug) or 'schedule'
+    setActiveTournament(slug) 
+    if isAdmin() then 'schedule' else 'userSchedule'
   '*': 'notFound'
 
 Template.activeTournament.tournament = ->

@@ -18,3 +18,4 @@ Template.userMenu.events
 		Meteor.logout ->
       Session.set 'active-tournament', null
 	    Meteor.Router.to '/'
+    false

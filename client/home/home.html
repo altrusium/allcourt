@@ -6,18 +6,27 @@
 	  <div class="span8">
 
 			{{#if currentUser}}
-		  	{{#if isAdmin}}
-		  		{{> adminHome}}
-		  	{{else}}
-		  		{{> userHome}}
-			  {{/if}}
+	  		<div class="row">
+	  			<div class="span4">
+			  		{{> displayProfileDetails}}
+			  	</div>
+			  	<div class="span4">
+			  		{{#if isAdmin}}
+			  			{{> activeAdminTournamentList}}
+			  			{{> previousAdminTournamentList}}
+			  		{{else}}
+				  		{{> myTournamentList}}
+				  		{{> activeUserTournamentList}}
+			  		{{/if}}
+			  	</div>
+			  </div>
 			{{else}}
 	  		{{> anonymousHome}}
 	  		{{> signIn}}
 		  {{/if}}
 
-			<h2><small>Thoughts?</small></h2>
-			<p>Hi, I'm Don. If you have any questions, comments, or suggestions, please don't hesitate to <a href="mailto:locksmithdon@gmail.com">flick me a mail</a>. As the creator and current maintainer of All-Court, I'm happy to help however I can.</p>
+			<h2><small>Need Help?</small></h2>
+			<p>If you have any questions or comments, please <a href="mailto:volunteers@tennisauckland.co.nz">email Don</a>. He's happy to help.</p>
 
 		</div>
 	  <div class="span3 offset1">
@@ -27,7 +36,7 @@
 </template>
 
 <template name="anonymousHome">
-	<p class="lead">Welcome to All-Court, a tool supporting Auckland's <a href="http://festivaloftennis.co.nz">Festival of Tennis</a>. Register and sign-in below to make our next professional tennis tournaments <em>even better</em> than the last.</p>
+	<p class="lead">Welcome to All-Court, a tool supporting the <a href="http://festivaloftennis.co.nz">New Zealand Festival of Tennis</a>. Register and sign-in to make our next professional tournaments <em>even better</em> than the last.</p>
 </template>
 
 <template name="adminHome">
@@ -36,7 +45,6 @@
 </template>
 
 <template name="userHome">
-	<h2><small>User</small></h2>
-	<p>You are currently signed in as a user.</p>
+	{{> readOnlyProfile}}
 </template>
 

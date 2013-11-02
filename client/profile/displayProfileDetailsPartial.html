@@ -1,0 +1,15 @@
+<!-- This template should be in a span3 -->
+<template name="displayProfileDetails">
+    {{#with profileDetails}}
+    <div class="span3">
+      {{#if photoFilename}}
+        <img class="volunteer-photo" src="{{photoFile}}"><br>
+      {{else}}
+        <div class="{{#if isMale}}male{{else}}female{{/if}} photo-placeholder"></div>
+      {{/if}}}
+      <h3>{{fullName}}</h3>
+      <p>{{email}}</p>
+      <p><button id="editProfile" class="btn" data-volunteer-id="{{_id}}">Edit Profile</button></p>
+    </div>
+    {{/with}}
+</template>
