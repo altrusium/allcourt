@@ -12,14 +12,14 @@ setActiveTeam = ->
     if team.teamId is tId then return team
   Session.set 'active-team', activeTeam
 
-sendNotificationEmail = (tournament, role) ->
+sendNotificationEmail = (tournament, role, team) ->
   fullName = Meteor.user().profile.fullName
   Meteor.call 'sendEmail',
     from: 'All-Court Registrations <postmaster@allcourt.co.nz>',
     to: [Meteor.user().profile.email, 'Tennis Auckland <volunteers@tennisauckland.co.nz>'],
     replyTo: [Meteor.user().profile.email, 'Tennis Auckland <volunteers@tennisauckland.co.nz>'], 
     subject: 'New user registration on allcourt.co.nz',
-    text: "#{fullName}, thank you for your registering as a #{role} at #{tournament}.\n\nIf you have any questions, just reply to this message and someone from Tennis Auckland will get back to you as soon as they can.\n\nAll-Court is still under development, so we appreciate your patience, but please let us know if you run into anything unexpected.\n\nWarm regards,\nTennis Auckland"
+    text: "#{fullName}, thank you for registering as a #{role} (#{team}) at #{tournament}.\n\nIf you have any questions, just reply to this message and someone from Tennis Auckland will get back to you as soon as they can.\n\nAll-Court is still under development, so we appreciate your patience, but please let us know if you run into anything unexpected.\n\nWarm regards,\nTennis Auckland"
 
 setAcceptedShifts = ->
   signupId = Session.get 'reg-id'
@@ -32,6 +32,7 @@ associateUserWithTournament = (userId) ->
   roleName = Session.get('active-role').roleName
   tournamentName = Session.get('active-tournament').tournamentName
   teamId = Session.get('active-team').teamId
+  teamName = Session.get('active-team').teamName
   signup = Registrants.findOne { tournamentId: tId, userId: userId }
   Registrants.insert { 
     userId: userId, 
@@ -42,7 +43,7 @@ associateUserWithTournament = (userId) ->
     unless err
       Session.set 'reg-id', id
       setAcceptedShifts()
-      sendNotificationEmail tournamentName, roleName
+      sendNotificationEmail tournamentName, roleName, teamName
       Template.userMessages.showMessage
         type: 'info'
         title: 'Success:'
