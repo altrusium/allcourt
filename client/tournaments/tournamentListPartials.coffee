@@ -37,11 +37,17 @@ allcourt.getPreviousTournaments = ->
 Template.myTournamentList.myTournaments = ->
   allcourt.getMyTournaments()
 
+Template.myTournamentList.linkHelper = ->
+  tournamentSlug: this.slug
+
 Template.activeUserTournamentList.activeTournaments = ->
   allcourt.getActiveTournaments()
 
 Template.activeAdminTournamentList.activeTournaments = ->
   allcourt.getActiveTournaments()
+
+Template.activeAdminTournamentList.linkHelper = ->
+  tournamentSlug: this.slug
 
 Template.previousUserTournamentList.previousTournaments = ->
   allcourt.getPreviousTournaments()

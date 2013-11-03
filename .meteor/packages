@@ -9,7 +9,6 @@ stylus
 handlebars
 jquery
 bootstrap
-router
 moment
 standard-app-packages
 accounts-facebook
@@ -17,3 +16,4 @@ accounts-google
 accounts-password
 accounts-ui
 email
+iron-router

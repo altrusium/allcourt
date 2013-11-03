@@ -12,5 +12,5 @@ Template.displayProfileDetails.profileDetails = ->
 
 Template.displayProfileDetails.events =
   'click #editProfile': (evnt, template) ->
-    Meteor.Router.to '/profile/edit/'
+    Router.go 'profileEdit'
     false

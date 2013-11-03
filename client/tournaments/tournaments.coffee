@@ -2,20 +2,20 @@ Template.tournaments.created = ->
   Session.set 'active-tournament', null
 
 Template.tournaments.isAdmin = ->
-  Meteor.user().profile.admin
+  allcourt.isAdmin()
 
 Template.tournaments.showMyTournaments = ->
-  not Meteor.user().profile.admin
+  not allcourt.isAdmin()
 
 Template.tournaments.showActiveUserTournaments = ->
-  not Meteor.user().profile.admin
+  not allcourt.isAdmin()
 
 Template.tournaments.showActiveAdminTournaments = ->
-  Meteor.user().profile.admin
+  allcourt.isAdmin()
 
 Template.tournaments.showPreviousUserTournaments = ->
-  not Meteor.user().profile.admin
+  not allcourt.isAdmin()
 
 Template.tournaments.showPreviousAdminTournaments = ->
-  Meteor.user().profile.admin
+  allcourt.isAdmin()
   

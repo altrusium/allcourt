@@ -3,90 +3,164 @@ volunteers = Meteor.subscribe 'volunteers'
 tournaments = Meteor.subscribe 'tournaments'
 registrants = Meteor.subscribe 'registrants'
 
-setActiveTournament = (slug) ->
+setActiveTournament = ->
+  slug = this.params?.tournamentSlug
   tournament = Tournaments.findOne slug: slug
-  unless tournament
-    return 'notFound'
-  else
-    Session.set 'active-tournament', tournament
-    return false
+  Session.set 'active-tournament', tournament
 
-setActiveVolunteer = (slug) ->
+setActiveVolunteer = ->
+  slug = this.params.userSlug
   userDetails = Meteor.users.findOne 'profile.slug': slug
-  volunteer = userDetails and Volunteers.findOne userDetails._id
-  unless volunteer
-    return 'notFound'
-  else
-    volunteer.userDetails = userDetails
-    Session.set 'active-volunteer', volunteer
-    return false
+  volunteer = Volunteers.findOne userDetails?._id
+  Session.set 'active-volunteer', volunteer
 
-setActiveUser = (slug) ->
-  userDetails = Meteor.users.findOne 'profile.slug': slug
-  unless userDetails
-    return 'notFound'
-  else
-    Session.set 'active-user', userDetails
-    return false
+setActiveUser = ->
+  slug = this.params.userSlug
+  user = Meteor.users.findOne 'profile.slug': slug
+  Session.set 'active-user', user
     
-isAdmin = ->
-  return Meteor.user() and Meteor.user().profile.admin
+onlyShow = (template, router) ->
+  router.render()
+  router.render(template)
+  router.stop()
 
-Meteor.Router.add
-  '/': 'home',
-  '/profile': 'profileDetails',
-  '/profile/edit': 'profileEdit',
-  '/users': ->
-    return if isAdmin() then 'users' else 'notAuthorised'
-  '/user/create': ->
-    return if isAdmin() then 'userCreate' else 'notAuthorised'
-  '/user/edit/:slug': (slug) ->
-    unless isAdmin() then return 'notAuthorised'
-    return setActiveUser(slug) or 'userCreate'
-  '/user/:slug': (slug) ->
-    unless isAdmin() then return 'notAuthorised'
-    return setActiveUser(slug) or 'userDetails'
-  '/volunteers': ->
-    return if isAdmin() then 'volunteers' else 'notAuthorised'
-  '/volunteer/create': ->
-    return if isAdmin() then 'volunteerCreate' else 'notAuthorised'
-  '/volunteer/list': ->
-    return if isAdmin() then 'volunteerList' else 'notAuthorised'
-  '/volunteer/edit/:slug': (slug) ->
-    unless isAdmin() then return 'notAuthorised'
-    return setActiveVolunteer(slug) or 'volunteerCreate'
-  '/volunteer/:slug': (slug) ->
-    unless isAdmin() then return 'notAuthorised'
-    return setActiveVolunteer(slug) or 'volunteerDetails'
-  '/tournaments': 'tournaments' 
-  '/tournament/create': ->
-    return if isAdmin() then 'createTournament' else 'notAuthorised'
-  '/tournament/:slug/roles': (slug) ->
-    unless isAdmin() then return 'notAuthorised'
-    return setActiveTournament(slug) or 'setupRoles' 
-  '/tournament/:slug/teams': (slug) ->
-    unless isAdmin() then return 'notAuthorised'
-    return setActiveTournament(slug) or 'setupTeams' 
-  '/tournament/:slug/registrants': (slug) ->
-    unless isAdmin() then return 'notAuthorised'
-    return setActiveTournament(slug) or 'setupRegistrants' 
-  '/tournament/:slug/shifts': (slug) ->
-    unless isAdmin() then return 'notAuthorised'
-    return setActiveTournament(slug) or 'setupShifts' 
-  '/tournament/:slug': (slug) ->
-    return setActiveTournament(slug) or 'tournamentDetails'
-  '/tournament/:slug/register': (slug) ->
-    return setActiveTournament(slug) or 'register'
-  '/tournament/:slug/preferences': (slug) ->
-    return setActiveTournament(slug) or 'preferences'
-  '/tournament/:slug/schedule': (slug) ->
-    setActiveTournament(slug) 
-    if isAdmin() then 'schedule' else 'userSchedule'
-  '*': 'notFound'
+mustBeSignedIn = ->
+  unless Meteor.user() 
+    onlyShow 'home', this
 
+mustBeAnAdmin = ->
+  unless allcourt.isAdmin() then onlyShow 'notFound', this 
+
+Router.configure 
+  layoutTemplate: 'main'
+  notFoundTemplate: 'notFound'
+
+Router.before mustBeSignedIn, except: ['home']
+Router.before mustBeAnAdmin, except: [
+  'home', 
+  'profileDetails', 
+  'profileEdit', 
+  'tournaments',
+  'register',
+  'preferences',
+  'userSchedule'
+]
+
+Router.map ->
+  this.route 'home',
+    path: '/'
+
+  this.route 'profileDetails',
+    path: '/profile'
+
+  this.route 'profileEdit',
+    path: '/profile/edit'
+
+  this.route 'users',
+    path: '/users'
+
+  this.route 'userCreate',
+    path: '/user/create'
+    before: ->
+      Session.set 'active-user', null
+
+  this.route 'userEdit',
+    path: '/user/edit/:userSlug'
+    template: 'userCreate'
+    before: ->
+      setActiveUser.call(this)
+      setActiveVolunteer.call(this)
+    data: ->
+      Session.get 'active-user'
+
+  this.route 'userDetails',
+    path: 'user/:userSlug'
+    before: setActiveUser
+    data: ->
+      Session.get 'active-user'
+
+  # '/volunteers': ->
+  #   return if allcourt.isAdmin() then 'volunteers' else 'notAuthorised'
+  # '/volunteer/create': ->
+  #   return if allcourt.isAdmin() then 'volunteerCreate' else 'notAuthorised'
+  # '/volunteer/list': ->
+  #   return if allcourt.isAdmin() then 'volunteerList' else 'notAuthorised'
+  # '/volunteer/edit/:slug': (slug) ->
+  #   unless allcourt.isAdmin() then return 'notAuthorised'
+  #   return setActiveVolunteer(slug) or 'volunteerCreate'
+  # '/volunteer/:slug': (slug) ->
+  #   unless allcourt.isAdmin() then return 'notAuthorised'
+  #   return setActiveVolunteer(slug) or 'volunteerDetails'
+
+  this.route 'tournaments',
+    path: '/tournaments'
+
+  this.route 'createTournament',
+    path: '/tournament/create'
+
+  this.route 'setupRoles',
+    path: '/:tournamentSlug/roles'
+    before: setActiveTournament
+    data: ->
+      Session.get 'active-tournament'
+
+  this.route 'setupTeams',
+    path: '/:tournamentSlug/teams'
+    before: setActiveTournament
+    data: ->
+      Session.get 'active-tournament'
+      
+  this.route 'setupRegistrants',
+    path: '/:tournamentSlug/registrants'
+    before: setActiveTournament
+    data: ->
+      Session.get 'active-tournament'
+      
+  this.route 'setupShifts',
+    path: '/:tournamentSlug/shifts'
+    before: setActiveTournament
+    data: ->
+      Session.get 'active-tournament'
+      
+  this.route 'register',
+    path: '/:tournamentSlug/register'
+    before: setActiveTournament
+    data: ->
+      Session.get 'active-tournament'
+      
+  this.route 'preferences',
+    path: '/:tournamentSlug/preferences'
+    before: setActiveTournament
+    data: ->
+      Session.get 'active-tournament'
+      
+  this.route 'schedule',
+    path: '/:tournamentSlug/schedule'
+    before: setActiveTournament
+    data: ->
+      Session.get 'active-tournament'
+      
+  this.route 'userSchedule',
+    path: '/:tournamentSlug/schedule/:userSlug'
+    before: ->
+      setActiveTournament.call(this)
+      setActiveUser.call(this)
+    data: ->
+      Session.get('active-tournament')? and Session.get('active-user')?
+      
+  this.route 'tournamentDetails',
+    path: '/:tournamentSlug'
+    before: setActiveTournament
+    data: ->
+      Session.get 'active-tournament'
+      
+
+
+
+# Template is in allcourt.html
 Template.activeTournament.tournament = ->
-  tournament = Session.get 'active-tournament'
-  return tournament 
+  Session.get 'active-tournament'
+
 
 # For debugging and styling
 # Session.set 'user-message',

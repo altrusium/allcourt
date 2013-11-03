@@ -11,6 +11,7 @@ Meteor.methods
         photoFilename: options.photoFilename
         gender: options.gender || 'female'
         slug: options.firstName + options.lastName
+        admin: options.admin
     Accounts.createUser newUser
 
   updateUser: (options) ->
@@ -23,7 +24,8 @@ Meteor.methods
       fullName: firstName + ' ' + lastName,
       photoFilename: options.photoFilename,
       gender: options.gender || 'female',
-      slug: options.firstName + options.lastName,
+      slug: firstName + lastName,
+      admin: options.admin
       }
 
   createNewVolunteer: (options) ->

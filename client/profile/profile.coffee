@@ -102,7 +102,7 @@ Template.profileDetails.myTournaments = ->
 
 Template.profileDetails.events =
   'click #editProfile': (evnt, template) ->
-    Meteor.Router.to '/profile/edit/'
+    Router.go 'profileEdit'
 
 
 
@@ -141,5 +141,5 @@ Template.profileEdit.events
         title: 'Success!',
         message: 'Your profile details were saved successfully.'
     $('.wait-message').hide()
-    Meteor.Router.to '/profile/'
+    Router.go 'profileDetails'
 

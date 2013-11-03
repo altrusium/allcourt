@@ -55,6 +55,9 @@ Template.preferences.rendered = ->
       teams = $('#sortableTeams').sortable('toArray').slice(0, 4)
       saveTeamPreferences teams
 
+Template.preferences.linkHelper = ->
+  allcourt.getTournamentLinkHelper()
+
 Template.preferences.activeTournamentSlug = ->
   Session.get('active-tournament').slug
 
@@ -154,4 +157,4 @@ Template.preferences.events
     setAcceptedShifts()
 
   'click #continueButton': (evnt, template) ->
-    Meteor.Router.to '/profile/edit'
+    Router.go 'profileEdit'

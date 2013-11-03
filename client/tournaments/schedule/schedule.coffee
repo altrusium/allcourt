@@ -123,6 +123,9 @@ Template.schedule.created = ->
       Session.set 'volunteer-role-id', role.roleId
       return
 
+Template.schedule.linkHelper = ->
+  allcourt.getTournamentLinkHelper()
+
 Template.schedule.activeTournamentSlug = ->
   Session.get('active-tournament').slug
 

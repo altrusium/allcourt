@@ -34,9 +34,6 @@ setActiveRole = ->
     if role.roleId is rId then return role
   Session.set 'active-role', activeRole
 
-isAdmin = ->
-  Meteor.user().profile.admin
-
 
 
 
@@ -47,7 +44,10 @@ Template.setupTeams.activeTournaments = ->
   getActiveTournaments()
 
 Template.setupTeams.isAdmin = ->
-  isAdmin()
+  allcourt.isAdmin()
+
+Template.setupTeams.linkHelper = ->
+  allcourt.getTournamentLinkHelper()
 
 Template.setupTeams.activeTournamentSlug = ->
   Session.get('active-tournament').slug

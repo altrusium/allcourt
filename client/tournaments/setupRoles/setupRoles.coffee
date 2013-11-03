@@ -29,9 +29,6 @@ getPreviousTournaments = ->
   list = getSortedTournaments()
   result = (t for t in list when new Date(t.days[t.days.length-1]) < new Date())
 
-isAdmin = ->
-  Meteor.user().profile.admin
-
 
 
 
@@ -45,7 +42,10 @@ Template.setupRoles.activeTournaments = ->
   getActiveTournaments()
 
 Template.setupRoles.isAdmin = ->
-  isAdmin()
+  allcourt.isAdmin()
+
+Template.setupRoles.linkHelper = ->
+  allcourt.getTournamentLinkHelper()
 
 Template.setupRoles.activeTournamentSlug = ->
   Session.get('active-tournament').slug

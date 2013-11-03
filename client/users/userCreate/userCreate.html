@@ -1,15 +1,10 @@
 <template name="userCreate">
   {{> tabs}}
   {{setTab 'users'}}
-  <ul class="breadcrumb">
-    <li><a href="/users">Users</a> <span class="divider">/</span></li>
-    <li class="active">{{#if detail.isNew}}Create{{else}}Edit{{/if}}</li>
-  </ul>
   {{> userMessages}}
   <div class="row">
-    <form method="post">
-    {{#with detail}}
     <div class="span5">
+      {{#with userDetails}}
       <form class="form-horizontal">
         <div id="photoPlaceholder" class="{{#if isMale}}male{{else}}female{{/if}} empty photo-placeholder">
           <img src="{{photoPath}}" id="photoImg">
@@ -22,9 +17,9 @@
           </div>
         </div>
         <div class="control-group">
-          <label class="control-label" for="primaryEmail">Primary Email</label>
+          <label class="control-label" for="email">Email</label>
           <div class="controls">
-            <input type="text" id="primaryEmail" value="{{primaryEmail}}" {{emailDisabled}} required>
+            <input type="text" id="email" value="{{email}}" {{emailDisabled}} required>
           </div>
         </div>
         <div class="control-group">
@@ -66,13 +61,22 @@
         </div>
         <div class="control-group">
           <div class="controls">
+            <label class="checkbox">
+              <input type="checkbox" id="isVolunteer" {{volunteer}}> Volunteer
+            </label>
+          </div>
+        </div>
+        <div class="control-group">
+          <div class="controls">
             <button type="button" id="saveProfile" class="btn btn-primary">Save Profile</button>
           </div>
         </div>
       </form>
+      {{/with}}
     </div>
     <div class="span5">
-      <form class="form-horizontal">
+      {{#with volunteerDetails}}
+      <form class="{{hidden}} volunteer-details form-horizontal">
         <div class="control-group">
           <label class="control-label" for="shirtSize">Shirt Size</label>
           <div class="controls">
@@ -146,9 +150,8 @@
           </div>
         </div>
       </form>
+      {{/with}}
     </div>
-    {{/with}}
-    </form>
   </div>
 </template>
 

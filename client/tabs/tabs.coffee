@@ -17,5 +17,5 @@ Template.userMenu.events
 	'click #signOut': (evnt, temlate) ->
 		Meteor.logout ->
       Session.set 'active-tournament', null
-	    Meteor.Router.to '/'
+	    Router.go 'home'
     false

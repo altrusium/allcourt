@@ -254,7 +254,7 @@ Template.volunteerDetails.events =
     id = Session.get('active-volunteer')._id
     Volunteers.remove id, ->
       Meteor.users.remove id, ->
-      Meteor.Router.to '/volunteer/list'
+      Router.go 'volunteerList'
       Template.userMessages.showMessage 
         type: 'info',
         title: 'Deleted!',
@@ -262,7 +262,7 @@ Template.volunteerDetails.events =
   'click #deleteCancelled': (evnt, template) ->
     $('#deleteModal').hide()
   'click #editProfile': (evnt, template) ->
-    Meteor.Router.to '/volunteer/edit/' + Session.get('active-volunteer').userDetails.profile.slug
+    Router.to 'volunteerEdit/', userSlug: Session.get('active-volunteer').userDetails.profile.slug
 
 
 

@@ -1,10 +1,6 @@
 <template name="userDetails">
   {{> tabs}}
   {{setTab 'users'}}
-  <ul class="breadcrumb">
-    <li><a href="/users">Users</a> <span class="divider">/</span></li>
-    <li class="active">Details</li>
-  </ul>
   {{> userMessages}}
   <div class="row">
     {{#with detail}}
@@ -20,12 +16,10 @@
     <div class="volunteer-details span4">
       <h3>{{firstName}} {{lastName}}</h3>
       <p>
-        {{#if primaryEmail}}<a href="mailto:{{primaryEmail}}">{{primaryEmail}}</a><br>{{/if}}
-        {{#if secondaryEmail}}<a href="mailto:{{secondaryEmail}}">{{secondaryEmail}}</a>{{/if}}
+        {{#if email}}<a href="mailto:{{email}}">{{email}}</a><br>{{/if}}
       </p>
       <p>
         {{#if homePhone}}Home phone: {{homePhone}}<br>{{/if}}
-        {{#if workPhone}}Work phone: {{workPhone}}<br>{{/if}}
         {{#if mobilePhone}}Mobile phone: {{mobilePhone}}{{/if}}
       </p>
       <address>

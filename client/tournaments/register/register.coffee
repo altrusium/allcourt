@@ -92,5 +92,5 @@ Template.register.events
               type: 'error'
               title: 'Uh oh! '
               message: 'There was an error creating your volunteer record. Reason: ' + err.reason
-      Meteor.Router.to '/tournament/' + slug + '/preferences'
+      Router.go 'preferences', tournamentSlug: slug
     false

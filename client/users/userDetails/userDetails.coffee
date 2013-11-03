@@ -7,7 +7,7 @@ Template.userDetails.detail = ->
   user.photoFilename = profile.photoFilename
   user.firstName = profile.firstName
   user.lastName = profile.lastName
-  user.primaryEmail = profile.email
+  user.email = profile.email
   user.slug = profile.slug
   return user
 
@@ -34,16 +34,20 @@ Template.userDetails.events =
   'click #deleteVolunteer': (evnt, template) ->
     $('#deleteModal').modal()
   'click #deleteConfirmed': (evnt, template) ->
-    id = Session.get('active-volunteer')._id
-    Volunteers.remove id, ->
-      Meteor.users.remove id, ->
-      Meteor.Router.to '/volunteer/list'
+    id = Session.get('active-user')._id
+    Meteor.users.remove id, ->
       Template.userMessages.showMessage 
         type: 'info',
         title: 'Deleted!',
-        message: 'The volunteer was deleted'
+        message: 'The user was deleted'
+      Router.go 'users'
+      Volunteers.remove id, ->
+        Template.userMessages.showMessage 
+          type: 'info',
+          title: 'Deleted!',
+          message: 'The volunteer was deleted'
   'click #deleteCancelled': (evnt, template) ->
     $('#deleteModal').hide()
   'click #editProfile': (evnt, template) ->
-    Meteor.Router.to '/user/edit/' + Session.get('active-user').profile.slug
+    Router.go 'userEdit', userSlug: Session.get('active-user').profile.slug
 

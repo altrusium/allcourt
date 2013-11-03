@@ -2,8 +2,15 @@
 	{{> tabs}}
 	{{setTab 'tournaments'}}
 	<ul class="breadcrumb">
-		<li><a href="/tournament/{{activeTournamentSlug}}/preferences">Preferences</a> <span class="divider">|</span></li>
-		<li class="active">Schedule</li>
+    {{#with linkHelper}}
+    <li>
+      <a href="{{pathFor 'preferences'}}">Preferences</a> 
+      <span class="divider">|</span>
+    </li>
+    <li class="active">
+      Schedule
+    </li>
+    {{/with}}
 	</ul>
 	{{> userMessages}}
 	<div class="row">

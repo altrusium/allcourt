@@ -6,9 +6,6 @@ setActiveTeam = ->
     if team.teamId is tId then return team
   Session.set 'active-team', activeTeam
 
-isAdmin = ->
-  Meteor.user().profile.admin
-
 
 
 
@@ -29,7 +26,10 @@ Template.setupShifts.rendered = ->
   $('.icon-info-sign').popover()
 
 Template.setupShifts.isAdmin = ->
-  isAdmin()
+  allcourt.isAdmin()
+
+Template.setupShifts.linkHelper = ->
+  allcourt.getTournamentLinkHelper()
 
 Template.setupShifts.activeTeamName = ->
   Session.get('active-team')?.teamName

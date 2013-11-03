@@ -42,9 +42,6 @@ setActiveTeam = ->
     if team.teamId is tId then return team
   Session.set 'active-team', activeTeam
 
-isAdmin = ->
-  Meteor.user().profile.admin
-
 emptySearchResults = ->
   Session.set 'search-results', null
   $('#search').val ''
@@ -100,7 +97,10 @@ Template.setupRegistrants.rendered = ->
   setActiveTeam()
 
 Template.setupRegistrants.isAdmin = ->
-  isAdmin()
+  allcourt.isAdmin()
+
+Template.setupRegistrants.linkHelper = ->
+  allcourt.getTournamentLinkHelper()
 
 Template.setupRegistrants.activeTournaments = ->
   getActiveTournaments()

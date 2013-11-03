@@ -37,3 +37,6 @@
   margin-right: auto;
 }
 
+.hidden.volunteer-details {
+  display: none;
+}

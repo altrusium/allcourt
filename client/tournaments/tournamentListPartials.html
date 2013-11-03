@@ -2,7 +2,7 @@
   <h2 class="column-header"><small>My Tournaments</small></h2>
   <ul>
     {{#each myTournaments}}
-    <li><a href="/tournament/{{slug}}/preferences">{{tournamentName}}</a></li>
+    <li><a href="/{{slug}}/preferences">{{tournamentName}}</a></li>
     {{/each}}
   </ul>
 </template>
@@ -11,7 +11,8 @@
   <h2 class="column-header"><small>Active Tournaments</small></h2>
   <ul>
     {{#each activeTournaments}}
-    <li>{{tournamentName}} (<a href="/tournament/{{slug}}/register">register</a>)</li>
+    <li>{{tournamentName}} (<a href="/{{slug}}/register">register</a>)
+    </li>
     {{/each}}
   </ul>
 </template>
@@ -20,7 +21,7 @@
   <h2 class="column-header"><small>Active Tournaments</small></h2>
   <ul>
     {{#each activeTournaments}}
-    <li><a href="/tournament/{{slug}}">{{tournamentName}}</a></li>
+    <li><a href="/{{slug}}">{{tournamentName}}</a></li>
     {{/each}}
   </ul>
 </template>
@@ -38,7 +39,7 @@
   <h2 class="column-header"><small>Previous Tournaments</small></h2>
   <ul>
     {{#each previousTournaments}}
-    <li><a href="/tournament/{{slug}}">{{tournamentName}}</a></li>
+    <li><a href="/{{slug}}">{{tournamentName}}</a></li>
     {{/each}}
   </ul>
 </template>

@@ -3,12 +3,26 @@
   {{setTab 'tournaments'}}
   {{#if isAdmin}}
   <ul class="breadcrumb">
-    <li><a href="/tournament/{{activeTournamentSlug}}">Details</a> <span class="divider">|</span></li>
-    <li class="active">Roles <span class="divider">|</span></li>
-    <li><a href="/tournament/{{activeTournamentSlug}}/teams">Teams</a> <span class="divider">|</span></li>
-    <li><a href="/tournament/{{activeTournamentSlug}}/registrants">Registrants</a> <span class="divider">|</span></li>
-    <li><a href="/tournament/{{activeTournamentSlug}}/shifts">Volunteer Shifts</a> <span class="divider">|</span></li>
-    <li><a href="/tournament/{{activeTournamentSlug}}/schedule">Volunteer Schedule</a></li>
+    {{#with linkHelper}}
+    <li>
+      <a href="{{pathFor 'tournamentDetails'}}">Details</a> 
+      <span class="divider">|</span>
+    </li><li class="active">
+      Roles 
+      <span class="divider">|</span>
+    </li><li>
+      <a href="{{pathFor 'setupTeams'}}">Teams</a> 
+      <span class="divider">|</span>
+    </li><li>
+      <a href="{{pathFor 'setupRegistrants'}}">Registrants</a> 
+      <span class="divider">|</span>
+    </li><li>
+      <a href="{{pathFor 'setupShifts'}}">Volunteer Shifts</a> 
+      <span class="divider">|</span>
+    </li><li>
+      <a href="{{pathFor 'schedule'}}">Volunteer Schedule</a>
+    </li>
+    {{/with}}
   </ul>
   {{/if}}
   {{> userMessages}}
