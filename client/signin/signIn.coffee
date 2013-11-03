@@ -78,6 +78,12 @@ Template.signIn.events
 					type: 'error',
 					title: 'Registration unsuccessful.',
 					message: 'Unable to save your registration. Please try agin and let us know if you continue to have trouble.'
+			else
+				Meteor.call 'sendVerificationEmail', Meteor.userId()
+				Template.userMessages.showMessage
+					type: 'info',
+					title: 'Success!',
+					message: 'Please check your email so you can verify your email address.'
 		false
 	'submit #recoveryForm': (evnt, template) ->
 		evnt.preventDefault()

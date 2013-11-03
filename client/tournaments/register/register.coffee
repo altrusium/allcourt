@@ -12,18 +12,25 @@ setActiveTeam = ->
     if team.teamId is tId then return team
   Session.set 'active-team', activeTeam
 
-sendNotificationEmail = ->
+sendNotificationEmail = (tournament, role) ->
+  fullName = Meteor.user().profile.fullName
   Meteor.call 'sendEmail',
     from: 'All-Court Registrations <postmaster@allcourt.co.nz>',
     to: [Meteor.user().profile.email, 'Tennis Auckland <volunteers@tennisauckland.co.nz>'],
     replyTo: [Meteor.user().profile.email, 'Tennis Auckland <volunteers@tennisauckland.co.nz>'], 
     subject: 'New user registration on allcourt.co.nz',
-    text: "#{Meteor.user().profile.firstName}, thank you for your #{Meteor.user().profile.type} registration at All-Court.\n\nIf you have any questions, just reply to this message and someone from Tennis Auckland will get back to you as soon as they can.\n\nAll-Court is still under development, but in the near future (before the tournaments begin) you'll be able to use it to help with your involvement in the tournaments.\n\nWarm regards,\nTennis Auckland"
-  
+    text: "#{fullName}, thank you for your registering as a #{role} at #{tournament}.\n\nIf you have any questions, just reply to this message and someone from Tennis Auckland will get back to you as soon as they can.\n\nAll-Court is still under development, so we appreciate your patience, but please let us know if you run into anything unexpected.\n\nWarm regards,\nTennis Auckland"
+
+setAcceptedShifts = ->
+  signupId = Session.get 'reg-id'
+  signup = Registrants.findOne { _id: signupId }
+  Session.set 'accepted-shifts', signup.shifts
 
 associateUserWithTournament = (userId) ->
   setActiveTeam()
   tId = Session.get('active-tournament')._id
+  roleName = Session.get('active-role').roleName
+  tournamentName = Session.get('active-tournament').tournamentName
   teamId = Session.get('active-team').teamId
   signup = Registrants.findOne { tournamentId: tId, userId: userId }
   Registrants.insert { 
@@ -35,7 +42,7 @@ associateUserWithTournament = (userId) ->
     unless err
       Session.set 'reg-id', id
       setAcceptedShifts()
-      sendNotificationEmail()
+      sendNotificationEmail tournamentName, roleName
       Template.userMessages.showMessage
         type: 'info'
         title: 'Success:'

@@ -117,3 +117,5 @@ Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicke
 - shiftId
 - userId
 
+allcourt.user@gmail.com
+Pz7n7BTWDfTADVmC

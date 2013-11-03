@@ -55,7 +55,7 @@ getUserFormValues = (template) ->
     lastName: template.find('#lastName').value
     email: template.find('#email').value
     photoFilename: template.find('#photoFilename').value
-    admin: if template.find('#siteAdmin:checked') then true
+    admin: if template.find('#siteAdmin:checked') then true else false
     gender: template.find('input:radio[name=gender]:checked').value
 
 getVolunteerFormValues = (template) ->
@@ -212,14 +212,14 @@ Template.userCreate.volunteerDetails = ->
 
 Template.userCreate.events
   'click #saveProfile': (event, template) ->
-    activeUser = 
+    activeUser = Session.get('active-user')
     userOptions = getUserFormValues template
     volunteerOptions = getVolunteerFormValues template
-    unless activeUser
-      saveNewUserAndVolunteer userOptions, volunteerOptions
-    else
+    if activeUser
       userOptions._id = activeUser._id
       updateUserAndVolunteer userOptions, volunteerOptions
+    else
+      saveNewUserAndVolunteer userOptions, volunteerOptions
 
   'change #hasProfileAccess': (evnt, template) ->
     if $(evnt.currentTarget).prop('checked')

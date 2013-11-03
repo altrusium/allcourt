@@ -147,7 +147,7 @@ Template.setupRegistrants.registrants = ->
   users = for reg in registrants
     user = Meteor.users.findOne({ _id: reg[0] })?.profile
     if reg[1] then user.teamLeadChecked = 'checked'
-    user.id = reg[0]
+    user and user.id = reg[0]
     user
 
 Template.setupRegistrants.searchResults = ->
@@ -187,7 +187,7 @@ Template.setupRegistrants.events
     tId = Session.get('active-tournament')._id
     uId = $(evnt.currentTarget).data 'user'
     reg = Registrants.findOne 'tournamentId': tId, 'userId': uId
-    Registrants.update reg._id, $pull: teams: Session.get('active-team').teamId
+    Registrants.update reg?._id, $pull: teams: Session.get('active-team').teamId
     false
 
   'click [data-action=makeLead]': (evnt, template) ->

@@ -88,6 +88,9 @@ Meteor.methods
         shiftDefId: newShiftDef.shiftDefId
       Tournaments.update options.tournamentId, $push: shifts: newShift
 
+  sendVerificationEmail: (userId) ->
+    Accounts.sendVerificationEmail userId
+
   sendEmail: (options) ->
     this.unblock()
     Email.send options
