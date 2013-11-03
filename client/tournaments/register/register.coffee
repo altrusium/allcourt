@@ -12,6 +12,15 @@ setActiveTeam = ->
     if team.teamId is tId then return team
   Session.set 'active-team', activeTeam
 
+sendNotificationEmail = ->
+  Meteor.call 'sendEmail',
+    from: 'All-Court Registrations <postmaster@allcourt.co.nz>',
+    to: [Meteor.user().profile.email, 'Tennis Auckland <volunteers@tennisauckland.co.nz>'],
+    replyTo: [Meteor.user().profile.email, 'Tennis Auckland <volunteers@tennisauckland.co.nz>'], 
+    subject: 'New user registration on allcourt.co.nz',
+    text: "#{Meteor.user().profile.firstName}, thank you for your #{Meteor.user().profile.type} registration at All-Court.\n\nIf you have any questions, just reply to this message and someone from Tennis Auckland will get back to you as soon as they can.\n\nAll-Court is still under development, but in the near future (before the tournaments begin) you'll be able to use it to help with your involvement in the tournaments.\n\nWarm regards,\nTennis Auckland"
+  
+
 associateUserWithTournament = (userId) ->
   setActiveTeam()
   tId = Session.get('active-tournament')._id
@@ -26,6 +35,7 @@ associateUserWithTournament = (userId) ->
     unless err
       Session.set 'reg-id', id
       setAcceptedShifts()
+      sendNotificationEmail()
       Template.userMessages.showMessage
         type: 'info'
         title: 'Success:'

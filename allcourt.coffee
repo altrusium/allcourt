@@ -24,7 +24,7 @@ Meteor.methods
       fullName: firstName + ' ' + lastName,
       photoFilename: options.photoFilename,
       gender: options.gender || 'female',
-      slug: firstName + lastName,
+      slug: firstName.replace(' ','') + lastName.replace(' ',''),
       admin: options.admin
       }
 
@@ -88,5 +88,6 @@ Meteor.methods
         shiftDefId: newShiftDef.shiftDefId
       Tournaments.update options.tournamentId, $push: shifts: newShift
 
-
-
+  sendEmail: (options) ->
+    this.unblock()
+    Email.send options

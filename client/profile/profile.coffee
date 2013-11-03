@@ -54,10 +54,10 @@ initializeControls = ->
 getUserFormValues = (template) ->
   return values = 
     _id: Meteor.userId()
-    photoFilename: template.find('#photoFilename').value
-    email: template.find('#email').value
     firstName: template.find('#firstName').value
     lastName: template.find('#lastName').value
+    email: template.find('#email').value
+    photoFilename: template.find('#photoFilename').value
     gender: template.find('input:radio[name=gender]:checked').value
 
 getVolunteerFormValues = (template) ->
@@ -128,18 +128,30 @@ Template.profileEdit.photoFilename = ->
 Template.profileEdit.events
   'click #saveProfile': (event, template) ->
     userOptions = getUserFormValues template
-    volunteerOptions = getVolunteerFormValues template
     # Todo: add exception handling for these 2 calls
-    Meteor.call 'updateUserProfile', userOptions, (err) ->
-      Template.userMessages.showMessage 
-        type: 'info',
-        title: 'Success!',
-        message: 'Your profile details were saved successfully.'
-    Meteor.call 'updateVolunteer', volunteerOptions, (err) ->
-      Template.userMessages.showMessage 
-        type: 'info',
-        title: 'Success!',
-        message: 'Your profile details were saved successfully.'
-    $('.wait-message').hide()
+    Meteor.call 'updateUser', userOptions, (err) ->
+      if err
+        Template.userMessages.showMessage 
+          type: 'error',
+          title: 'Error. ',
+          message: 'Your profile details were not saved. Reason: ' + err.reason
+      else
+        Template.userMessages.showMessage 
+          type: 'info',
+          title: 'Success!',
+          message: 'Your profile details were saved successfully.'
+    if Session.get('active-volunteer')
+      volunteerOptions = getVolunteerFormValues template
+      Meteor.call 'updateVolunteer', volunteerOptions, (err) ->
+        if err
+          Template.userMessages.showMessage 
+            type: 'error',
+            title: 'Error.',
+            message: 'Your profile details were not saved. Reason: ' + err.reason
+        else
+          Template.userMessages.showMessage 
+            type: 'info',
+            title: 'Success!',
+            message: 'Your profile details were saved successfully.'
     Router.go 'profileDetails'
 

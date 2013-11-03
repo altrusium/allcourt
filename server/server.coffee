@@ -27,7 +27,3 @@ Meteor.publish 'tournaments', ->
 Meteor.publish 'registrants', ->
   return Registrants.find()
 
-Meteor.methods
-  sendEmail: (options) ->
-    this.unblock()
-    Email.send options

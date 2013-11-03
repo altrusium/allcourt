@@ -7,9 +7,6 @@
 
 			{{#if currentUser}}
 	  		<div class="row">
-	  			<div class="span4">
-			  		{{> displayProfileDetails}}
-			  	</div>
 			  	<div class="span4">
 			  		{{#if isAdmin}}
 			  			{{> activeAdminTournamentList}}
@@ -18,6 +15,9 @@
 				  		{{> myTournamentList}}
 				  		{{> activeUserTournamentList}}
 			  		{{/if}}
+			  	</div>
+	  			<div class="span4">
+			  		{{> displayProfileDetails}}
 			  	</div>
 			  </div>
 			{{else}}

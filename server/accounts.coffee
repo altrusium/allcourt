@@ -13,6 +13,6 @@ Accounts.onCreateUser (options, user) ->
 		user.profile.lastName = google.family_name
 		user.profile.gender = google.gender
 	user.profile.fullName = user.profile.firstName + ' ' + user.profile.lastName
-	user.profile.slug = user.profile.firstName + user.profile.lastName
+	user.profile.slug = user.profile.firstName.replace(' ','') + user.profile.lastName.replace(' ','')
 	user.profile.gender = user.profile.gender || 'female'
 	user
