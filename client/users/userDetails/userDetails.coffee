@@ -33,6 +33,7 @@ Template.userDetails.myTournaments = ->
 Template.userDetails.events =
   'click #deleteVolunteer': (evnt, template) ->
     $('#deleteModal').modal()
+
   'click #deleteConfirmed': (evnt, template) ->
     id = Session.get('active-user')._id
     Meteor.users.remove id, ->
@@ -46,8 +47,10 @@ Template.userDetails.events =
           type: 'info',
           title: 'Deleted!',
           message: 'The volunteer was deleted'
+
   'click #deleteCancelled': (evnt, template) ->
     $('#deleteModal').hide()
+    
   'click #editProfile': (evnt, template) ->
     Router.go 'userEdit', userSlug: Session.get('active-user').profile.slug
 

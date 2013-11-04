@@ -1,5 +1,4 @@
 # Notes
-============
 
 ## File/photo uploads
 
@@ -8,33 +7,20 @@ For uploading photos to the server, rather than to Amazon S3 via Filepicker.io, 
 Currently using this approach: http://stackoverflow.com/questions/11790191/meteor-file-uploads
 
 
-## CSS Bootstrap Overrides
-
-.page-header
- - margin-bottom from 30px to 0
- - border-bottom-width from 1px to 0
-.navbar
- - margin-bottom from 20px to 0
-
-
 ## Session objects
 
 * active-tournament
 * active-role
 * active-team
+* active-user
 * user-message
  - type: 'alert && alert-error || alert-info || alert-success'
  - title: String
  - message: String
 
 
-## Page navigation
-
-Using Meteor Router from: https://github.com/tmeasday/meteor-router
-Which uses Page.js: http://visionmedia.github.com/page.js/
-
-
 ## Connecting to the production DB
+
 http://stackoverflow.com/questions/11801278/accessing-meteor-production-database
 
 $ meteor mongo 
@@ -45,7 +31,6 @@ $ meteor mongo
 ## Date picker
 
 Using Datepicker for Bootstrap from: https://github.com/eternicode/bootstrap-datepicker
-Really like how I'm initialising the datepicker in the Template.templateName.rendered event
 
 
 ## Time picker
@@ -55,11 +40,10 @@ Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicke
 
 ## Data model
 
-4 Dec 2012: Learned MongoDB doesn't really like arrays of objects that don't have a unique property. The alternative is to use the positional operator, which can only go one level deep [http://docs.mongodb.org/manual/reference/operators/#update-operators-array]. Also, Meteor's minimongo doesn't support it yet [https://github.com/meteor/meteor/issues/153]. 
+4 Dec 2012: Learned MongoDB doesn't really like arrays of objects that don't have a unique property. The alternative is to use the positional operator, which can only go one level deep [http://docs.mongodb.org/manual/reference/operators/#update-operators-array]. Unfortunately, Meteor's minimongo doesn't support it yet [https://github.com/meteor/meteor/issues/153]. 
 
 ### Tournaments 
 - tournamentName: String
-- description: String   ------- todo
 - logo: String          ------- todo
 - slug: String
 - days: Array
@@ -71,7 +55,6 @@ Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicke
   - roleId: UUID
   - teamId: UUID
   - teamName: String
-  - publicCanSignup: Boolean ------- todo
 - shiftDefs: Array
   - shiftDefId: UUID
   - teamId: UUID
@@ -95,8 +78,7 @@ Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicke
 - city
 - suburb
 - postalcode
-- country
-- primaryEmail
+- country              ------ todo
 - homephone
 - mobilephone
 
@@ -104,18 +86,36 @@ Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicke
 - userId
 - tournamentId
 - teams: Array (order significant)
-  - teamId
+  - UUID (teamId)
 - addedBy
 - approvedBy
-- agreedToTerms
+- agreedToTerms       ------- todo?
 - isTeamLead
 - shifts: Array
-  - shiftId
+  - UUID (shiftId)
 
 ### Schedule
 - tournamentId
 - shiftId
 - userId
 
-allcourt.user@gmail.com
-Pz7n7BTWDfTADVmC
+
+# TODO
+
+* BUG: When an admin is updating a user's profile who is not yet a volunteer, checking the box doesn't add the volunteer document
+* Add tournament logos to tournament document
+  - Show logo in top-right when it is active
+  - Show small logo in tournament list
+* Add a Function field to user (for accreditation badge)
+* Add an ApprovedBy field to user (for accreditation)
+  - Complete for volunteers who are added by an Admin
+  - Add some UI for Admins to approve any user
+  - Add a list to show all users for a tournament who are not approved
+* When deleting a user, delete all associations in Registrants and Schedule
+* Finish volunteer schedule
+  - Only show link to volunteers, not other roles
+* On Admin's volunteer schedule page, link names to the volunteer's schedule
+* Add ability for users to change their password
+* Show on user details if their email is verified or not
+* Add visible que so Admins will know they are logged in as an Admin
+* 

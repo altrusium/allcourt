@@ -140,7 +140,7 @@ Template.profileEdit.events
           type: 'info',
           title: 'Success!',
           message: 'Your profile details were saved successfully.'
-    if Session.get('active-volunteer')
+    if Volunteers.findOne Meteor.userId()
       volunteerOptions = getVolunteerFormValues template
       Meteor.call 'updateVolunteer', volunteerOptions, (err) ->
         if err

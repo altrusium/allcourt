@@ -26,24 +26,26 @@ registrationPasswordsMatch = (form) ->
 registrationFormIsValid = (form) ->
 	valid = true
 	$('input', form).each ->
-		valid = valid && validateInput this
+		valid = valid and validateInput this
 	valid
 
 Template.signIn.events 
 	'click #facebookButton': (evnt, template) ->
 		Meteor.loginWithFacebook (err) ->
-			if err && err.details
+			if err and err.details
 				Template.userMessages.showMessage
 					type: 'error',
 					title: err.details.title,
 					message: err.details.message
+
 	'click #googleButton': (evnt, template) ->
 		Meteor.loginWithGoogle (err) ->
-			if err && err.details
+			if err and err.details
 				Template.userMessages.showMessage
 					type: 'error',
 					title: err.details.title,
 					message: err.details.message
+
 	'submit #signInForm': (evnt, template) ->
 		evnt.preventDefault()
 		unless registrationFormIsValid(evnt.currentTarget) then return
@@ -54,7 +56,10 @@ Template.signIn.events
 						type: 'error',
 						title: 'Sign-in unsuccessful.',
 						message: 'A user with that email and password could not be found.'
+				else
+					Template.userMessages.clear()
 		false
+
 	'submit #registerForm': (evnt, template) ->
 		evnt.preventDefault()
 		unless registrationFormIsValid(evnt.currentTarget) then return
@@ -85,6 +90,7 @@ Template.signIn.events
 					title: 'Success!',
 					message: 'Please check your email so you can verify your email address.'
 		false
+
 	'submit #recoveryForm': (evnt, template) ->
 		evnt.preventDefault()
 		email = template.find('#recoverEmail').value
@@ -106,6 +112,7 @@ Template.signIn.events
 					title: 'Email sent.',
 					message: 'Please check your email for a message that will help you recover your password.'
 		false
+
 	'keydown, blur input': (evnt, template) ->
 		validateInput evnt.currentTarget
 		true
