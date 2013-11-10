@@ -27,6 +27,7 @@ onlyShow = (template, router) ->
 mustBeSignedIn = ->
   unless Meteor.user() 
     onlyShow 'home', this
+  window.scrollTo 0, 0
 
 mustBeAnAdmin = ->
   unless allcourt.isAdmin() then onlyShow 'notFound', this 
@@ -78,6 +79,14 @@ Router.map ->
     before: setActiveUser
     data: ->
       Session.get 'active-user'
+
+  this.route 'userPreferences',
+    path: 'user/:userSlug/preferences/:tournamentSlug'
+    before: ->
+      setActiveUser.call(this)
+      setActiveTournament.call(this)
+    data: ->
+      Session.get('active-user') and Session.get('active-tournament')
 
   # '/volunteers': ->
   #   return if allcourt.isAdmin() then 'volunteers' else 'notAuthorised'

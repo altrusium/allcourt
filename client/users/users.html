@@ -13,29 +13,29 @@
 				</form>
 			</div>
 		</div>
+		<p>Total number of users: <strong>{{totalCount}}</strong></p>
 		{{#each users}}
-			<div class="container-fluid">
-				<div class="row-fluid">
-					<div class="span2">
-						<a href="/user/{{slug}}">
-							{{#if photoFilename}}
-								<img src="{{photoRoot}}{{photoFilename}}" class="user-photo">
+		<div class="container-fluid">
+			<div class="row-fluid">
+				<div class="span2">
+					<a href="/user/{{slug}}">
+						{{#if photoFilename}}
+							<img src="{{photoRoot}}{{photoFilename}}" class="user-photo">
+						{{else}}
+							{{#if isMale}}
+								<img src="/img/no-male-photo.jpg" class="user-photo">
 							{{else}}
-								{{#if isMale}}
-									<img src="/img/no-male-photo.jpg" class="user-photo">
-								{{else}}
-									<img src="/img/no-female-photo.jpg" class="user-photo">
-								{{/if}}
-							{{/if}}}
-						</a>
-					</div>
-					<div class="span10 user-info">
-						<a href="/user/{{slug}}" class="user-name">{{firstName}} {{lastName}}</a><br>
-						<span class="user-phone">Mobile: {{mobilePhone}}</span><br>
-						<span class="user-email">Email: <a href="mailto:{{email}}">{{email}}</a>
-					</div>
+								<img src="/img/no-female-photo.jpg" class="user-photo">
+							{{/if}}
+						{{/if}}}
+					</a>
+				</div>
+				<div class="span10 user-info">
+					<a href="/user/{{slug}}" class="user-name">{{firstName}} {{lastName}}</a><br>
+					<span class="user-email">Email: <a href="mailto:{{email}}">{{email}}</a>
 				</div>
 			</div>
+		</div>
 		{{/each}}
 	</div>
 </template>

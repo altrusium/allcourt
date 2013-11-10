@@ -120,4 +120,8 @@ Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicke
 * Add visible que so Admins will know they are logged in as an Admin
 * Add a "Select All" to the shift
 * For users, add a Home button to the right of Tournaments
-* 
+
+
+
+
+

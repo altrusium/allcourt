@@ -1,5 +1,7 @@
 @allcourt = {}
 
+allcourt.photoRoot = 'http://s3-ap-southeast-2.amazonaws.com/shifty-photos/'
+
 allcourt.isAdmin = ->
   Meteor.user().profile.admin
 

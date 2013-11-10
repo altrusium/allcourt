@@ -13,6 +13,7 @@
 </template>
 
 <template name="activeUserTournamentList">
+  {{#if activeTournaments}}
   <h2 class="column-header"><small>Active Tournaments</small></h2>
   <ul>
     {{#each activeTournaments}}
@@ -20,32 +21,39 @@
     </li>
     {{/each}}
   </ul>
+  {{/if}}
 </template>
 
 <template name="activeAdminTournamentList">
+  {{#if activeTournaments}}
   <h2 class="column-header"><small>Active Tournaments</small></h2>
   <ul>
     {{#each activeTournaments}}
     <li><a href="/{{slug}}">{{tournamentName}}</a></li>
     {{/each}}
   </ul>
+  {{/if}}
 </template>
 
 <template name="previousUserTournamentList">
+  {{#if previousTournaments}}
   <h2 class="column-header"><small>Previous Tournaments</small></h2>
   <ul>
     {{#each previousTournaments}}
     <li>{{tournamentName}}</li>
     {{/each}}
   </ul>
+  {{/if}}
 </template>
 
 <template name="previousAdminTournamentList">
+  {{#if previousTournaments}}
   <h2 class="column-header"><small>Previous Tournaments</small></h2>
   <ul>
     {{#each previousTournaments}}
     <li><a href="/{{slug}}">{{tournamentName}}</a></li>
     {{/each}}
   </ul>
+  {{/if}}
 </template>
 

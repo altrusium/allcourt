@@ -1,7 +1,5 @@
-photoRoot = 'http://s3-ap-southeast-2.amazonaws.com/shifty-photos/'
-
 updatePage = (file) ->
-  $('#photoImg').fadeIn(400).attr 'src', photoRoot + file.key
+  $('#photoImg').fadeIn(400).attr 'src', allcourt.photoRoot + file.key
   $('#photoPlaceholder').removeClass('empty').find('h4, p, .loading').remove()
   $('#photoFilename').val file.key
   $('#pickPhoto').removeAttr 'disabled'
@@ -48,6 +46,12 @@ initializeControls = ->
     processPhoto()
   $('#femaleGender, #maleGender').change ->
     $('#photoPlaceholder').toggleClass 'male female'
+
+getActiveVolunteer = ->
+  id = Session.get('active-user')._id
+  volunteer = Volunteers.findOne id
+  Session.set 'active-volunteer', volunteer
+  volunteer
 
 getUserFormValues = (template) ->
   values = 
@@ -115,67 +119,76 @@ clearFormValues = (template) ->
   $('#photoPlaceholder').addClass('empty').find('p, h4').remove()
   $('#photoImg').attr('src', '').fadeOut 400
 
-# TODO: Refactor out the duplication
-# TODO: Separate the create and update operations
+showResultOfVolunteerCreation = (err) ->
+  if err
+    Template.userMessages.showMessage 
+      type: 'error',
+      title: 'Uh oh!',
+      message: 'The new volunteer was not saved. Reason: ' + err.reason
+  else
+    Template.userMessages.showMessage 
+      type: 'info',
+      title: 'Success!',
+      message: 'The new volunteer was saved successfully.'
+
+showResultOfVolunteerUpdate = (err) ->
+  if err
+    Template.userMessages.showMessage 
+      type: 'error',
+      title: 'Uh oh!',
+      message: 'The volunteer was not updated. Reason: ' + err.reason
+  else
+    Template.userMessages.showMessage 
+      type: 'info',
+      title: 'Success!',
+      message: 'The volunteer was updated successfully.'
+
+showResultOfUserCreation = (err) ->
+  if err
+    Template.userMessages.showMessage 
+      type: 'error',
+      title: 'Uh oh!',
+      message: 'The new user was not saved. Reason: ' + err.reason
+  else
+    Template.userMessages.showMessage 
+      type: 'info',
+      title: 'Success!',
+      message: 'The new user was saved successfully.'
+
+showResultOfUserUpdate = (err) ->
+  if err
+    Template.userMessages.showMessage 
+      type: 'error',
+      title: 'Uh oh!',
+      message: 'The user was not updated. Reason: ' + err.reason
+  else
+    Template.userMessages.showMessage 
+      type: 'info',
+      title: 'Success!',
+      message: 'The user was updated successfully.'
+
 saveNewUserAndVolunteer = (userOptions, volunteerOptions) ->
   Meteor.call 'createNewUser', userOptions, (err, id) ->
-    if err
-      Template.userMessages.showMessage 
-        type: 'error',
-        title: 'Uh oh!',
-        message: 'The new user was not saved. Reason: ' + err.reason
-    else
+    showResultOfUserCreation err
+    unless err
       if $('#isVolunteer').prop('checked')
         volunteerOptions._id = id
         createNewVolunteer volunteerOptions, (err) ->
           if id then clearFormValues template
-          if err
-            Template.userMessages.showMessage 
-              type: 'error',
-              title: 'Uh oh!',
-              message: 'The new volunteer was not saved. Reason: ' + err.reason
-          else
-            Template.userMessages.showMessage 
-              type: 'info',
-              title: 'Success!',
-              message: 'The new volunteer was saved successfully.'
-      else
-        Template.userMessages.showMessage 
-          type: 'info',
-          title: 'Success!',
-          message: 'The new user was saved successfully.'
+          showResultOfVolunteerCreation err
 
-# TODO: Refactor out the duplication
-# TODO: Separate the create and update operations
 updateUserAndVolunteer = (userOptions, volunteerOptions) ->
   Meteor.call 'updateUser', userOptions, (err) ->
-    if err
-      Template.userMessages.showMessage 
-        type: 'error',
-        title: 'Uh oh!',
-        message: 'The user was not updated. Reason: ' + err.reason
-    else
+    showResultOfUserUpdate err
+    unless err
       if $('#isVolunteer').prop('checked')
         volunteerOptions._id = Session.get('active-user')._id
-        updateVolunteer volunteerOptions, (err) ->
-          if err
-            Template.userMessages.showMessage 
-              type: 'error',
-              title: 'Uh oh!',
-              message: 'The volunteer was not updated. Reason: ' + err.reason
-          else
-            Template.userMessages.showMessage 
-              type: 'info',
-              title: 'Success!',
-              message: 'The volunteer was updated successfully.'
-      else
-        Template.userMessages.showMessage 
-          type: 'info',
-          title: 'Success!',
-          message: 'The user was updated successfully.'
-
-
-
+        if Session.get('active-volunteer')
+          updateVolunteer volunteerOptions, (err) ->
+            showResultOfVolunteerUpdate err
+        else
+          createNewVolunteer volunteerOptions, (err) ->
+            showResultOfVolunteerCreation err
 
 Template.userCreate.rendered = ->
   initializeControls()
@@ -190,12 +203,12 @@ Template.userCreate.userDetails = ->
   details.isMale = profile.gender is 'male'
   details.photoFilename = profile.photoFilename
   if profile.photoFilename
-    details.photoPath = photoRoot + profile.photoFilename
+    details.photoPath = allcourt.photoRoot + profile.photoFilename
   details.firstName = profile.firstName
   details.lastName = profile.lastName
   details.email = profile.email
   details.siteAdmin = if profile.admin then 'checked' else ''
-  details.volunteer = if Session.get('active-volunteer')? then 'checked'
+  details.volunteer = if getActiveVolunteer() then 'checked'
 
   if profile.email isnt 'no.email@tennisauckland.co.nz'
     details.emailDisabled = ''
@@ -220,6 +233,7 @@ Template.userCreate.events
       updateUserAndVolunteer userOptions, volunteerOptions
     else
       saveNewUserAndVolunteer userOptions, volunteerOptions
+    Router.go 'userDetails', userSlug: Session.get('active-user').profile.slug
 
   'change #hasProfileAccess': (evnt, template) ->
     if $(evnt.currentTarget).prop('checked')

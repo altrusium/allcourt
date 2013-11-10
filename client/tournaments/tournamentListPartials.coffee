@@ -4,20 +4,23 @@ allcourt.getSortedTournaments = ->
   list.sort (t1, t2) ->
     date1 = new Date(t1.days[0])
     date2 = new Date(t2.days[0])
-    if date1 > date2 then return -1
-    if date1 < date2 then return 1
+    if date1 < date2 then return -1
+    if date1 > date2 then return 1
     return 0
   return list
 
-allcourt.getMyTournaments = ->
+allcourt.userTournaments = (userId) ->
   results = []
-  myId = Meteor.userId()
-  myTournamentIds = Registrants.find({ 'userId': myId }, fields: 'tournamentId': 1).fetch()
+  myTournamentIds = Registrants.find({ 'userId': userId }, fields: 'tournamentId': 1).fetch()
   allcourt.getSortedTournaments().forEach (tournament) ->
     myTournamentIds.forEach (my) ->
       if my.tournamentId is tournament._id
         results.push tournament
   results
+
+allcourt.getMyTournaments = ->
+  myId = Meteor.userId()
+  allcourt.userTournaments myId
 
 allcourt.getActiveTournaments = ->
   mine = allcourt.getMyTournaments()

@@ -11,38 +11,36 @@
           <div class="{{#if isMale}}male{{else}}female{{/if}} photo-placeholder"></div>
         {{/if}}}
         <p><button id="editProfile" class="btn" data-volunteer-id="{{_id}}">Edit Profile</button></p>
-        <p><button id="deleteVolunteer" class="btn btn-link" data-volunteer-id="{{_id}}">Delete Volunteer</button></p>
+        <p><button id="deleteVolunteer" class="btn btn-link" data-volunteer-id="{{_id}}">Delete User</button></p>
     </div>
     <div class="volunteer-details span4">
       <h3>{{firstName}} {{lastName}}</h3>
+      <h2 class="column-header"><small>Details</small></h2>
       <p>
         {{#if email}}<a href="mailto:{{email}}">{{email}}</a><br>{{/if}}
       </p>
       <p>
-        {{#if homePhone}}Home phone: {{homePhone}}<br>{{/if}}
-        {{#if mobilePhone}}Mobile phone: {{mobilePhone}}{{/if}}
+        Age: <strong>{{age}}</strong><br>
+        Shirt size: <strong>{{shirtSize}}</strong><br>
       </p>
-      <address>
-        {{#if address}}{{address}}<br>{{/if}}
-        {{#if city}}{{city}}<br>{{/if}}
-        {{#if suburb}}{{suburb}}<br>{{/if}}
-        {{#if postalCode}}{{postalCode}}<br>{{/if}}
-      </address>
+      <p>
+        Home phone: <strong>{{homePhone}}</strong><br>
+        Mobile phone: <strong>{{mobilePhone}}</strong><br>
+      </p>
+      {{#if notes}}<p>Notes: <strong>{{notes}}</strong></p>{{/if}}
     </div>
     {{/with}}
     <div class="volunteer-details span5">
       {{#if myTournamentsExist}}
-      <h3>My Tournaments</h3>
-      {{#each myTournaments}}
-      <div class="media">
-        <a class="pull-left" href="#">
-          <img class="media-object" data-src="">
-        </a>
-        <div class="media-body">
-          <h4 class="media-heading"><a href="/tournament/{{_id}}">{{tournamentName}}</a></h4>
-        </div>
-      </div>
-      {{/each}}
+      <h3>Registrations</h3>
+        {{#each myTournaments}}
+        <h2 class="column-header"><small>{{tournamentName}}</small></h2>
+          <ul>
+          {{#each teams}}
+            <li><a href="#" data-team-id="{{teamId}}" data-team-name="{{teamName}}" data-tournament-slug="{{../slug}}">{{teamName}}</a></li>
+          {{/each}}
+          </ul>
+        {{/each}}
       {{/if}}
     </div>
   </div>

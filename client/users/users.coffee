@@ -11,7 +11,9 @@ Template.users.photoRoot = ->
 
 Template.users.users = ->
   Meteor.users.find().map (user) ->
-    user.isMale = ->
+    user.profile.isMale = ->
       return user.profile.gender is 'male'
     user.profile
 
+Template.users.totalCount = ->
+  Template.users.users().length

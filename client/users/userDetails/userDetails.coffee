@@ -1,7 +1,17 @@
-photoRoot = 'http://s3-ap-southeast-2.amazonaws.com/shifty-photos/'
+userId = ''
+myTournaments = null
+
+getCalculatedAge = (birthdate) ->
+  if birthdate then moment().diff(moment(birthdate), 'years')
+
+getTeamInfo = (tournamentId, teamId) ->
+  tournament = Tournaments.findOne tournamentId
+  _.find tournament.teams, (team) ->
+    team.teamId is teamId
 
 Template.userDetails.detail = ->
   user = Session.get 'active-user'
+  volunteerInfo = Volunteers.findOne user._id
   profile = user.profile
   user.isMale = profile.gender is 'male'
   user.photoFilename = profile.photoFilename
@@ -9,26 +19,28 @@ Template.userDetails.detail = ->
   user.lastName = profile.lastName
   user.email = profile.email
   user.slug = profile.slug
+  if volunteerInfo
+    user.age = getCalculatedAge volunteerInfo.birthdate
+    user.shirtSize = volunteerInfo.shirtSize
+    user.homePhone = volunteerInfo.homePhone
+    user.mobilePhone = volunteerInfo.mobilePhone
+    user.notes = volunteerInfo.notes
   return user
 
 Template.userDetails.photoRoot = ->
-  return photoRoot
-
-Template.userDetails.availableTournamentsExist = ->
-  tournaments = Template.volunteerDetails.availableTournaments()
-  return tournaments.length > 0
-
-Template.userDetails.availableTournaments = ->
-  tournaments = Tournaments.find({}, fields: {tournamentName: 1, days: 1}).fetch()
-  futureTournaments = for tournament in tournaments
-    tournamentStartDate = new Date tournament.days[0]
-    tournament if new Date() - tournamentStartDate < 0
+  return allcourt.photoRoot
 
 Template.userDetails.myTournamentsExist = ->
-  return false
+  userId = Session.get('active-user')._id
+  myTournaments = allcourt.userTournaments userId
 
 Template.userDetails.myTournaments = ->
-  return []
+  result = for myT in myTournaments
+    reg = Registrants.findOne userId: userId, tournamentId: myT._id
+    myT.teams = for team in reg?.teams
+      getTeamInfo myT._id, team
+    myT
+  result
 
 Template.userDetails.events =
   'click #deleteVolunteer': (evnt, template) ->
@@ -54,3 +66,12 @@ Template.userDetails.events =
   'click #editProfile': (evnt, template) ->
     Router.go 'userEdit', userSlug: Session.get('active-user').profile.slug
 
+  'click a[data-team-id]': (evnt, template) ->
+    anchor = $(evnt.currentTarget)
+    teamId = anchor.data('team-id')
+    teamName = anchor.data('team-name')
+    tournamentSlug = anchor.data('tournament-slug')
+    userSlug = Session.get('active-user').profile.slug
+    Session.set 'active-team', { teamId: teamId, teamName: teamName }
+    Router.go 'userPreferences', { userSlug: userSlug, tournamentSlug: tournamentSlug }
+    false
