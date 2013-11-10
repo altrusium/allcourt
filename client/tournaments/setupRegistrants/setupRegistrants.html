@@ -35,7 +35,7 @@
           <div class="controls">
             <select id="role">
               {{#each roles}}
-              <option value="{{roleId}}">{{roleName}}</option>
+              <option value="{{roleId}}" {{markSelectedRole}}>{{roleName}}</option>
               {{/each}}
             </select>
           </div>
@@ -45,7 +45,7 @@
           <div class="controls">
             <select id="team">
               {{#each teams}}
-              <option value="{{teamId}}">{{teamName}}</option>
+              <option value="{{teamId}}" {{markSelectedTeam}}>{{teamName}}</option>
               {{/each}}
             </select>
           </div>
@@ -95,7 +95,8 @@
         <tbody>
           {{#each registrants}}
           <tr>
-            <td>{{fullName}}</td>
+            <!-- <td><a href="#" data-user-slug="{{slug}}">{{fullName}}</a></td> -->
+            <td><a href="/user/{{slug}}/preferences/{{activeTournamentSlug}}">{{fullName}}</a></td>
             <td>
               <input type="checkbox" class="checkbox" data-action="approve" data-user="{{id}}" {{approved}}>
             </td>

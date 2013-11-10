@@ -27,20 +27,24 @@ getActiveTournaments = ->
     _.find mine, (myT) ->
       myT._id is tournament._id
 
-setActiveRole = ->
-  rId = $('#role option:selected').val()
-  tournament = Session.get 'active-tournament'
-  activeRole = _.find tournament.roles, (role) ->
-    if role.roleId is rId then return role
-  Session.set 'active-role', activeRole
+setActiveRole = (forceChange) ->
+  activeRole = Session.get('active-role')
+  if forceChange or not activeRole
+    rId = $('#role option:selected').val()
+    tournament = Session.get 'active-tournament'
+    activeRole = _.find tournament.roles, (role) ->
+      if role.roleId is rId then return role
+    Session.set 'active-role', activeRole
 
-setActiveTeam = ->
-  tId = $('#team option:selected').val()
-  tournament = Session.get 'active-tournament'
-  role = Session.get 'active-role'
-  activeTeam = _.find tournament.teams, (team) ->
-    if team.teamId is tId then return team
-  Session.set 'active-team', activeTeam
+setActiveTeam = (forceChange) ->
+  activeTeam = Session.get('active-team')
+  if forceChange or not activeTeam
+    tId = $('#team option:selected').val()
+    tournament = Session.get 'active-tournament'
+    role = Session.get 'active-role'
+    activeTeam = _.find tournament.teams, (team) ->
+      if team.teamId is tId then return team
+    Session.set 'active-team', activeTeam
 
 emptySearchResults = ->
   Session.set 'search-results', null
@@ -93,8 +97,9 @@ Template.setupRegistrants.created = ->
   setSearchableUserList()
 
 Template.setupRegistrants.rendered = ->
-  setActiveRole()
-  setActiveTeam()
+  forceChange = false
+  setActiveRole forceChange
+  setActiveTeam forceChange
 
 Template.setupRegistrants.isAdmin = ->
   allcourt.isAdmin()
@@ -114,6 +119,10 @@ Template.setupRegistrants.markSelectedTournament = ->
 
 Template.setupRegistrants.markSelectedRole = ->
   if this.roleId is Session.get('active-role')?.roleId
+    return 'selected=selected'
+
+Template.setupRegistrants.markSelectedTeam = ->
+  if this.teamId is Session.get('active-team')?.teamId
     return 'selected=selected'
 
 Template.setupRegistrants.teams = ->
@@ -161,11 +170,13 @@ Template.setupRegistrants.activeTeamName = ->
 
 Template.setupRegistrants.events
   'change #role': (evnt, template) ->
-    setActiveRole()
-    setActiveTeam()
+    forceChange = true
+    setActiveRole forceChange
+    setActiveTeam forceChange
 
   'change #team': (evnt, template) ->
-    setActiveTeam()
+    forceChange = true
+    setActiveTeam forceChange
 
   'click #addTeam': (evnt, template) ->
     tId = Session.get('active-tournament')._id
@@ -216,7 +227,7 @@ Template.setupRegistrants.events
     results = searcher.search query
     Session.set 'search-results', results
 
-  'click #addUser': (event, template) ->
+  'click #addUser': (evnt, template) ->
     userOptions = getUserFormValues template
     Meteor.call 'createNewUser', userOptions, (err, id) ->
       if err
@@ -227,6 +238,12 @@ Template.setupRegistrants.events
       else
         associateUserWithTournament id
     Session.set 'adding-new-user', null
+
+  'click a[data-user-slug]': (evnt, template) ->
+    userSlug = $(evnt.currentTarget).data('user-slug')
+    tournamentSlug = Session.get('active-tournament').slug
+    Router.go 'userPreferences', { userSlug: userSlug, tournamentSlug: tournamentSlug }
+    false
 
   'change #hasProfileAccess': (evnt, template) ->
     if $(evnt.currentTarget).prop('checked')
