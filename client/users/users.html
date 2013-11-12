@@ -32,7 +32,8 @@
 				</div>
 				<div class="span10 user-info">
 					<a href="/user/{{slug}}" class="user-name">{{firstName}} {{lastName}}</a><br>
-					<span class="user-email">Email: <a href="mailto:{{email}}">{{email}}</a>
+					<span class="user-email">Email: <a href="mailto:{{email}}">{{email}}</a></span><br>
+					{{#if isNew}}<span class="new-user">New Volunteer</span>{{/if}}
 				</div>
 			</div>
 		</div>

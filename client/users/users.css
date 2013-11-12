@@ -25,3 +25,9 @@
 .user-info {
   margin-bottom: 20px;
 }
+
+.new-user {
+  color: red;
+  font-size: 18px;
+  font-weight: bold;
+}

@@ -60,6 +60,7 @@ getUserFormValues = (template) ->
     email: template.find('#email').value
     photoFilename: template.find('#photoFilename').value
     admin: if template.find('#siteAdmin:checked') then true else false
+    isNew: if template.find('#isNew:checked') then true else false
     gender: template.find('input:radio[name=gender]:checked').value
 
 getVolunteerFormValues = (template) ->
@@ -168,20 +169,22 @@ showResultOfUserUpdate = (err) ->
       message: 'The user was updated successfully.'
 
 saveNewUserAndVolunteer = (userOptions, volunteerOptions) ->
+  isVolunteer = $('#isVolunteer').prop('checked')
   Meteor.call 'createNewUser', userOptions, (err, id) ->
     showResultOfUserCreation err
     unless err
-      if $('#isVolunteer').prop('checked')
+      if isVolunteer
         volunteerOptions._id = id
         createNewVolunteer volunteerOptions, (err) ->
           if id then clearFormValues template
           showResultOfVolunteerCreation err
 
 updateUserAndVolunteer = (userOptions, volunteerOptions) ->
+  isVolunteer = $('#isVolunteer').prop('checked')
   Meteor.call 'updateUser', userOptions, (err) ->
     showResultOfUserUpdate err
     unless err
-      if $('#isVolunteer').prop('checked')
+      if isVolunteer
         volunteerOptions._id = Session.get('active-user')._id
         if Session.get('active-volunteer')
           updateVolunteer volunteerOptions, (err) ->
@@ -208,6 +211,7 @@ Template.userCreate.userDetails = ->
   details.lastName = profile.lastName
   details.email = profile.email
   details.siteAdmin = if profile.admin then 'checked' else ''
+  details.isNew = if profile.isNew then 'checked' else ''
   details.volunteer = if getActiveVolunteer() then 'checked'
 
   if profile.email isnt 'no.email@tennisauckland.co.nz'
