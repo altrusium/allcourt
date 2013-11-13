@@ -1,0 +1,39 @@
+.user-details .photo-placeholder {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 20px auto;
+  position: relative;
+  background-repeat: no-repeat;
+}
+.user-details .photo-placeholder.small {
+  width: 70px;
+  height: 70px;
+  background-size: contain;
+  border: 1px solid silver;
+  margin: 0;
+}
+.user-details .photo-placeholder.empty {
+  border: 2px dashed silver;
+}
+.user-details .photo-placeholder.male {
+  background-image: url(/img/no-male-photo.jpg);
+}
+.user-details .photo-placeholder.female {
+  background-image: url(/img/no-female-photo.jpg);
+}
+.user-details .photo-placeholder h4 {
+  text-align: center;
+}
+.user-details .photo-placeholder p {
+  position: absolute;
+  text-align: center;
+  margin: 5px;
+  bottom: 5px;
+}
+.user-details .photo-placeholder .loading {
+  width: 40px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+

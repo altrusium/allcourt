@@ -1,10 +1,10 @@
-# Notes
+# Notes for allcourt.co.nz
 
 ## File/photo uploads
 
-For uploading photos to the server, rather than to Amazon S3 via Filepicker.io, consider: https://gist.github.com/3922137
+For uploading photos to the server, rather than to Amazon S3 via Filepicker.io, consider [this](https://gist.github.com/3922137).
 
-Currently using this approach: http://stackoverflow.com/questions/11790191/meteor-file-uploads
+Currently using [this approach](http://stackoverflow.com/questions/11790191/meteor-file-uploads).
 
 
 ## Session objects
@@ -21,30 +21,31 @@ Currently using this approach: http://stackoverflow.com/questions/11790191/meteo
 
 ## Connecting to the production DB
 
-http://stackoverflow.com/questions/11801278/accessing-meteor-production-database
+[http://stackoverflow.com/questions/11801278/accessing-meteor-production-database](http://stackoverflow.com/questions/11801278/accessing-meteor-production-database)
 
+```
 $ meteor mongo 
 (use the end of the resulting url in the next statement)
 > use allcourt_co_nz
-
+```
 
 ## Date picker
 
-Using Datepicker for Bootstrap from: https://github.com/eternicode/bootstrap-datepicker
+Using [Datepicker for Bootstrap](https://github.com/eternicode/bootstrap-datepicker)
 
 
 ## Time picker
 
-Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicker/
+Using [Timepicker for Bootstrap](http://jdewit.github.com/bootstrap-timepicker)
 
 
 ## Data model
 
-4 Dec 2012: Learned MongoDB doesn't really like arrays of objects that don't have a unique property. The alternative is to use the positional operator, which can only go one level deep [http://docs.mongodb.org/manual/reference/operators/#update-operators-array]. Unfortunately, Meteor's minimongo doesn't support it yet [https://github.com/meteor/meteor/issues/153]. 
+4 Dec 2012: Learned MongoDB doesn't really like arrays of objects that don't have a unique property. The alternative is to use the positional operator, which can only go one level deep ([more info](http://docs.mongodb.org/manual/reference/operators/#update-operators-array)). Unfortunately, Meteor's minimongo [doesn't support it yet](https://github.com/meteor/meteor/issues/153).
 
 ### Tournaments 
 - tournamentName: String
-- logo: String          ------- todo
+- logo: String (**TODO**)
 - slug: String
 - days: Array
   - Date
@@ -78,7 +79,7 @@ Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicke
 - city
 - suburb
 - postalcode
-- country              ------ todo
+- country (**TODO**)
 - homephone
 - mobilephone
 
@@ -89,7 +90,7 @@ Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicke
   - UUID (teamId)
 - addedBy
 - approvedBy
-- agreedToTerms       ------- todo?
+- agreedToTerms (**TODO?**)
 - isTeamLead
 - shifts: Array
   - UUID (shiftId)
@@ -100,7 +101,7 @@ Using Timepicker for Bootstrap from:http://jdewit.github.com/bootstrap-timepicke
 - userId
 
 
-# TODO
+### More TODOs
 
 * BUG: When an admin is updating a user's profile who is not yet a volunteer, checking the box doesn't add the volunteer document
 * Add tournament logos to tournament document

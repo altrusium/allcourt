@@ -112,10 +112,8 @@
       </table>
       {{/if}}
       {{#if addingNewUser}}
-      <!-- <form class="form-horizontal"> -->
-      <form class="form-vertical">
+      <form class="add-new-registrant form-vertical">
         <h2 class="column-header"><small>New User</small></h2>
-        <!--
         <div id="photoPlaceholder" class="female empty photo-placeholder">
           <img src="{{photoPath}}" id="photoImg">
         </div>
@@ -126,11 +124,10 @@
             <input type="hidden" id="photoFilename">
           </div>
         </div>
-        -->
         <div class="control-group">
-          <label class="control-label" for="primaryEmail">Primary Email</label>
+          <label class="control-label" for="email">Email</label>
           <div class="controls">
-            <input type="text" id="primaryEmail" required>
+            <input type="text" id="email" required>
           </div>
         </div>
         <div class="control-group">

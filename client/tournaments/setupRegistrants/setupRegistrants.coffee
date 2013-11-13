@@ -1,3 +1,49 @@
+updatePage = (file) ->
+  $('#photoImg').fadeIn(400).attr 'src', allcourt.photoRoot + file.key
+  $('#photoPlaceholder').removeClass('empty').find('h4, p, .loading').remove()
+  $('#photoFilename').val file.key
+  $('#pickPhoto').removeAttr 'disabled'
+
+storePhoto = (file) ->
+  filepicker.store file
+  , (storedFile) ->
+    updatePage storedFile
+  , (err) ->
+    console.log err
+    Template.userMessages.showMessage 
+      type: 'error',
+      title: 'Photo upload error',
+      message: 'Please refresh the page and start over. We apologise for the inconvenience.'
+
+resizePhoto = (file) ->
+  filepicker.convert file,
+    {width: 200, height: 200, align: 'faces', format: 'png', fit: 'crop'}
+    , (convertedFile) ->
+      storePhoto convertedFile
+    , (err) ->
+      console.log err
+      Template.userMessages.showMessage 
+        type: 'error',
+        title: 'Photo upload error',
+        message: 'Please refresh the page and start over. We apologise for the inconvenience.'
+
+processPhoto = ->
+  filepicker.pick mimetypes: 'image/*'
+    , (file) ->
+      $('#photoImg').attr 'src', ''
+      msg = '<h4 class="wait-message">Processing<br> your<br> photo</h4><img src="/img/loading.gif" class="loading" /><p>Please complete the form while you wait.</p>'
+      $(msg).appendTo '#photoPlaceholder'
+      $('#pickPhoto').attr 'disabled', 'disabled'
+      resizePhoto file
+    , (err) ->
+      console.log err
+
+initializeControls = ->
+  $('#pickPhoto').click ->
+    processPhoto()
+  $('#femaleGender, #maleGender').change ->
+    $('#photoPlaceholder').toggleClass 'male female'
+
 getSortedTournaments = ->
   tournaments = Tournaments.find {}, fields: tournamentName: 1, slug: 1, days: 1
   list = tournaments.fetch()
@@ -60,7 +106,7 @@ getUserFormValues = (template) ->
   values = 
     firstName: template.find('#firstName').value
     lastName: template.find('#lastName').value
-    email: template.find('#primaryEmail').value
+    email: template.find('#email').value
     photoFilename: template.find('#photoFilename').value
     gender: template.find('input:radio[name=gender]:checked').value
 
@@ -97,6 +143,9 @@ Template.setupRegistrants.created = ->
   setSearchableUserList()
 
 Template.setupRegistrants.rendered = ->
+  initializeControls()
+  if Meteor.user().profile.photoFile
+    $('.photo-placeholder').removeClass 'empty'
   forceChange = false
   setActiveRole forceChange
   setActiveTeam forceChange
@@ -229,6 +278,8 @@ Template.setupRegistrants.events
 
   'click #addUser': (evnt, template) ->
     userOptions = getUserFormValues template
+    if not $('#hasProfileAccess').prop('checked')
+      userOptions.email = userOptions.firstName + '.' + userOptions.lastName + '@has-no-email.co.nz'
     Meteor.call 'createNewUser', userOptions, (err, id) ->
       if err
         Template.userMessages.showMessage 
@@ -247,9 +298,9 @@ Template.setupRegistrants.events
 
   'change #hasProfileAccess': (evnt, template) ->
     if $(evnt.currentTarget).prop('checked')
-      $('#primaryEmail').prop('disabled', false).val('')
+      $('#email').prop('disabled', false)
     else
-      $('#primaryEmail').prop('disabled', true).val('no.email@tennisauckland.co.nz')
+      $('#email').prop('disabled', true).val('')
 
   'change input[name=gender]': (evnt, template) ->
     $('.photo-placeholder').toggleClass 'male female'

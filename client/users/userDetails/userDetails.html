@@ -4,7 +4,7 @@
   {{> userMessages}}
   <div class="row">
     {{#with detail}}
-    <div class="span3">
+    <div class="user-details span3">
         {{#if photoFilename}}
           <img class="volunteer-photo" src="{{photoRoot}}{{detail.photoFilename}}"><br>
         {{else}}
@@ -47,13 +47,13 @@
   <div id="deleteModal" class="modal hide fade">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      <h3>Deleting a volunteer</h3>
+      <h3>Deleting a user</h3>
     </div>
     <div class="modal-body">
-      <p>Are you sure you wish to delete this volunteer? This operation will remove their user account, volunteer details, and any tournament registrations. This can not be undone.</p>
+      <p>Are you sure you wish to delete this user? This operation will remove their user account, any associated volunteer details, and any tournament registrations. This can not be undone.</p>
     </div>
     <div class="modal-footer">
-      <a href="#" class="btn link" id="deleteConfirmed" data-dismiss="modal">Delete volunteer</a>
+      <a href="#" class="btn link" id="deleteConfirmed" data-dismiss="modal">Delete user</a>
       <a href="#" class="btn btn-primary" id="deleteCancelled" data-dismiss="modal">Do not delete</a>
     </div>
   </div>

@@ -1,36 +1,36 @@
-.photo-placeholder {
+.user-create .photo-placeholder {
   width: 200px;
   height: 200px;
   margin: 0 auto 20px auto;
   position: relative;
   background-repeat: no-repeat;
 }
-.photo-placeholder.small {
+.user-create .photo-placeholder.small {
   width: 70px;
   height: 70px;
   background-size: contain;
   border: 1px solid silver;
   margin: 0;
 }
-.photo-placeholder.empty {
+.user-create .photo-placeholder.empty {
   border: 2px dashed silver;
 }
-.photo-placeholder.male {
+.user-create .photo-placeholder.male {
   background-image: url(/img/no-male-photo.jpg);
 }
-.photo-placeholder.female {
+.user-create .photo-placeholder.female {
   background-image: url(/img/no-female-photo.jpg);
 }
-.photo-placeholder h4 {
+.user-create .photo-placeholder h4 {
   text-align: center;
 }
-.photo-placeholder p {
+.user-create .photo-placeholder p {
   position: absolute;
   text-align: center;
   margin: 5px;
   bottom: 5px;
 }
-.photo-placeholder .loading {
+.user-create .photo-placeholder .loading {
   width: 40px;
   display: block;
   margin-left: auto;

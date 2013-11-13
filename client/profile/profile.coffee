@@ -1,9 +1,5 @@
-@photoRoot = 'http://s3-ap-southeast-2.amazonaws.com/shifty-photos/'
-
-
-
 updatePage = (file) ->
-  $('#photoImg').fadeIn(400).attr 'src', photoRoot + file.key
+  $('#photoImg').fadeIn(400).attr 'src', allcourt.photoRoot + file.key
   $('#photoPlaceholder').removeClass('empty').find('h4, p, .loading').remove()
   $('#photoFilename').val file.key
   $('#pickPhoto').removeAttr 'disabled'
@@ -79,7 +75,7 @@ Template.profileDetails.details = ->
   user = Meteor.user()
   details = user.profile || {}
   if details.photoFilename
-    details.photoFile = photoRoot + details.photoFilename
+    details.photoFile = allcourt.photoRoot + details.photoFilename
   details.isMale = details.gender is 'male'
   return details || {}
 
@@ -116,7 +112,7 @@ Template.profileEdit.details = ->
   details = user.profile || {}
   details.isMale = details.gender is 'male'
   if details.photoFilename
-    details.photoFile = photoRoot + details.photoFilename
+    details.photoFile = allcourt.photoRoot + details.photoFilename
   return details
 
 Template.profileEdit.volunteerDetails = ->

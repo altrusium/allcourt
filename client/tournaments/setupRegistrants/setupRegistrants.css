@@ -1,36 +1,36 @@
-.profile-edit .photo-placeholder {
+.add-new-registrant .photo-placeholder {
   width: 200px;
   height: 200px;
-  margin: 0 auto 20px auto;
+  margin: 0;
   position: relative;
   background-repeat: no-repeat;
 }
-.profile-edit .photo-placeholder.small {
+.add-new-registrant .photo-placeholder.small {
   width: 70px;
   height: 70px;
   background-size: contain;
   border: 1px solid silver;
   margin: 0;
 }
-.profile-edit .photo-placeholder.empty {
+.add-new-registrant .photo-placeholder.empty {
   border: 2px dashed silver;
 }
-.profile-edit .photo-placeholder.male {
+.add-new-registrant .photo-placeholder.male {
   background-image: url(/img/no-male-photo.jpg);
 }
-.profile-edit .photo-placeholder.female {
+.add-new-registrant .photo-placeholder.female {
   background-image: url(/img/no-female-photo.jpg);
 }
-.profile-edit .photo-placeholder h4 {
+.add-new-registrant .photo-placeholder h4 {
   text-align: center;
 }
-.profile-edit .photo-placeholder p {
+.add-new-registrant .photo-placeholder p {
   position: absolute;
   text-align: center;
   margin: 5px;
   bottom: 5px;
 }
-.profile-edit .photo-placeholder .loading {
+.add-new-registrant .photo-placeholder .loading {
   width: 40px;
   display: block;
   margin-left: auto;
