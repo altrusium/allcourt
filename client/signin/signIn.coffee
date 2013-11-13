@@ -35,16 +35,16 @@ Template.signIn.events
 			if err and err.details
 				Template.userMessages.showMessage
 					type: 'error',
-					title: err.details.title,
-					message: err.details.message
+					title: err.reason || 'Unknown error. ',
+					message: err.details || 'Unable to authenticate you with your Facebook account.'
 
 	'click #googleButton': (evnt, template) ->
 		Meteor.loginWithGoogle (err) ->
 			if err and err.details
 				Template.userMessages.showMessage
 					type: 'error',
-					title: err.details.title,
-					message: err.details.message
+					title: err.reason || 'Unknown error. ',
+					message: err.details || 'Unable to authenticate you with your Google account.'
 
 	'submit #signInForm': (evnt, template) ->
 		evnt.preventDefault()
@@ -81,8 +81,8 @@ Template.signIn.events
 			if err
 				Template.userMessages.showMessage
 					type: 'error',
-					title: 'Registration unsuccessful.',
-					message: 'Unable to save your registration. Please try agin and let us know if you continue to have trouble.'
+					title: err.reason || 'Registration unsuccessful.',
+					message: err.details || 'Unable to save your registration. Please try again and let us know if you continue to experience issues.'
 			else
 				Meteor.call 'sendVerificationEmail', Meteor.userId()
 				Template.userMessages.showMessage

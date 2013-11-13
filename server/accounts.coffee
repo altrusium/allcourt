@@ -1,3 +1,13 @@
+userMatchingSlugAlreadyExists = (slug) ->
+	Meteor.users.findOne 'profile.slug': slug
+
+getUserCredentialService = (slug) ->
+	service = 'a password'
+	user = Meteor.users.findOne {'profile.slug': slug}, {services:1}
+	if user.services.facebook then service = 'facebook'
+	if user.services.google then service = 'google'
+	service
+
 Accounts.onCreateUser (options, user) ->
 	user.profile = user.profile || options.profile || {}
 	facebook = user.services && user.services.facebook
@@ -15,4 +25,9 @@ Accounts.onCreateUser (options, user) ->
 	user.profile.fullName = user.profile.firstName + ' ' + user.profile.lastName
 	user.profile.slug = user.profile.firstName.replace(' ','') + user.profile.lastName.replace(' ','')
 	user.profile.gender = user.profile.gender || 'female'
-	user
+
+	if userMatchingSlugAlreadyExists user.profile.slug
+		existingService = getUserCredentialService user.profile.slug
+		throw new Meteor.Error 409, 'User matching this name already exists.', 'Try using ' + existingService + ' to sign in and let us know if this persists.'
+	else
+		return user
