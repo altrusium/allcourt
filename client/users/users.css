@@ -21,6 +21,9 @@
 .user-list .user-info .user-email {
   font-size: 12px;
 }
+.user-list .user-info .user-teams {
+  font-size: 12px;
+}
 
 .user-info {
   margin-bottom: 20px;

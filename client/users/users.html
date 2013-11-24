@@ -5,15 +5,53 @@
 		<li><a href="/user/create">Create new user</a></li>
 	</ul>
 	{{> userMessages}}
-	<div class="container user-list">
-		<div class="search row">
-			<div class="span12">
-				<form class="navbar-search">
-					<input type="text" class="search-query" placeholder="Find user">
-				</form>
-			</div>
+  <form class="row">
+    <div class="control-group span3">
+      <label for="tournament" class="control-label">Tournament</label>
+      <div class="controls">
+        <select id="tournament">
+          <option value="alltournaments">All Tournaments</option>
+          {{#each tournaments}}
+          <option value="{{_id}}" {{markSelectedTournament}}>{{tournamentName}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+    <div class="control-group span3">
+      <label for="role" class="control-label">Role</label>
+      <div class="controls">
+        <select id="role">
+          <option value="allroles">All Roles</option>
+          {{#each roles}}
+          <option value="{{roleId}}" {{markSelectedRole}}>{{roleName}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+    <div class="control-group span3">
+      <label for="team" class="control-label">Team</label>
+      <div class="controls">
+        <select id="team">
+          <option value="allteams">All Teams</option>
+          {{#each teams}}
+          <option value="{{teamId}}" {{markSelectedTeam}}>{{teamName}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+    <div class="control-group span3">
+      <label for="search" class="control-label">Search All Users</label>
+      <div class="controls">
+				<div class="search">
+					<form class="navbar-search">
+						<input id="search" type="text" class="search-query" placeholder="partial name of user">
+					</form>
+				</div>
+			</div>	
 		</div>
-		<p>Total number of users: <strong>{{totalCount}}</strong></p>
+  </form>
+	<div class="container user-list row span12">
+		{{#if totalCount}}<p>Showing <strong>{{totalCount}}</strong> users</p>{{/if}}
 		{{#each users}}
 		<div class="container-fluid">
 			<div class="row-fluid">
@@ -31,8 +69,11 @@
 					</a>
 				</div>
 				<div class="span10 user-info">
-					<a href="/user/{{slug}}" class="user-name">{{firstName}} {{lastName}}</a><br>
-					<span class="user-email">Email: <a href="mailto:{{email}}">{{email}}</a></span><br>
+					<a href="/user/{{slug}}" class="user-name">{{fullName}}</a><br>
+					<p class="user-email">Email: <a href="mailto:{{email}}">{{email}}</a></p>
+					{{#each this.tournaments}}
+					<p class="user-teams">{{name}} : {{role.name}} : {{role.team.name}}</p>
+					{{/each}}
 					{{#if isNew}}<span class="new-user">New Volunteer</span>{{/if}}
 				</div>
 			</div>
