@@ -26,14 +26,17 @@
 			{{/if}}
 		</div>
 		<div class="span7">
+			<p>Shifts for {{topPickedTeam}}</p>
+			<!--
 			<form class="form-inline">
 				<label for="team" class="control-label">Shifts for </label>
 				<select id="team" class="span3">
-					{{#each teams}}
-					<option value="{{teamId}}" {{markSelectedTeam}}>{{teamName}}</option>
-					{{/each}}
+					{#each teams}
+					<option value="{teamId}" {markSelectedTeam}>{teamName}</option>
+					{/each}
 				</select>
 			</form>
+			-->
 			{{#if shifts.defs}}
 			<p></p>
 			<table id="shiftTable" class="table table-striped table-condensed">

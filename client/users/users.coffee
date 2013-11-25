@@ -1,7 +1,7 @@
 getUserIdsOnTeam = (teamId) ->
   users = []
-  roleId = Session.get('active-role').roleId
-  tournamentId = Session.get('active-tournament')._id
+  roleId = Session.get('active-role')?.roleId
+  tournamentId = Session.get('active-tournament')?._id
   for user in Session.get('user-list')
     for tournament in user.tournaments when tournament.id is tournamentId
       if tournament.role?.team?.id is teamId then users.push user
@@ -9,14 +9,13 @@ getUserIdsOnTeam = (teamId) ->
 
 getUserIdsWithRole = (roleId) ->
   users = []
-  tournamentId = Session.get('active-tournament')._id
+  tournamentId = Session.get('active-tournament')?._id
   for user in Session.get('user-list')
     for tournament in user.tournaments when tournament.id is tournamentId
       if tournament.role?.id is roleId then users.push user
   users
 
 getUserIdsAtTournament = (tournamentId) ->
-  unless Session.get 'user-list' then setSearchableUserList()
   users = []
   for user in Session.get('user-list')
     for tournament in user.tournaments when tournament.id is tournamentId
@@ -35,6 +34,7 @@ getUserAccessCode = (userId) ->
   return 'ABC'
 
 getTournamentRegistrations = (userId) ->
+  registrants = -> null until registrantsSubscription.ready()
   registrants = Registrants.find userId: userId
   registrants.map (reg) ->
     t = Tournaments.findOne { _id: reg.tournamentId }, { fields: days: 0, shifts: 0, shiftDefs: 0 }
@@ -89,6 +89,12 @@ setActiveTeam = (forceChange) ->
       if team.teamId is tId then return team
     Session.set 'active-team', activeTeam
 
+
+
+
+Template.users.created = ->
+  setSearchableUserList()
+  
 Template.users.rendered = ->
   Session.set 'active-volunteer', null
 
@@ -175,7 +181,6 @@ Template.users.events
     Session.set 'active-team', null
     Session.set 'active-role', null
     Session.set 'active-tournament', null
-    unless Session.get 'user-list' then setSearchableUserList()
     users = Session.get 'user-list'
     searcher = new Fuse users, keys: ['fullName']
     results = searcher.search query

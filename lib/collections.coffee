@@ -3,6 +3,12 @@
 @Registrants = new Meteor.Collection 'registrants'
 @Tournaments = new Meteor.Collection 'tournaments'
 
+if Meteor.isClient
+  @scheduleSubscription = Meteor.subscribe 'schedule'
+  @volunteersSubscription = Meteor.subscribe 'volunteers'
+  @tournamentsSubscription = Meteor.subscribe 'tournaments'
+  @registrantsSubscription = Meteor.subscribe 'registrants'
+
 Meteor.users.allow
   insert: (userId, doc) ->
     Meteor.user().profile.admin

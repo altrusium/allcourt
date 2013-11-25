@@ -86,6 +86,9 @@ Template.userPreferences.teams = ->
       sortedTeams.push team
   sortedTeams
 
+Template.userPreferences.topPickedTeam = ->
+  Template.userPreferences.teams()[0].teamName
+
 Template.userPreferences.acceptedShift = ->
   if _.contains Session.get('accepted-shifts'), this.shiftId
     return 'checked="checked"'

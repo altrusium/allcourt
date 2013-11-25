@@ -1,8 +1,3 @@
-schedule = Meteor.subscribe 'schedule'
-volunteers = Meteor.subscribe 'volunteers'
-tournaments = Meteor.subscribe 'tournaments'
-registrants = Meteor.subscribe 'registrants'
-
 setActiveTournament = ->
   slug = this.params?.tournamentSlug
   tournament = Tournaments.findOne slug: slug

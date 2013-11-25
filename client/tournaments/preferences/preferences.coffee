@@ -1,11 +1,13 @@
 setRegistrationId = ->
   userId = Meteor.userId()
   tId = Session.get('active-tournament')._id
+  reg = -> null until registrantsSubscription.ready()
   reg = Registrants.findOne { userId: userId, tournamentId: tId }
   Session.set 'reg-id', reg._id
 
 setAcceptedShifts = ->
   signupId = Session.get 'reg-id'
+  signup = -> null until registrantsSubscription.ready()
   signup = Registrants.findOne { _id: signupId }
   Session.set 'accepted-shifts', signup.shifts
 
@@ -15,14 +17,15 @@ getVolunteerRoleId = ->
   role[0].roleId
 
 setActiveTeam = ->
-  tId = $('#team option:selected').val()
+  teamId = $('#sortableTeams').sortable('toArray')[0]
   tournament = Session.get 'active-tournament'
   activeTeam = _.find tournament.teams, (team) ->
-    if team.teamId is tId then return team
+    if team.teamId is teamId then return team
   Session.set 'active-team', activeTeam
 
 getTeamPreferences = ->
   signupId = Session.get 'reg-id'
+  signup = -> null until registrantsSubscription.ready()
   signup = Registrants.findOne { _id: signupId }
   signup and signup.teams or []
 
@@ -47,13 +50,13 @@ Template.preferences.created = ->
   setAcceptedShifts()
 
 Template.preferences.rendered = ->
-  setActiveTeam()
   $('#sortableTeams').disableSelection()
   $('#sortableTeams').sortable 
     forcePlaceholderSize: true 
     stop: (evnt, ui) ->
       teams = $('#sortableTeams').sortable('toArray').slice(0, 4)
       saveTeamPreferences teams
+  setActiveTeam()
 
 Template.preferences.linkHelper = ->
   allcourt.getTournamentLinkHelper()
@@ -96,6 +99,9 @@ Template.preferences.activeTeamName = ->
 Template.preferences.markSelectedTeam = ->
   if this.teamName is Session.get('active-team')?.teamName
     return 'selected=selected'
+
+Template.preferences.topPickedTeam = ->
+  Template.userPreferences.teams()[0].teamName
 
 # This function is identical to Template.setupShifts.shifts
 Template.preferences.shifts = ->

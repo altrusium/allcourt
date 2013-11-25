@@ -18,6 +18,7 @@
 			{{#if teams}}
 			<div class="row"><div class="span6"></div></div>
 			<p>Sort (drag and drop) the following volunteer teams in the order of your preference. Only the order of the top 4 are saved.</p>
+			<p>After your team preferences are sorted, select all of the shifts you are available. You aren't expected to work during all of your selections; this is just to help the coordinators understand <strong>your availability</strong>.</p> 
 			<ul id="sortableTeams" class="sortable-teams nav nav-pills nav-stacked">
 				{{#each teams}}
 				<li id="{{teamId}}">
@@ -36,14 +37,7 @@
 			{{/if}}
 		</div>
 		<div class="span7">
-			<form class="form-inline">
-				<label for="team" class="control-label">Shifts for </label>
-				<select id="team" class="span3">
-					{{#each teams}}
-					<option value="{{teamId}}" {{markSelectedTeam}}>{{teamName}}</option>
-					{{/each}}
-				</select>
-			</form>
+			<h2 class="column-header"><small>Shifts for {{topPickedTeam}}</small></h2>
 			{{#if shifts.defs}}
 			<p></p>
 			<table id="shiftTable" class="table table-striped table-condensed">

@@ -141,6 +141,7 @@ associateUserWithTournament = (userId) ->
 
 Template.setupRegistrants.created = ->
   setSearchableUserList()
+  Session.set 'view-prefs', ['1']
 
 Template.setupRegistrants.rendered = ->
   initializeControls()
@@ -174,6 +175,18 @@ Template.setupRegistrants.markSelectedTeam = ->
   if this.teamId is Session.get('active-team')?.teamId
     return 'selected=selected'
 
+Template.setupRegistrants.firstPreference = ->
+  if _.contains Session.get('view-prefs'), '1' then 'checked' else ''
+
+Template.setupRegistrants.secondPreference = ->
+  if _.contains Session.get('view-prefs'), '2' then 'checked' else ''
+
+Template.setupRegistrants.thirdPreference = ->
+  if _.contains Session.get('view-prefs'), '3' then 'checked' else ''
+
+Template.setupRegistrants.forthPreference = ->
+  if _.contains Session.get('view-prefs'), '4' then 'checked' else ''
+
 Template.setupRegistrants.teams = ->
   roleId = Session.get('active-role')?.roleId
   tournament = Session.get 'active-tournament'
@@ -199,14 +212,21 @@ Template.setupRegistrants.registrants = ->
   tId = Session.get('active-tournament')._id
   teamId = Session.get('active-team')?.teamId
   unless tId and teamId then return []
-  Registrants.find({ tournamentId: tId }).forEach (reg) ->
-    if _.contains reg.teams, teamId
-      registrants.push [reg.userId, reg.isTeamLead]
+  Session.get('view-prefs').forEach (pref) ->
+    Registrants.find({ tournamentId: tId }).forEach (reg) ->
+      # if _.contains reg.teams, teamId
+      if reg.teams[pref-1] is teamId
+        registrants.push [reg.userId, reg.isTeamLead]
   users = for reg in registrants
     user = Meteor.users.findOne({ _id: reg[0] })?.profile
     if reg[1] then user.teamLeadChecked = 'checked'
     user and user.id = reg[0]
     user
+  _.sortBy users, (user) ->
+    user?.fullName
+
+Template.setupRegistrants.registrantCount = ->
+  Template.setupRegistrants.registrants().length
 
 Template.setupRegistrants.searchResults = ->
   Session.get 'search-results'
@@ -275,6 +295,12 @@ Template.setupRegistrants.events
     searcher = new Fuse users, keys: ['fullName']
     results = searcher.search query
     Session.set 'search-results', results
+
+  'change #viewPreferences [type=checkbox]': (evnt, template) ->
+    evnt.preventDefault()
+    selected = $('#viewPreferences input:checkbox:checked').map ->
+      $(this).val()
+    Session.set 'view-prefs', selected.get()
 
   'click #addUser': (evnt, template) ->
     userOptions = getUserFormValues template

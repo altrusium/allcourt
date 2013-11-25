@@ -58,6 +58,24 @@
           <label for="addUser" class="control-label">Looked and can't find them?</label>
           <a id="addNewUser" href="#">Add new user</a>
         </div>
+        <div class="control-group">
+          <div id="viewPreferences" class="controls">
+            <span>Show volunteers whereby this is their</span>
+            <label class="checkbox">
+              <input type="checkbox" name="prefs" value="1" {{firstPreference}}> First preference
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" name="prefs" value="2" {{secondPreference}}> Second preference
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" name="prefs" value="3" {{thirdPreference}}> Third preference
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" name="prefs" value="4" {{forthPreference}}> Forth preference
+            </label>
+            <span>{{registrantCount}}</span>
+          </div>
+        </div>
       </form>
     </div>
     <div class="span8">
