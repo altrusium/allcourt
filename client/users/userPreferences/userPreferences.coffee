@@ -1,11 +1,13 @@
 setRegistrationId = ->
   userId = Session.get('active-user')._id
   tId = Session.get('active-tournament')._id
+  reg = -> null until registrantsSubscription.ready()
   reg = Registrants.findOne { userId: userId, tournamentId: tId }
   Session.set 'reg-id', reg._id
 
 setAcceptedShifts = ->
   signupId = Session.get 'reg-id'
+  signup = -> null until registrantsSubscription.ready()
   signup = Registrants.findOne { _id: signupId }
   Session.set 'accepted-shifts', signup.shifts
 
@@ -23,6 +25,7 @@ setActiveTeam = ->
 
 getTeamPreferences = ->
   signupId = Session.get 'reg-id'
+  signup = -> null until registrantsSubscription.ready()
   signup = Registrants.findOne { _id: signupId }
   signup and signup.teams or []
 
