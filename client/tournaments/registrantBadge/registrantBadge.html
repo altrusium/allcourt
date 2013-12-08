@@ -1,0 +1,21 @@
+<template name="registrantBadge">
+	<div class="id-badge">
+		{{#if isASB}}
+		<div class="womens top-band"></div>
+		<img src="/img/wta.png" class="wta-logo">
+		<img src="/img/asb-logo.png" class="asb-logo">
+		{{else}}
+		<div class="mens top-band"></div>
+		<img src="/img/atp.png" class="atp-logo">
+		<img src="/img/heineken.png" class="heineken-logo">
+		{{/if}}
+		<img src="/img/fot-logo.png" class="fot-logo">
+		<div class="year">2014</div>
+		<img src="{{photoFilename}}" class="photo">
+		<div class="full-name">{{fullName}}</div>
+		<div class="function">{{function}}</div>
+		<div class="access-code">{{accessCode}}</div>
+		<div class="right-edge"></div>
+		<div class="bottom-edge"></div>
+	</div>
+</template>

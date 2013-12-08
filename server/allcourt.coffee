@@ -90,6 +90,15 @@ Meteor.methods
         shiftDefId: newShiftDef.shiftDefId
       Tournaments.update options.tournamentId, $push: shifts: newShift
 
+  updateRegistrant: (options) ->
+    Registrants.update({ 
+      userId: options.userId
+      tournamentId: options.tournamentId 
+      }, $set: { 
+      'function': options.function
+      'accessCode': options.accessCode
+    })
+
   sendVerificationEmail: (userId) ->
     Accounts.sendVerificationEmail userId
 

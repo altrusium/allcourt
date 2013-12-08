@@ -12,6 +12,10 @@
   </body>
 </template>
 
+<template name="blank">
+  {{yield}}
+</template>
+
 <!-- Helper is in client.coffee -->
 <template name="activeTournament">
 	{{#if tournament.tournamentName}}

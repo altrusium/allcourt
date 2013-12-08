@@ -37,7 +37,11 @@
         <h2 class="column-header"><small>{{tournamentName}}</small></h2>
           <ul>
           {{#each teams}}
-            <li><a href="#" data-team-id="{{teamId}}" data-team-name="{{teamName}}" data-tournament-slug="{{../slug}}">{{teamName}}</a></li>
+            <li>{{teamName}}:
+              <a href="#" data-shifts-link data-team-id="{{teamId}}" data-team-name="{{teamName}}" data-tournament-slug="{{../slug}}">Shifts</a> |
+              <a href="#" data-details-link data-team-id="{{teamId}}" data-team-name="{{teamName}}" data-tournament-slug="{{../slug}}">Details</a> |
+              <a href="#" data-badge-link data-team-id="{{teamId}}" data-team-name="{{teamName}}" data-tournament-slug="{{../slug}}">Badge</a>
+            </li>
           {{/each}}
           </ul>
         {{/each}}

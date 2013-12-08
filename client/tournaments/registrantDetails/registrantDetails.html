@@ -1,0 +1,33 @@
+<template name="registrantDetails">
+  {{> tabs}}
+  {{setTab 'users'}}
+  {{> userMessages}}
+  <div class="row">
+    <div class="user-details span3">
+      {{#if photoFilename}}
+        <img class="volunteer-photo" src="{{photoFilename}}"><br>
+      {{else}}
+        <div class="{{#if isMale}}male{{else}}female{{/if}} photo-placeholder"></div>
+      {{/if}}}
+    </div>
+    <div class="volunteer-details span4">
+      <h3>{{fullName}}</h3>
+      <form class="form-vertical">
+	      <div class="control-group">
+	      	<label class="control-label" for="function">Function</label>
+	      	<div class="controls">
+		      	<input type="text" id="function" class="input-medium" value="{{function}}">
+	      	</div>
+	      </div>
+	      <div class="control-group">
+	      	<label class="control-label" for="accessCode">Access Code</label>
+	      	<div class="controls">
+		      	<input type="text" id="accessCode" class="input-small" value="{{accessCode}}">
+	      	</div>
+	      </div>
+	      <button data-save class="btn btn-primary">Save</button>
+      </form>
+    </div>
+  </div>
+</template>
+

@@ -83,6 +83,23 @@ Router.map ->
     data: ->
       Session.get('active-user') and Session.get('active-tournament')
 
+  this.route 'registrantBadge',
+    layoutTemplate: 'blank'
+    path: 'registrant/:userSlug/:tournamentSlug/badge'
+    before: ->
+      setActiveUser.call(this)
+      setActiveTournament.call(this)
+    data: ->
+      Session.get('active-user') and Session.get('active-tournament')
+
+  this.route 'registrantDetails',
+    path: 'registrant/:userSlug/:tournamentSlug'
+    before: ->
+      setActiveUser.call(this)
+      setActiveTournament.call(this)
+    data: ->
+      Session.get('active-user') and Session.get('active-tournament')
+
   # '/volunteers': ->
   #   return if allcourt.isAdmin() then 'volunteers' else 'notAuthorised'
   # '/volunteer/create': ->

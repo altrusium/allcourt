@@ -66,7 +66,7 @@ Template.userDetails.events =
   'click #editProfile': (evnt, template) ->
     Router.go 'userEdit', userSlug: Session.get('active-user').profile.slug
 
-  'click a[data-team-id]': (evnt, template) ->
+  'click [data-shifts-link]': (evnt, template) ->
     anchor = $(evnt.currentTarget)
     teamId = anchor.data('team-id')
     teamName = anchor.data('team-name')
@@ -74,4 +74,24 @@ Template.userDetails.events =
     userSlug = Session.get('active-user').profile.slug
     Session.set 'active-team', { teamId: teamId, teamName: teamName }
     Router.go 'userPreferences', { userSlug: userSlug, tournamentSlug: tournamentSlug }
+    false
+
+  'click [data-details-link]': (evnt, template) ->
+    anchor = $(evnt.currentTarget)
+    teamId = anchor.data('team-id')
+    teamName = anchor.data('team-name')
+    tournamentSlug = anchor.data('tournament-slug')
+    userSlug = Session.get('active-user').profile.slug
+    Session.set 'active-team', { teamId: teamId, teamName: teamName }
+    Router.go 'registrantDetails', { userSlug: userSlug, tournamentSlug: tournamentSlug }
+    false
+
+  'click [data-badge-link]': (evnt, template) ->
+    anchor = $(evnt.currentTarget)
+    teamId = anchor.data('team-id')
+    teamName = anchor.data('team-name')
+    tournamentSlug = anchor.data('tournament-slug')
+    userSlug = Session.get('active-user').profile.slug
+    Session.set 'active-team', { teamId: teamId, teamName: teamName }
+    Router.go 'registrantBadge', { userSlug: userSlug, tournamentSlug: tournamentSlug }
     false
