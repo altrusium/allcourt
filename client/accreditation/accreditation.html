@@ -41,7 +41,7 @@
 								<p class="user-teams">{{name}} : {{role.name}} : {{role.team.name}} : {{function}} : {{accessCode}} <br>
 		              <a href="#" data-details-link data-registration-id="{{regId}}">Edit Details</a>
 		              {{#if canPrintBadge}} -
-		              <a href="/registrant/{{this.registrantSlug}}/{{this.tournamentSlug}}/badge" target="_blank">Print Badge</a>
+		              <a href="/registrant/{{this.registrantSlug}}/{{this.tournamentSlug}}/badge">Print Badge</a>
 		              {{/if}}
 								</p>
 				        {{/each}}
@@ -142,7 +142,7 @@
 		          <div class="controls">
 		            <button type="button" id="saveRegistrant" class="btn btn-primary">Save</button>
 		            {{#if canPrintActiveBadge}}
-		            <a href="/registrant/{{userSlug}}/{{tournamentSlug}}/badge" target="_blank">Print Badge</a>
+		            <a href="/registrant/{{userSlug}}/{{tournamentSlug}}/badge">Print Badge</a>
 		            {{/if}}
 		          </div>
 		        </div>
