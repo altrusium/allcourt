@@ -55,6 +55,9 @@ Router.map ->
   this.route 'users',
     path: '/users'
 
+  this.route 'accreditation',
+    path: '/accreditation'
+      
   this.route 'userCreate',
     path: '/user/create'
     before: ->
@@ -174,7 +177,7 @@ Router.map ->
     before: setActiveTournament
     data: ->
       Session.get 'active-tournament'
-      
+
 
 
 

@@ -4,7 +4,7 @@ Meteor.methods
     newUser = 
       email: options.email
       profile:
-        email: options.email
+        email: options.email.toLowerCase()
         firstName: options.firstName
         lastName: options.lastName
         fullName: options.firstName + ' ' + options.lastName
@@ -19,13 +19,13 @@ Meteor.methods
     firstName = options.firstName
     lastName = options.lastName
     Meteor.users.update options._id, $set: profile: {
-      email: options.email,
+      email: options.email.toLowerCase(),
       firstName: firstName,
       lastName: lastName,
       fullName: firstName + ' ' + lastName,
       photoFilename: options.photoFilename,
       gender: options.gender || 'female',
-      slug: firstName.replace(' ','') + lastName.replace(' ',''),
+      slug: firstName.replace(/\s/g,'') + lastName.replace(/\s/g,''),
       admin: options.admin,
       isNew: options.isNew
       }
@@ -34,7 +34,7 @@ Meteor.methods
     Volunteers.insert { 
       _id: options._id,
       birthdate: options.birthdate || '',
-      shirtSize: options.shirtSize || '',
+      shirtSize: options.shirtSize.toUpperCase() || '',
       homePhone: options.homePhone || '',
       mobilePhone: options.mobilePhone || '',
       address: options.address || '',
@@ -47,7 +47,7 @@ Meteor.methods
   updateVolunteer: (options) ->
     Volunteers.update _id: options._id, { 
       birthdate: options.birthdate,
-      shirtSize: options.shirtSize,
+      shirtSize: options.shirtSize.toUpperCase(),
       homePhone: options.homePhone,
       mobilePhone: options.mobilePhone,
       address: options.address,
@@ -96,7 +96,7 @@ Meteor.methods
       tournamentId: options.tournamentId 
       }, $set: { 
       'function': options.function
-      'accessCode': options.accessCode
+      'accessCode': options.accessCode.toUpperCase()
     })
 
   sendVerificationEmail: (userId) ->

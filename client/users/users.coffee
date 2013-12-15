@@ -60,6 +60,7 @@ setSearchableUserList = ->
       email: user.profile.email
       isNew: user.profile.isNew
       fullName: user.profile.fullName
+      isMale: user.profile.gender is 'male'
       accessCode: getUserAccessCode user._id
       photoFilename: user.profile.photoFilename
       tournaments: getTournamentRegistrations user._id

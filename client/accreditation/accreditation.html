@@ -1,0 +1,154 @@
+<template name="accreditation">
+	{{> tabs}}
+	{{> userMessages}}
+	<div class="tabbable accreditation"> 
+	  <ul class="nav nav-tabs">
+	    <li class="find-tab {{findTabIsActive}}"><a href="#find-registrant-tab" data-toggle="tab">Find Registrant</a></li>
+	    <li class="add-edit-tab {{addEditTabIsActive}}"><a href="#add-edit-registrant-tab" data-toggle="tab">Add/Edit Registrant</a></li>
+	  </ul>
+	  <div class="tab-content">
+	    <div class="tab-pane {{findTabIsActive}}" id="find-registrant-tab">
+		    <form>
+			    <div class="control-group">
+			      <label for="search" class="control-label">Search All Users</label>
+			      <div class="controls">
+							<div class="search">
+								<form class="navbar-search">
+									<input id="search" type="text" class="search-query" placeholder="partial name of user">
+								</form>
+							</div>
+						</div>	
+					</div>
+				</form>
+				<div class="container user-list row">
+					{{#each users}}
+					<div class="container-fluid">
+						<div class="row-fluid">
+							<div class="span2">
+								{{#if photoFilename}}
+									<img src="{{photoRoot}}{{photoFilename}}" class="user-photo">
+								{{else}}
+									{{#if isMale}}
+										<img src="/img/no-male-photo.jpg" class="user-photo">
+									{{else}}
+										<img src="/img/no-female-photo.jpg" class="user-photo">
+									{{/if}}
+								{{/if}}}
+							</div>
+							<div class="span10 user-info">
+								<p class="user-name">{{fullName}}</p>
+				        {{#each this.tournaments}}
+								<p class="user-teams">{{name}} : {{role.name}} : {{role.team.name}} : {{function}} : {{accessCode}} <br>
+		              <a href="#" data-details-link data-registration-id="{{regId}}">Edit Details</a>
+		              {{#if canPrintBadge}} -
+		              <a href="/registrant/{{this.registrantSlug}}/{{this.tournamentSlug}}/badge" target="_blank">Print Badge</a>
+		              {{/if}}
+								</p>
+				        {{/each}}
+							</div>
+						</div>
+					</div>
+					{{/each}}
+				</div>
+	    </div>
+	    <div class="tab-pane {{addEditTabIsActive}}" id="add-edit-registrant-tab">
+	    	<div class="span3">
+				  <form class="form-vertical">
+				    <div class="control-group span3">
+				      <label for="tournament" class="control-label">Tournament</label>
+				      <div class="controls">
+				        <select id="tournament">
+				          <option value=""></option>
+				          {{#each tournaments}}
+				          <option value="{{_id}}" {{markSelectedTournament}}>{{tournamentName}}</option>
+				          {{/each}}
+				        </select>
+				      </div>
+				    </div>
+				    <div class="control-group span3">
+				      <label for="role" class="control-label">Role</label>
+				      <div class="controls">
+				        <select id="role">
+				          <option value=""></option>
+				          {{#each roles}}
+				          <option value="{{roleId}}" {{markSelectedRole}}>{{roleName}}</option>
+				          {{/each}}
+				        </select>
+				      </div>
+				    </div>
+				    <div class="control-group span3">
+				      <label for="team" class="control-label">Team</label>
+				      <div class="controls">
+				        <select id="team">
+				          <option value=""></option>
+				          {{#each teams}}
+				          <option value="{{teamId}}" {{markSelectedTeam}}>{{teamName}}</option>
+				          {{/each}}
+				        </select>
+				      </div>
+				    </div>
+				  </form>
+			  </div>
+		    <div class="span5">
+		      <form class="user-create form-horizontal">
+		      {{#with registrationDetails}}
+		        <div id="photoPlaceholder" class="{{#if isMale}}male{{else}}female{{/if}} empty photo-placeholder">
+		          <img src="{{photoPath}}" id="photoImg">
+		        </div>
+		        <div class="control-group">
+		          <label class="control-label" for="photo">Photo</label>
+		          <div class="controls">
+		            <button id="pickPhoto" type="button" class="btn input-medium">Select File</button>
+		            <input type="hidden" id="photoFilename" value="{{photoFilename}}">
+		          </div>
+		        </div>
+		        <div class="control-group">
+		          <label class="control-label" for="gender">Gender</label>
+		          <div class="controls">
+		            <label class="radio inline">
+		              <input type="radio" id="maleGender" name="gender" value="male" {{#if isMale}}checked{{/if}}> male
+		            </label>
+		            <label class="radio inline">
+		              <input type="radio" id="femaleGender" name="gender" value="female" {{#unless isMale}}checked{{/unless}}> female
+		            </label>
+		          </div>
+		        </div>
+		        <div class="control-group">
+		          <label class="control-label" for="firstName">First Name</label>
+		          <div class="controls">
+		            <input type="text" id="firstName" class="input-medium" value="{{firstName}}" required>
+		          </div>
+		        </div>
+		        <div class="control-group">
+		          <label class="control-label" for="lastName">Last Name</label>
+		          <div class="controls">
+		            <input type="text" id="lastName" class="input-medium" value="{{lastName}}" required>
+		          </div>
+		        </div>
+		        <div class="control-group">
+		          <label class="control-label" for="function">Function</label>
+		          <div class="controls">
+		            <input type="text" id="function" class="input-medium" value="{{function}}" required>
+		          </div>
+		        </div>
+		        <div class="control-group">
+		          <label class="control-label" for="accessCode">Access Code</label>
+		          <div class="controls">
+		            <input type="text" id="accessCode" class="input-medium" value="{{accessCode}}" required>
+		          </div>
+		        </div>
+			      {{/with}}
+		        <div class="control-group">
+		          <div class="controls">
+		            <button type="button" id="saveRegistrant" class="btn btn-primary">Save</button>
+		            {{#if canPrintActiveBadge}}
+		            <a href="/registrant/{{userSlug}}/{{tournamentSlug}}/badge" target="_blank">Print Badge</a>
+		            {{/if}}
+		          </div>
+		        </div>
+		      </form>
+		    </div>
+	    </div>
+    </div>
+  </div>
+</template>
