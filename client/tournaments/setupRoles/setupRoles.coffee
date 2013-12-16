@@ -102,8 +102,12 @@ Template.setupRoles.events
     Tournaments.update toId, $set: teams: fromTeams
 
   'click [data-action=delete]': (evnt, template) ->
+    Session.set 'deleting-role', $(evnt.currentTarget).data 'role'
+    $('#deleteModal').modal()
+
+  'click #deleteConfirmed': (evnt, template) ->
     id = Session.get('active-tournament')._id
-    roleToDelete = $(evnt.currentTarget).data 'role'
+    roleToDelete = Session.get 'deleting-role'
     roles = Session.get('active-tournament').roles
     keepingRoles = (role for role in roles when role.roleId isnt roleToDelete)
     Tournaments.update id, $set: roles: keepingRoles
@@ -111,3 +115,6 @@ Template.setupRoles.events
     keepingTeams = (team for team in teams when team.roleId isnt roleToDelete)
     Tournaments.update id, $set: teams: keepingTeams
 
+  'click #deleteCancelled': (evnt, template) ->
+    $('#deleteModal').hide()
+    

@@ -70,7 +70,9 @@ augmentDayShiftsWithConfirmedCount = (days, shifts, confirmed) ->
     day
 
 getFullName = (id) ->
-  Meteor.users.findOne(id).profile.fullName
+  user = Meteor.users.findOne(id)
+  unless user then console.log "No user: "+id
+  user?.profile?.fullName
 
 getVolunteers = (id, idType) ->
   activeDay = Session.get('active-day')

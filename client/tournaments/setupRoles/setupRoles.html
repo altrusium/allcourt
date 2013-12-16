@@ -78,4 +78,17 @@
     </div>
   </div>
   {{/if}}
+  <div id="deleteModal" class="modal hide fade">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h3>Deleting a role</h3>
+    </div>
+    <div class="modal-body">
+      <p><strong>Important! Please read.</strong> Are you sure you wish to delete this role? If you just created it by accident or misspelling, cool, go for it. If this role has teams and/or users associated with it, not cool, please reconider.</p>
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="btn link" id="deleteConfirmed" data-dismiss="modal">Delete role</a>
+      <a href="#" class="btn btn-primary" id="deleteCancelled" data-dismiss="modal">Do not delete</a>
+    </div>
+  </div>
 </template>

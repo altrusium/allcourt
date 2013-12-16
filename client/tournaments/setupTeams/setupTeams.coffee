@@ -94,9 +94,16 @@ Template.setupTeams.events
     $('#teamName').val('').focus()
 
   'click [data-action=delete]': (evnt, template) ->
+    Session.set 'deleting-team', $(evnt.currentTarget).data 'team'
+    $('#deleteModal').modal()
+
+  'click #deleteConfirmed': (evnt, template) ->
     id = Session.get('active-tournament')._id
-    teamToDelete = $(evnt.currentTarget).data 'team'
+    teamToDelete = Session.get 'deleting-team'
     teams = Session.get('active-tournament').teams
     keepingTeams = (team for team in teams when team.teamId isnt teamToDelete)
     Tournaments.update id, $set: teams: keepingTeams
 
+  'click #deleteCancelled': (evnt, template) ->
+    $('#deleteModal').hide()
+    
