@@ -1,7 +1,7 @@
-Meteor.methods 
+Meteor.methods
 
   createNewUser: (options) ->
-    newUser = 
+    newUser =
       email: options.email
       profile:
         email: options.email.toLowerCase()
@@ -31,10 +31,10 @@ Meteor.methods
       }
 
   createNewVolunteer: (options) ->
-    Volunteers.insert { 
+    Volunteers.insert {
       _id: options._id,
       birthdate: options.birthdate || '',
-      shirtSize: options.shirtSize.toUpperCase() || '',
+      shirtSize: options.shirtSize?.toUpperCase() || '',
       homePhone: options.homePhone || '',
       mobilePhone: options.mobilePhone || '',
       address: options.address || '',
@@ -45,9 +45,9 @@ Meteor.methods
     }
 
   updateVolunteer: (options) ->
-    Volunteers.update _id: options._id, { 
+    Volunteers.update _id: options._id, {
       birthdate: options.birthdate,
-      shirtSize: options.shirtSize.toUpperCase(),
+      shirtSize: options.shirtSize?.toUpperCase(),
       homePhone: options.homePhone,
       mobilePhone: options.mobilePhone,
       address: options.address,
@@ -65,14 +65,15 @@ Meteor.methods
       slug: options.slug,
       days: options.days,
       roles: [ roleId: newId, roleName: 'Volunteer'],
-      teams: [ teamId: newId, roleId: newId, teamName: 'Default Volunteer Team'],
+      teams: [ teamId: newId, roleId: newId,
+        teamName: 'Default Volunteer Team'],
       shifts: [],
       shiftDefs: []
     }
 
   addShift: (options) ->
     tournament = Tournaments.findOne options.tournamentId
-    newShiftDef = 
+    newShiftDef =
       shiftDefId: Meteor.uuid()
       teamId: options.teamId
       shiftName: options.shiftName
@@ -80,7 +81,7 @@ Meteor.methods
       endTime: options.endTime
     Tournaments.update options.tournamentId, $push: shiftDefs: newShiftDef
     for day in tournament.days
-      newShift = 
+      newShift =
         day: day
         count: options.count
         shiftId: Meteor.uuid()
@@ -91,10 +92,10 @@ Meteor.methods
       Tournaments.update options.tournamentId, $push: shifts: newShift
 
   updateRegistrant: (options) ->
-    Registrants.update({ 
+    Registrants.update({
       userId: options.userId
-      tournamentId: options.tournamentId 
-      }, $set: { 
+      tournamentId: options.tournamentId
+      }, $set: {
       'function': options.function
       'accessCode': options.accessCode.toUpperCase()
     })

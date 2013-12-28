@@ -11,7 +11,8 @@ allcourt.getSortedTournaments = ->
 
 allcourt.userTournaments = (userId) ->
   results = []
-  myTournamentIds = Registrants.find({ 'userId': userId }, fields: 'tournamentId': 1).fetch()
+  myTournamentIds = Registrants.find({ 'userId': userId },
+    fields: 'tournamentId': 1).fetch()
   allcourt.getSortedTournaments().forEach (tournament) ->
     myTournamentIds.forEach (my) ->
       if my.tournamentId is tournament._id

@@ -29,7 +29,8 @@ Template.volunteerList.photoRoot = ->
 
 
 updatePage = (file) ->
-  $('#photoImg').fadeIn(400).attr 'src', Template.volunteerList.photoRoot() + file.key
+  $('#photoImg').fadeIn(400).attr 'src',
+    Template.volunteerList.photoRoot() + file.key
   $('#photoPlaceholder').removeClass('empty').find('h4, p, .loading').remove()
   $('#photoFilename').val file.key
   $('#pickPhoto').removeAttr 'disabled'
@@ -40,10 +41,11 @@ storePhoto = (file) ->
     updatePage storedFile
   , (err) ->
     console.log err
-    Template.userMessages.showMessage 
+    Template.userMessages.showMessage
       type: 'error',
       title: 'Photo upload error',
-      message: 'Please refresh the page and start over. We apologise for the inconvenience.'
+      message: 'Please refresh the page and start over.
+        We apologise for the inconvenience.'
 
 resizePhoto = (file) ->
   filepicker.convert file,
@@ -52,21 +54,24 @@ resizePhoto = (file) ->
       storePhoto convertedFile
     , (err) ->
       console.log err
-      Template.userMessages.showMessage 
+      Template.userMessages.showMessage
         type: 'error',
         title: 'Photo upload error',
-        message: 'Please refresh the page and start over. We apologise for the inconvenience.'
+        message: 'Please refresh the page and start over.
+          We apologise for the inconvenience.'
 
 processPhoto = ->
   filepicker.pick mimetypes: 'image/*'
-    , (file) ->
-      $('#photoImg').attr 'src', ''
-      msg = '<h4 class="wait-message">Processing<br> your<br> photo</h4><img src="/img/loading.gif" class="loading" /><p>Please complete the form while you wait.</p>'
-      $(msg).appendTo '#photoPlaceholder'
-      $('#pickPhoto').attr 'disabled', 'disabled'
-      resizePhoto file
-    , (err) ->
-      console.log err
+  , (file) ->
+    $('#photoImg').attr 'src', ''
+    msg = '<h4 class="wait-message">Processing<br> your<br> photo</h4>
+      <img src="/img/loading.gif" class="loading" /><p>Please complete the
+      form while you wait.</p>'
+    $(msg).appendTo '#photoPlaceholder'
+    $('#pickPhoto').attr 'disabled', 'disabled'
+    resizePhoto file
+  , (err) ->
+    console.log err
 
 initializeControls = ->
   $('.birthDatepicker').datepicker format: 'dd M yyyy'
@@ -81,7 +86,7 @@ getUserFormValues = (template) ->
   firstName = template.find('#firstName').value
   lastName = template.find('#lastName').value
   email = template.find('#primaryEmail').value
-  return values = 
+  return values =
     email: email
     profile:
       email: email
@@ -94,7 +99,7 @@ getUserFormValues = (template) ->
       gender: template.find('input:radio[name=gender]:checked').value
 
 getVolunteerFormValues = (template) ->
-  return values = 
+  return values =
     shirtSize: template.find('#shirtSize').value
     birthdate: template.find('#birthdate').value
     homePhone: template.find('#homePhone').value
@@ -106,7 +111,7 @@ getVolunteerFormValues = (template) ->
     notes: template.find('#notes').value
 
 createNewVolunteer = (options, callback) ->
-  Volunteers.insert { 
+  Volunteers.insert {
     _id: options._id,
     birthdate: options.birthdate || '',
     shirtSize: options.shirtSize || '',
@@ -185,7 +190,7 @@ Template.volunteerCreate.events
     unless activeVolunteer # new user
       Meteor.call 'createNewUser', userOptions, (err, id) ->
         if err
-          Template.userMessages.showMessage 
+          Template.userMessages.showMessage
             type: 'error',
             title: 'Uh oh!',
             message: 'The volunteer was not saved. Reason: ' + err.reason
@@ -193,26 +198,28 @@ Template.volunteerCreate.events
           volunteerOptions._id = id
           createNewVolunteer volunteerOptions, (err) ->
             if id then clearFormValues template
-            Template.userMessages.showMessage 
+            Template.userMessages.showMessage
               type: 'info',
               title: 'Success!',
-              message: 'The volunteer ' + userOptions.profile.fullName + ' was saved'
+              message: 'The volunteer ' + userOptions.profile.fullName +
+                ' was saved'
         $('.wait-message').hide()
     else # updating exiting volunteer
       userOptions._id = activeVolunteer._id
       Meteor.call 'updateUser', userOptions, (err) ->
         if err
-          Template.userMessages.showMessage 
+          Template.userMessages.showMessage
             type: 'error',
             title: 'Uh oh!',
             message: 'The volunteer was not saved. Reason: ' + err.reason
         else
           volunteerOptions._id = activeVolunteer._id
           updateVolunteer volunteerOptions, (err) ->
-            Template.userMessages.showMessage 
+            Template.userMessages.showMessage
               type: 'info',
               title: 'Success!',
-              message: 'The volunteer ' + userOptions.profile.fullName + ' was saved'
+              message: 'The volunteer ' + userOptions.profile.fullName +
+                ' was saved'
         $('.wait-message').hide()
 
 
@@ -236,7 +243,8 @@ Template.volunteerDetails.availableTournamentsExist = ->
   return tournaments.length > 0
 
 Template.volunteerDetails.availableTournaments = ->
-  tournaments = Tournaments.find({}, fields: {tournamentName: 1, days: 1}).fetch()
+  tournaments = Tournaments.find({},
+    fields: {tournamentName: 1, days: 1}).fetch()
   futureTournaments = for tournament in tournaments
     tournamentStartDate = new Date tournament.days[0]
     tournament if new Date() - tournamentStartDate < 0
@@ -255,14 +263,15 @@ Template.volunteerDetails.events =
     Volunteers.remove id, ->
       Meteor.users.remove id, ->
       Router.go 'volunteerList'
-      Template.userMessages.showMessage 
+      Template.userMessages.showMessage
         type: 'info',
         title: 'Deleted!',
         message: 'The volunteer was deleted'
   'click #deleteCancelled': (evnt, template) ->
     $('#deleteModal').hide()
   'click #editProfile': (evnt, template) ->
-    Router.to 'volunteerEdit/', userSlug: Session.get('active-volunteer').userDetails.profile.slug
+    Router.to 'volunteerEdit/',
+      userSlug: Session.get('active-volunteer').userDetails.profile.slug
 
 
 

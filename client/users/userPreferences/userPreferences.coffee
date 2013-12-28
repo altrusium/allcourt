@@ -32,8 +32,8 @@ getTeamPreferences = ->
 saveTeamPreferences = (prefs) ->
   signupId = Session.get 'reg-id'
   Registrants.update(
-    { _id: signupId }, 
-    { $set: teams: prefs}, 
+    { _id: signupId },
+    { $set: teams: prefs},
     { $upsert: 1 }, (err) ->
       Template.userMessages.showMessage
         type: 'info'
@@ -52,8 +52,8 @@ Template.userPreferences.created = ->
 Template.userPreferences.rendered = ->
   setActiveTeam()
   $('#sortableTeams').disableSelection()
-  $('#sortableTeams').sortable 
-    forcePlaceholderSize: true 
+  $('#sortableTeams').sortable
+    forcePlaceholderSize: true
     stop: (evnt, ui) ->
       teams = $('#sortableTeams').sortable('toArray').slice(0, 4)
       saveTeamPreferences teams
@@ -84,7 +84,7 @@ Template.userPreferences.teams = ->
         team.found = true
         team
     sortedTeams.push pref
-  for team in tournament.teams when team.roleId is roleId # then the rest of them
+  for team in tournament.teams when team.roleId is roleId #then the rest of them
     unless team.found
       sortedTeams.push team
   sortedTeams
@@ -120,7 +120,7 @@ Template.userPreferences.shifts = ->
     date2 = moment def2.startTime, timeFormat
     date1 - date2
   # sort shifts
-  teamShifts = (shift for shift in tournament.shifts when shift.teamId is teamId)
+  teamShifts = (s for s in tournament.shifts when s.teamId is teamId)
   sortedShifts = teamShifts.sort (shift1, shift2) ->
     date1 = new Date(shift1.startTime)
     date2 = new Date(shift2.startTime)
@@ -130,12 +130,13 @@ Template.userPreferences.shifts = ->
     return date1 - date2
   # get days with shifts
   shiftDays = for day in sortedDays
-    dayShifts = 
+    dayShifts =
       dayOfWeek: moment(day).format('ddd')
       dayOfMonth: moment(day).format('Do')
-      activeShifts: (shift for shift in sortedShifts when shift.day.valueOf() is day.valueOf())
+      activeShifts: (
+        s for s in sortedShifts when s.day.valueOf() is day.valueOf())
   # return the result
-  result = 
+  result =
     defs: shiftDefs
     days: shiftDays
 

@@ -10,10 +10,11 @@ storePhoto = (file) ->
     updatePage storedFile
   , (err) ->
     console.log err
-    Template.userMessages.showMessage 
+    Template.userMessages.showMessage
       type: 'error',
       title: 'Photo upload error',
-      message: 'Please refresh the page and start over. We apologise for the inconvenience.'
+      message: 'Please refresh the page and start over.
+        We apologise for the inconvenience.'
 
 resizePhoto = (file) ->
   filepicker.convert file,
@@ -22,21 +23,24 @@ resizePhoto = (file) ->
       storePhoto convertedFile
     , (err) ->
       console.log err
-      Template.userMessages.showMessage 
+      Template.userMessages.showMessage
         type: 'error',
         title: 'Photo upload error',
-        message: 'Please refresh the page and start over. We apologise for the inconvenience.'
+        message: 'Please refresh the page and start over.
+          We apologise for the inconvenience.'
 
 processPhoto = ->
   filepicker.pick mimetypes: 'image/*'
-    , (file) ->
-      $('#photoImg').attr 'src', ''
-      msg = '<h4 class="wait-message">Processing<br> your<br> photo</h4><img src="/img/loading.gif" class="loading" /><p>Please complete the form while you wait.</p>'
-      $(msg).appendTo '#photoPlaceholder'
-      $('#pickPhoto').attr 'disabled', 'disabled'
-      resizePhoto file
-    , (err) ->
-      console.log err
+  , (file) ->
+    $('#photoImg').attr 'src', ''
+    msg = '<h4 class="wait-message">Processing<br> your<br>
+      photo</h4><img src="/img/loading.gif" class="loading" /><p>Please
+      complete the form while you wait.</p>'
+    $(msg).appendTo '#photoPlaceholder'
+    $('#pickPhoto').attr 'disabled', 'disabled'
+    resizePhoto file
+  , (err) ->
+    console.log err
 
 initializeControls = ->
   $('.birthDatepicker').datepicker format: 'dd M yyyy'
@@ -48,7 +52,7 @@ initializeControls = ->
     $('#photoPlaceholder').toggleClass 'male female'
 
 getUserFormValues = (template) ->
-  return values = 
+  return values =
     _id: Meteor.userId()
     firstName: template.find('#firstName').value
     lastName: template.find('#lastName').value
@@ -57,7 +61,7 @@ getUserFormValues = (template) ->
     gender: template.find('input:radio[name=gender]:checked').value
 
 getVolunteerFormValues = (template) ->
-  return values = 
+  return values =
     _id: Meteor.userId()
     shirtSize: template.find('#shirtSize').value
     birthdate: template.find('#birthdate').value
@@ -85,7 +89,7 @@ Template.profileDetails.availableTournamentsExist = ->
   return false
 
 Template.profileDetails.availableTournaments = ->
-  tournaments = Tournaments.find({}, fields: { tournamentName: 1, days: 1 }).fetch()
+  tournaments = Tournaments.find({}, fields: {tournamentName:1, days:1}).fetch()
   futureTournaments = for tournament in tournaments
     tournamentStartDate = new Date tournament.days[0]
     tournament if new Date() - tournamentStartDate < 0
@@ -119,7 +123,7 @@ Template.profileEdit.volunteerDetails = ->
   return Volunteers.findOne Meteor.userId()
 
 Template.profileEdit.photoFilename = ->
-	return Meteor.user().profile.photoFilename
+  return Meteor.user().profile.photoFilename
 
 Template.profileEdit.events
   'click #saveProfile': (event, template) ->
@@ -127,12 +131,12 @@ Template.profileEdit.events
     # Todo: add exception handling for these 2 calls
     Meteor.call 'updateUser', userOptions, (err) ->
       if err
-        Template.userMessages.showMessage 
+        Template.userMessages.showMessage
           type: 'error',
           title: 'Error. ',
           message: 'Your profile details were not saved. Reason: ' + err.reason
       else
-        Template.userMessages.showMessage 
+        Template.userMessages.showMessage
           type: 'info',
           title: 'Success!',
           message: 'Your profile details were saved successfully.'
@@ -140,12 +144,12 @@ Template.profileEdit.events
       volunteerOptions = getVolunteerFormValues template
       Meteor.call 'updateVolunteer', volunteerOptions, (err) ->
         if err
-          Template.userMessages.showMessage 
+          Template.userMessages.showMessage
             type: 'error',
             title: 'Error.',
-            message: 'Your profile details were not saved. Reason: ' + err.reason
+            message: 'Your profile details were not saved. Reason: '+err.reason
         else
-          Template.userMessages.showMessage 
+          Template.userMessages.showMessage
             type: 'info',
             title: 'Success!',
             message: 'Your profile details were saved successfully.'

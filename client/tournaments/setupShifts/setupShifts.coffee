@@ -59,7 +59,8 @@ Template.setupShifts.shiftDefs = ->
   # tId = Session.get('active-tournament')._id
   # teamId = Session.get('active-team').teamId
   # if tId and teamId
-  #   tournament = Tournaments.findOne tId, {fields: {shiftDefs: 1}, sort: {shiftDefs: startTime: 1}}
+  #   tournament = Tournaments.findOne tId, {fields: {shiftDefs: 1},
+  #     sort: {shiftDefs: startTime: 1}}
   #   shiftDefs = for def in tournament.shiftDefs when def.teamId is teamId
   #     def.startTime = moment(def.startTime).format('h:mm a')
   #     def.endTime = moment(def.endTime).format('h:mm a')
@@ -88,7 +89,7 @@ Template.setupShifts.shifts = ->
     date2 = moment def2.startTime, timeFormat
     date1 - date2
   # sort shifts
-  teamShifts = (shift for shift in tournament.shifts when shift.teamId is teamId)
+  teamShifts = (s for s in tournament.shifts when s.teamId is teamId)
   sortedShifts = teamShifts.sort (shift1, shift2) ->
     date1 = new Date(shift1.startTime)
     date2 = new Date(shift2.startTime)
@@ -98,12 +99,13 @@ Template.setupShifts.shifts = ->
     return date1 - date2
   # get days with shifts
   shiftDays = for day in sortedDays
-    dayShifts = 
+    dayShifts =
       dayOfWeek: moment(day).format('ddd')
       dayOfMonth: moment(day).format('Do')
-      activeShifts: (shift for shift in sortedShifts when shift.day.valueOf() is day.valueOf())
+      activeShifts: (
+        s for s in sortedShifts when s.day.valueOf() is day.valueOf())
   # return the result
-  result = 
+  result =
     defs: shiftDefs
     days: shiftDays
 
@@ -112,7 +114,7 @@ Template.setupShifts.events
     setActiveTeam()
 
   'click #addShift': (evnt, template) ->
-    options = 
+    options =
       tournamentId: Session.get('active-tournament')._id
       teamId: $('#team option:selected').val()
       startTime: moment($('#setupShiftsStartTime').val(), 'h:m a').toDate()
@@ -136,7 +138,7 @@ Template.setupShifts.events
     id = tournament._id
     shiftId = $(evnt.currentTarget).closest('[data-shift-id]').data 'shift-id'
     count = $(evnt.currentTarget).closest('div').find('input').val()
-    targetShift = (shift for shift in tournament.shifts when shift.shiftId is shiftId)[0]
+    targetShift = (s for s in tournament.shifts when s.shiftId is shiftId)[0]
     targetShift.count = count
     Tournaments.update id, $pull: shifts: shiftId: shiftId
     Tournaments.update id, $push: shifts: targetShift
@@ -146,7 +148,7 @@ Template.setupShifts.events
     tournament = Session.get('active-tournament')
     id = tournament._id
     shiftId = $(evnt.currentTarget).data 'deactivate-shift-id'
-    targetShift = (shift for shift in tournament.shifts when shift.shiftId is shiftId)[0]
+    targetShift = (s for s in tournament.shifts when s.shiftId is shiftId)[0]
     targetShift.active = false
     Tournaments.update id, $pull: shifts: shiftId: shiftId
     Tournaments.update id, $push: shifts: targetShift
@@ -155,7 +157,7 @@ Template.setupShifts.events
     tournament = Session.get('active-tournament')
     id = tournament._id
     shiftId = $(evnt.currentTarget).data 'activate-shift-id'
-    targetShift = (shift for shift in tournament.shifts when shift.shiftId is shiftId)[0]
+    targetShift = (s for s in tournament.shifts when s.shiftId is shiftId)[0]
     targetShift.active = true
     Tournaments.update id, $pull: shifts: shiftId: shiftId
     Tournaments.update id, $push: shifts: targetShift

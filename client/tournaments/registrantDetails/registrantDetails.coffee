@@ -28,19 +28,21 @@ Template.registrantDetails.events =
       'userId': Session.get('active-user')._id
       'tournamentId': Session.get('active-tournament')._id
       'function': $('#function').val()
-      'accessCode': $('#accessCode').val() 
+      'accessCode': $('#accessCode').val()
     }
     Meteor.call 'updateRegistrant', options, (err) ->
       if err
         Template.userMessages.showMessage
           type: 'error'
           title: 'Uh oh! '
-          message: 'The registrants information was not updated successfully. Please try again.'
+          message: 'The registrants information was not updated successfully.
+            Please try again.'
       else
         # show success message
         Template.userMessages.showMessage
           type: 'info'
           title: 'Success. '
           message: 'The registrants information was updated successfully.'
-        Router.go 'userDetails', userSlug: Session.get('active-user').profile.slug
+        Router.go 'userDetails',
+          userSlug: Session.get('active-user').profile.slug
     false

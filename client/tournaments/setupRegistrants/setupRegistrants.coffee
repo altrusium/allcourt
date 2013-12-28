@@ -10,10 +10,11 @@ storePhoto = (file) ->
     updatePage storedFile
   , (err) ->
     console.log err
-    Template.userMessages.showMessage 
+    Template.userMessages.showMessage
       type: 'error',
       title: 'Photo upload error',
-      message: 'Please refresh the page and start over. We apologise for the inconvenience.'
+      message: 'Please refresh the page and start over.
+        We apologise for the inconvenience.'
 
 resizePhoto = (file) ->
   filepicker.convert file,
@@ -22,21 +23,24 @@ resizePhoto = (file) ->
       storePhoto convertedFile
     , (err) ->
       console.log err
-      Template.userMessages.showMessage 
+      Template.userMessages.showMessage
         type: 'error',
         title: 'Photo upload error',
-        message: 'Please refresh the page and start over. We apologise for the inconvenience.'
+        message: 'Please refresh the page and start over.
+          We apologise for the inconvenience.'
 
 processPhoto = ->
   filepicker.pick mimetypes: 'image/*'
-    , (file) ->
-      $('#photoImg').attr 'src', ''
-      msg = '<h4 class="wait-message">Processing<br> your<br> photo</h4><img src="/img/loading.gif" class="loading" /><p>Please complete the form while you wait.</p>'
-      $(msg).appendTo '#photoPlaceholder'
-      $('#pickPhoto').attr 'disabled', 'disabled'
-      resizePhoto file
-    , (err) ->
-      console.log err
+  , (file) ->
+    $('#photoImg').attr 'src', ''
+    msg = '<h4 class="wait-message">Processing<br> your<br> photo</h4><img
+      src="/img/loading.gif" class="loading" /><p>Please complete the form
+      while you wait.</p>'
+    $(msg).appendTo '#photoPlaceholder'
+    $('#pickPhoto').attr 'disabled', 'disabled'
+    resizePhoto file
+  , (err) ->
+    console.log err
 
 initializeControls = ->
   $('#pickPhoto').click ->
@@ -58,7 +62,8 @@ getSortedTournaments = ->
 getMyTournaments = ->
   results = []
   myId = Meteor.userId()
-  myTournamentIds = Registrants.find({ 'userId': myId }, fields: 'tournamentId': 1).fetch()
+  myTournamentIds = Registrants.find({ 'userId': myId },
+    fields: 'tournamentId': 1).fetch()
   getSortedTournaments().forEach (tournament) ->
     myTournamentIds.forEach (my) ->
       if my.tournamentId is tournament._id
@@ -98,12 +103,13 @@ emptySearchResults = ->
 
 setSearchableUserList = ->
   users = Meteor.users.find({}).map (user) ->
-    usr = id: user._id, fullName: user.profile.firstName + ' ' + user.profile.lastName
+    usr = id: user._id, fullName: user.profile.firstName +
+      ' ' + user.profile.lastName
   Session.set 'user-list', users
   emptySearchResults()
 
 getUserFormValues = (template) ->
-  values = 
+  values =
     firstName: template.find('#firstName').value
     lastName: template.find('#lastName').value
     email: template.find('#email').value
@@ -117,11 +123,11 @@ associateUserWithTournament = (userId) ->
   if signup
     Session.set 'signup-id', signup._id
     Registrants.update signup._id, $push: teams: teamId
-  else 
-    Registrants.insert { 
-      userId: userId, 
+  else
+    Registrants.insert {
+      userId: userId,
       teams: [teamId],
-      tournamentId: tId, 
+      tournamentId: tId,
       addedBy: Meteor.userId()
     }, (err, id) ->
       unless err
@@ -134,7 +140,8 @@ associateUserWithTournament = (userId) ->
         Template.userMessages.showMessage
           type: 'error'
           title: 'Sign-up Failed:'
-          message: 'An error occurred while registering user. Please refresh the browser and let us know if this continues.'
+          message: 'An error occurred while registering user. Please refresh
+            the browser and let us know if this continues.'
 
 
 
@@ -202,7 +209,7 @@ Template.setupRegistrants.roles = ->
 Template.setupRegistrants.registrantsExist = ->
   show = true
   registrants = Template.setupRegistrants.registrants()
-  show = registrants.length > 0 
+  show = registrants.length > 0
   show = show and not Session.get('search-results')?
   show = show and not Session.get('adding-new-user')?
   show
@@ -305,10 +312,11 @@ Template.setupRegistrants.events
   'click #addUser': (evnt, template) ->
     userOptions = getUserFormValues template
     if not $('#hasProfileAccess').prop('checked')
-      userOptions.email = userOptions.firstName + '.' + userOptions.lastName + '@has-no-email.co.nz'
+      userOptions.email = userOptions.firstName + '.' + userOptions.lastName +
+        '@has-no-email.co.nz'
     Meteor.call 'createNewUser', userOptions, (err, id) ->
       if err
-        Template.userMessages.showMessage 
+        Template.userMessages.showMessage
           type: 'error',
           title: 'Uh oh!',
           message: 'The user was not saved. Reason: ' + err.reason
@@ -319,7 +327,10 @@ Template.setupRegistrants.events
   'click a[data-user-slug]': (evnt, template) ->
     userSlug = $(evnt.currentTarget).data('user-slug')
     tournamentSlug = Session.get('active-tournament').slug
-    Router.go 'userPreferences', { userSlug: userSlug, tournamentSlug: tournamentSlug }
+    Router.go 'userPreferences', {
+      userSlug: userSlug,
+      tournamentSlug: tournamentSlug
+    }
     false
 
   'change #hasProfileAccess': (evnt, template) ->

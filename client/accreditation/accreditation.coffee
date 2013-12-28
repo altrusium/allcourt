@@ -10,10 +10,11 @@ storePhoto = (file) ->
     updatePage storedFile
   , (err) ->
     console.log err
-    Template.userMessages.showMessage 
+    Template.userMessages.showMessage
       type: 'error',
       title: 'Photo upload error',
-      message: 'Please refresh the page and start over. We apologise for the inconvenience.'
+      message: 'Please refresh the page and start over.
+                We apologise for the inconvenience.'
 
 resizePhoto = (file) ->
   filepicker.convert file,
@@ -22,21 +23,24 @@ resizePhoto = (file) ->
       storePhoto convertedFile
     , (err) ->
       console.log err
-      Template.userMessages.showMessage 
+      Template.userMessages.showMessage
         type: 'error',
         title: 'Photo upload error',
-        message: 'Please refresh the page and start over. We apologise for the inconvenience.'
+        message: 'Please refresh the page and start over.
+                  We apologise for the inconvenience.'
 
 processPhoto = ->
   filepicker.pick mimetypes: 'image/*'
-    , (file) ->
-      $('#photoImg').attr 'src', ''
-      msg = '<h4 class="wait-message">Processing<br> your<br> photo</h4><img src="/img/loading.gif" class="loading" /><p>Please complete the form while you wait.</p>'
-      $(msg).appendTo '#photoPlaceholder'
-      $('#pickPhoto').attr 'disabled', 'disabled'
-      resizePhoto file
-    , (err) ->
-      console.log err
+  , (file) ->
+    $('#photoImg').attr 'src', ''
+    msg = '<h4 class="wait-message">Processing<br> your<br> photo</h4>
+      <img src="/img/loading.gif" class="loading" /><p>Please complete
+      the form while you wait.</p>'
+    $(msg).appendTo '#photoPlaceholder'
+    $('#pickPhoto').attr 'disabled', 'disabled'
+    resizePhoto file
+  , (err) ->
+    console.log err
 
 initializeControls = ->
   $('#pickPhoto').click ->
@@ -104,20 +108,22 @@ getTournamentRegistrations = (userId) ->
   user = Meteor.users.findOne userId
   registrants = Registrants.find userId: userId
   registrants.map (reg) ->
-    t = Tournaments.findOne { _id: reg.tournamentId }, { fields: days: 0, shifts: 0, shiftDefs: 0 }
+    t = Tournaments.findOne { _id: reg.tournamentId },
+        { fields: days: 0, shifts: 0, shiftDefs: 0 }
     tourney = {
-      regId: reg._id, 
-      id: t._id, 
-      tournamentSlug: t.slug, 
-      name: t.tournamentName, 
+      regId: reg._id,
+      id: t._id,
+      tournamentSlug: t.slug,
+      name: t.tournamentName,
       function: reg.function,
       accessCode: reg.accessCode,
       registrantSlug: user.profile.slug,
       canPrintBadge: user.profile?.photoFilename and reg.accessCode
     }
-    teamsRoleId = (teamObj.roleId for teamObj in t.teams when teamObj.teamId is reg.teams[0])[0]
+    teamsRoleId = (teamObj.roleId for teamObj in t.teams \
+      when teamObj.teamId is reg.teams[0])[0]
     roleObj = for r in t.roles when r.roleId is teamsRoleId
-      id: r.roleId, name: r.roleName 
+      id: r.roleId, name: r.roleName
     tourney.role = roleObj[0]
     teamObj = for tTeam in t.teams when tTeam.teamId is reg.teams[0]
       id: tTeam.teamId, name: tTeam.teamName
@@ -126,7 +132,7 @@ getTournamentRegistrations = (userId) ->
 
 setSearchableUserList = ->
   users = Meteor.users.find({}).map (user) ->
-    usr = 
+    usr =
       id: user._id
       email: user.profile.email
       isNew: user.profile.isNew
@@ -141,12 +147,13 @@ getUserFormValues = (template) ->
   user = Session.get('active-user')
   firstName = template.find('#firstName').value
   lastName = template.find('#lastName').value
-  values = 
+  values =
     firstName: firstName
     lastName: lastName
     admin: user?.profile?.admin
     isNew: user?.profile?.isNew
-    email: user?.profile?.email or firstName.replace(/\s/g, '').toLowerCase()+'.'+lastName.replace(/\s/g, '').toLowerCase() + '@has-no-email.co.nz'
+    email: user?.profile?.email or firstName.replace(/\s/g, '').toLowerCase()+
+      '.'+lastName.replace(/\s/g, '').toLowerCase() + '@has-no-email.co.nz'
     photoFilename: template.find('#photoFilename').value
     gender: template.find('input:radio[name=gender]:checked').value
     function: template.find('#function').value
@@ -158,16 +165,16 @@ associateUserWithTournament = (userId, userOptions) ->
   registration = Registrants.findOne { tournamentId: tId, userId: userId }
   if registration
     Registrants.update registration._id, {
-     $push: {teams: teamId}, 
-     $set: {function: userOptions.function, accessCode: userOptions.accessCode} 
+      $push: {teams: teamId},
+      $set: {function: userOptions.function, accessCode: userOptions.accessCode}
     }
     setActiveRegistration registration._id
     setActiveUser userId
-  else 
-    Registrants.insert { 
-      userId: userId, 
+  else
+    Registrants.insert {
+      userId: userId,
       teams: [teamId],
-      tournamentId: tId, 
+      tournamentId: tId,
       function: userOptions.function,
       accessCode: userOptions.accessCode,
       addedBy: Meteor.userId()
@@ -183,16 +190,18 @@ associateUserWithTournament = (userId, userOptions) ->
         Template.userMessages.showMessage
           type: 'error'
           title: 'Sign-up Failed:'
-          message: 'An error occurred while registering user. Please refresh the browser and let us know if this continues.'
+          message: 'An error occurred while registering user. Please refresh
+            the browser and let us know if this continues.'
 
 addNewRegistrant = (template) ->
   userOptions = getUserFormValues template
   Meteor.call 'createNewUser', userOptions, (err, id) ->
     if err
-      Template.userMessages.showMessage 
+      Template.userMessages.showMessage
         type: 'error',
         title: 'Uh oh!',
-        message: 'The new registrant was not saved successfully. Reason: ' + err.reason
+        message: 'The new registrant was not saved successfully. Reason: ' +
+          err.reason
     else
       associateUserWithTournament id, userOptions
 
@@ -200,7 +209,7 @@ updateActiveRegistrant = (template) ->
   userOptions = getUserFormValues template
   Meteor.call 'updateUser', userOptions, (err) ->
     if err
-      Template.userMessages.showMessage 
+      Template.userMessages.showMessage
         type: 'error',
         title: 'Uh oh!',
         message: 'The user information was not updated. Reason: ' + err.reason
@@ -279,11 +288,12 @@ Template.accreditation.tournamentSlug = ->
   Session.get('active-tournament')?.slug
 
 Template.accreditation.canPrintActiveBadge = ->
-  Session.get('active-user')?.profile?.photoFilename and Session.get('active-registration').accessCode
+  Session.get('active-user')?.profile?.photoFilename and
+    Session.get('active-registration').accessCode
 
 
 
-Template.accreditation.events = 
+Template.accreditation.events =
 
   'keyup #search': (evnt, template) ->
     query = $(evnt.currentTarget).val()
@@ -306,7 +316,8 @@ Template.accreditation.events =
     registration = Session.get('active-registration')
     setActiveUser registration.userId
     setActiveTournament registration.tournamentId
-    team = (team for team in Session.get('active-tournament').teams when team.teamId is registration.teams[0])[0]
+    team = (team for team in Session.get('active-tournament').teams \
+      when team.teamId is registration.teams[0])[0]
     Session.set 'active-role', roleId: team?.roleId
     Session.set 'active-team', team
     Session.set 'active-tab', 'addEdit'

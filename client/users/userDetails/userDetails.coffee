@@ -49,20 +49,20 @@ Template.userDetails.events =
   'click #deleteConfirmed': (evnt, template) ->
     id = Session.get('active-user')._id
     Meteor.users.remove id, ->
-      Template.userMessages.showMessage 
+      Template.userMessages.showMessage
         type: 'info',
         title: 'Deleted!',
         message: 'The user was deleted'
       Router.go 'users'
       Volunteers.remove id, ->
-        Template.userMessages.showMessage 
+        Template.userMessages.showMessage
           type: 'info',
           title: 'Deleted!',
           message: 'The volunteer was deleted'
 
   'click #deleteCancelled': (evnt, template) ->
     $('#deleteModal').hide()
-    
+
   'click #editProfile': (evnt, template) ->
     Router.go 'userEdit', userSlug: Session.get('active-user').profile.slug
 
@@ -73,7 +73,10 @@ Template.userDetails.events =
     tournamentSlug = anchor.data('tournament-slug')
     userSlug = Session.get('active-user').profile.slug
     Session.set 'active-team', { teamId: teamId, teamName: teamName }
-    Router.go 'userPreferences', { userSlug: userSlug, tournamentSlug: tournamentSlug }
+    Router.go 'userPreferences', {
+      userSlug: userSlug,
+      tournamentSlug: tournamentSlug
+    }
     false
 
   'click [data-details-link]': (evnt, template) ->
@@ -83,7 +86,10 @@ Template.userDetails.events =
     tournamentSlug = anchor.data('tournament-slug')
     userSlug = Session.get('active-user').profile.slug
     Session.set 'active-team', { teamId: teamId, teamName: teamName }
-    Router.go 'registrantDetails', { userSlug: userSlug, tournamentSlug: tournamentSlug }
+    Router.go 'registrantDetails', {
+      userSlug: userSlug,
+      tournamentSlug: tournamentSlug
+    }
     false
 
   'click [data-badge-link]': (evnt, template) ->
@@ -93,5 +99,8 @@ Template.userDetails.events =
     tournamentSlug = anchor.data('tournament-slug')
     userSlug = Session.get('active-user').profile.slug
     Session.set 'active-team', { teamId: teamId, teamName: teamName }
-    Router.go 'registrantBadge', { userSlug: userSlug, tournamentSlug: tournamentSlug }
+    Router.go 'registrantBadge', {
+      userSlug: userSlug,
+      tournamentSlug: tournamentSlug
+    }
     false

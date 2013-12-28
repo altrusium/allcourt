@@ -13,29 +13,29 @@ setActiveUser = ->
   slug = this.params.userSlug
   user = Meteor.users.findOne 'profile.slug': slug
   Session.set 'active-user', user
-    
+
 onlyShow = (template, router) ->
   router.render()
   router.render(template)
   router.stop()
 
 mustBeSignedIn = ->
-  unless Meteor.user() 
+  unless Meteor.user()
     onlyShow 'home', this
   window.scrollTo 0, 0
 
 mustBeAnAdmin = ->
-  unless allcourt.isAdmin() then onlyShow 'notFound', this 
+  unless allcourt.isAdmin() then onlyShow 'notFound', this
 
-Router.configure 
+Router.configure
   layoutTemplate: 'main'
   notFoundTemplate: 'notFound'
 
 Router.before mustBeSignedIn, except: ['home']
 Router.before mustBeAnAdmin, except: [
-  'home', 
-  'profileDetails', 
-  'profileEdit', 
+  'home',
+  'profileDetails',
+  'profileEdit',
   'tournaments',
   'register',
   'preferences',
@@ -57,7 +57,7 @@ Router.map ->
 
   this.route 'accreditation',
     path: '/accreditation'
-      
+
   this.route 'userCreate',
     path: '/user/create'
     before: ->
@@ -133,37 +133,37 @@ Router.map ->
     before: setActiveTournament
     data: ->
       Session.get 'active-tournament'
-      
+
   this.route 'setupRegistrants',
     path: '/:tournamentSlug/registrants'
     before: setActiveTournament
     data: ->
       Session.get 'active-tournament'
-      
+
   this.route 'setupShifts',
     path: '/:tournamentSlug/shifts'
     before: setActiveTournament
     data: ->
       Session.get 'active-tournament'
-      
+
   this.route 'register',
     path: '/:tournamentSlug/register'
     before: setActiveTournament
     data: ->
       Session.get 'active-tournament'
-      
+
   this.route 'preferences',
     path: '/:tournamentSlug/preferences'
     before: setActiveTournament
     data: ->
       Session.get 'active-tournament'
-      
+
   this.route 'schedule',
     path: '/:tournamentSlug/schedule'
     before: setActiveTournament
     data: ->
       Session.get 'active-tournament'
-      
+
   this.route 'userSchedule',
     path: '/:tournamentSlug/schedule/:userSlug'
     before: ->
@@ -171,7 +171,7 @@ Router.map ->
       setActiveUser.call(this)
     data: ->
       Session.get('active-tournament')? and Session.get('active-user')?
-      
+
   this.route 'tournamentDetails',
     path: '/:tournamentSlug'
     before: setActiveTournament

@@ -16,10 +16,17 @@ sendNotificationEmail = (tournament, role, team) ->
   fullName = Meteor.user().profile.fullName
   Meteor.call 'sendEmail',
     from: 'All-Court Registrations <postmaster@allcourt.co.nz>',
-    to: [Meteor.user().profile.email, 'Tennis Auckland <volunteers@tennisauckland.co.nz>'],
-    replyTo: [Meteor.user().profile.email, 'Tennis Auckland <volunteers@tennisauckland.co.nz>'], 
+    to: [Meteor.user().profile.email,
+      'Tennis Auckland <volunteers@tennisauckland.co.nz>'],
+    replyTo: [Meteor.user().profile.email,
+      'Tennis Auckland <volunteers@tennisauckland.co.nz>'],
     subject: 'New user registration on allcourt.co.nz',
-    text: "#{fullName}, thank you for registering as a #{role} (#{team}) at #{tournament}.\n\nIf you have any questions, just reply to this message and someone from Tennis Auckland will get back to you as soon as they can.\n\nAll-Court is still under development, so we appreciate your patience, but please let us know if you run into anything unexpected.\n\nWarm regards,\nTennis Auckland"
+    text: "#{fullName}, thank you for registering as a #{role} (#{team}) at
+      #{tournament}.\n\nIf you have any questions, just reply to this message
+      and someone from Tennis Auckland will get back to you as soon as they
+      can.\n\nAll-Court is still under development, so we appreciate your
+      patience, but please let us know if you run into anything unexpected.\n\n
+      Warm regards,\nTennis Auckland"
 
 setAcceptedShifts = ->
   signupId = Session.get 'reg-id'
@@ -34,10 +41,10 @@ associateUserWithTournament = (userId) ->
   teamId = Session.get('active-team').teamId
   teamName = Session.get('active-team').teamName
   signup = Registrants.findOne { tournamentId: tId, userId: userId }
-  Registrants.insert { 
-    userId: userId, 
+  Registrants.insert {
+    userId: userId,
     teams: [teamId],
-    tournamentId: tId, 
+    tournamentId: tId,
     addedBy: Meteor.userId()
   }, (err, id) ->
     unless err
@@ -52,10 +59,11 @@ associateUserWithTournament = (userId) ->
       Template.userMessages.showMessage
         type: 'error'
         title: 'Sign-up Failed:'
-        message: 'A registration error occurred. Please refresh your browser and let us know if this continues.'
+        message: 'A registration error occurred. Please refresh your browser
+          and let us know if this continues.'
 
 createNewVolunteer = (options, callback) ->
-  Volunteers.insert { 
+  Volunteers.insert {
     _id: options._id,
     birthdate: options.birthdate || '',
     shirtSize: options.shirtSize || '',
@@ -109,6 +117,7 @@ Template.register.events
             Template.userMessages.showMessage
               type: 'error'
               title: 'Uh oh! '
-              message: 'There was an error creating your volunteer record. Reason: ' + err.reason
+              message: 'There was an error creating your volunteer record.
+                Reason: ' + err.reason
       Router.go 'preferences', tournamentSlug: slug
     false

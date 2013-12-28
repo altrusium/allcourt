@@ -5,11 +5,11 @@ Template.userMessages.message = ->
   return msg || type: '', title: '', message: ''
 
 Template.userMessages.showMessage = (options) ->
-  Session.set 'user-message', 
+  Session.set 'user-message',
     title: options.title,
     message: options.message,
     type: 'alert alert-' + options.type
-  setTimeout -> 
+  setTimeout ->
     Template.userMessages.clear()
   , options.timeout || 4000 unless options.type is 'error'
 

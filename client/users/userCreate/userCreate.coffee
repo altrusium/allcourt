@@ -10,10 +10,11 @@ storePhoto = (file) ->
     updatePage storedFile
   , (err) ->
     console.log err
-    Template.userMessages.showMessage 
+    Template.userMessages.showMessage
       type: 'error',
       title: 'Photo upload error',
-      message: 'Please refresh the page and start over. We apologise for the inconvenience.'
+      message: 'Please refresh the page and start over.
+        We apologise for the inconvenience.'
 
 resizePhoto = (file) ->
   filepicker.convert file,
@@ -22,21 +23,24 @@ resizePhoto = (file) ->
       storePhoto convertedFile
     , (err) ->
       console.log err
-      Template.userMessages.showMessage 
+      Template.userMessages.showMessage
         type: 'error',
         title: 'Photo upload error',
-        message: 'Please refresh the page and start over. We apologise for the inconvenience.'
+        message: 'Please refresh the page and start over.
+          We apologise for the inconvenience.'
 
 processPhoto = ->
   filepicker.pick mimetypes: 'image/*'
-    , (file) ->
-      $('#photoImg').attr 'src', ''
-      msg = '<h4 class="wait-message">Processing<br> your<br> photo</h4><img src="/img/loading.gif" class="loading" /><p>Please complete the form while you wait.</p>'
-      $(msg).appendTo '#photoPlaceholder'
-      $('#pickPhoto').attr 'disabled', 'disabled'
-      resizePhoto file
-    , (err) ->
-      console.log err
+  , (file) ->
+    $('#photoImg').attr 'src', ''
+    msg = '<h4 class="wait-message">Processing<br> your<br>
+      photo</h4><img src="/img/loading.gif" class="loading" /><p>
+      Please complete the form while you wait.</p>'
+    $(msg).appendTo '#photoPlaceholder'
+    $('#pickPhoto').attr 'disabled', 'disabled'
+    resizePhoto file
+  , (err) ->
+    console.log err
 
 initializeControls = ->
   $('.birthDatepicker').datepicker format: 'dd M yyyy'
@@ -54,7 +58,7 @@ getActiveVolunteer = ->
   volunteer
 
 getUserFormValues = (template) ->
-  values = 
+  values =
     firstName: template.find('#firstName').value
     lastName: template.find('#lastName').value
     email: template.find('#email').value
@@ -64,7 +68,7 @@ getUserFormValues = (template) ->
     gender: template.find('input:radio[name=gender]:checked').value
 
 getVolunteerFormValues = (template) ->
-  values = 
+  values =
     shirtSize: template.find('#shirtSize').value
     birthdate: template.find('#birthdate').value
     homePhone: template.find('#homePhone').value
@@ -74,33 +78,6 @@ getVolunteerFormValues = (template) ->
     city: template.find('#city').value
     postalCode: template.find('#postalCode').value
     notes: template.find('#notes').value
-
-createNewVolunteer = (options, callback) ->
-  Volunteers.insert { 
-    _id: options._id,
-    birthdate: options.birthdate || '',
-    shirtSize: options.shirtSize || '',
-    homePhone: options.homePhone || '',
-    mobilePhone: options.mobilePhone || '',
-    address: options.address || '',
-    city: options.city || '',
-    suburb: options.suburb || '',
-    postalCode: options.postalCode || '',
-    notes: options.notes || ''
-  }, callback
-
-updateVolunteer = (options, callback) ->
-  Volunteers.update { _id: options._id }, { $set: {
-    birthdate: options.birthdate || ''
-    shirtSize: options.shirtSize || ''
-    homePhone: options.homePhone || ''
-    mobilePhone: options.mobilePhone || ''
-    address: options.address || ''
-    city: options.city || ''
-    suburb: options.suburb || ''
-    postalCode: options.postalCode || ''
-    notes: options.notes || ''
-  }}, callback
 
 clearFormValues = (template) ->
   template.find('#photoFilename').value = ''
@@ -122,76 +99,76 @@ clearFormValues = (template) ->
 
 showResultOfVolunteerCreation = (err) ->
   if err
-    Template.userMessages.showMessage 
+    Template.userMessages.showMessage
       type: 'error',
       title: 'Uh oh!',
       message: 'The new volunteer was not saved. Reason: ' + err.reason
   else
-    Template.userMessages.showMessage 
+    Template.userMessages.showMessage
       type: 'info',
       title: 'Success!',
       message: 'The new volunteer was saved successfully.'
 
 showResultOfVolunteerUpdate = (err) ->
   if err
-    Template.userMessages.showMessage 
+    Template.userMessages.showMessage
       type: 'error',
       title: 'Uh oh!',
       message: 'The volunteer was not updated. Reason: ' + err.reason
   else
-    Template.userMessages.showMessage 
+    Template.userMessages.showMessage
       type: 'info',
       title: 'Success!',
       message: 'The volunteer was updated successfully.'
 
 showResultOfUserCreation = (err) ->
   if err
-    Template.userMessages.showMessage 
+    Template.userMessages.showMessage
       type: 'error',
       title: 'Uh oh!',
       message: 'The new user was not saved. Reason: ' + err.reason
   else
-    Template.userMessages.showMessage 
+    Template.userMessages.showMessage
       type: 'info',
       title: 'Success!',
       message: 'The new user was saved successfully.'
 
 showResultOfUserUpdate = (err) ->
   if err
-    Template.userMessages.showMessage 
+    Template.userMessages.showMessage
       type: 'error',
       title: 'Uh oh!',
       message: 'The user was not updated. Reason: ' + err.reason
   else
-    Template.userMessages.showMessage 
+    Template.userMessages.showMessage
       type: 'info',
       title: 'Success!',
       message: 'The user was updated successfully.'
 
 saveNewUserAndVolunteer = (userOptions, volunteerOptions) ->
-  isVolunteer = $('#isVolunteer').prop('checked')
   Meteor.call 'createNewUser', userOptions, (err, id) ->
     showResultOfUserCreation err
     unless err
-      if isVolunteer
+      if $('#isVolunteer').prop('checked')
         volunteerOptions._id = id
-        createNewVolunteer volunteerOptions, (err) ->
-          if id then clearFormValues template
-          showResultOfVolunteerCreation err
+        Meteor.call 'createNewVolunteer', volunteerOptions, (vErr, vId) ->
+          if vId then clearFormValues template
+          showResultOfVolunteerCreation vErr
 
 updateUserAndVolunteer = (userOptions, volunteerOptions) ->
-  isVolunteer = $('#isVolunteer').prop('checked')
   Meteor.call 'updateUser', userOptions, (err) ->
     showResultOfUserUpdate err
     unless err
-      if isVolunteer
+      if $('#isVolunteer').prop('checked')
         volunteerOptions._id = Session.get('active-user')._id
         if Session.get('active-volunteer')
-          updateVolunteer volunteerOptions, (err) ->
-            showResultOfVolunteerUpdate err
+          Meteor.call 'updateVolunteer', volunteerOptions, (vErr) ->
+            showResultOfVolunteerUpdate vErr
         else
-          createNewVolunteer volunteerOptions, (err) ->
-            showResultOfVolunteerCreation err
+          Meteor.call 'createNewVolunteer', volunteerOptions, (vErr) ->
+            showResultOfVolunteerCreation vErr
+
+
 
 Template.userCreate.rendered = ->
   initializeControls()
@@ -217,7 +194,7 @@ Template.userCreate.userDetails = ->
   if profile.email isnt 'no.email@tennisauckland.co.nz'
     details.emailDisabled = ''
     details.hasProfileAccess = 'checked'
-  else 
+  else
     details.hasProfileAccess = ''
     details.emailDisabled = 'disabled'
     details.email = 'no.email@tennisauckland.co.nz'
@@ -232,19 +209,22 @@ Template.userCreate.events
     activeUser = Session.get('active-user')
     userOptions = getUserFormValues template
     volunteerOptions = getVolunteerFormValues template
-    if activeUser
+    if activeUser # edit existing user
       userOptions._id = activeUser._id
       updateUserAndVolunteer userOptions, volunteerOptions
-    else
+    else # add new user
       saveNewUserAndVolunteer userOptions, volunteerOptions
     Router.go 'userDetails', userSlug: Session.get('active-user').profile.slug
 
   'change #hasProfileAccess': (evnt, template) ->
+    firstName = $('#firstName').val()
+    lastName = $('#lastName').val()
+    name = allcourt.prepNameForEmail firstName, lastName
     if $(evnt.currentTarget).prop('checked')
       $('#email').prop('disabled', false).val('')
       $('#siteAdmin').prop('disabled', false)
     else
-      $('#email').prop('disabled', true).val('no.email@tennisauckland.co.nz')
+      $('#email').prop('disabled', true).val(name + '@has-no-email.co.nz')
       $('#siteAdmin').prop('disabled', true)
       $('#siteAdmin').prop('checked', false)
 
@@ -253,4 +233,19 @@ Template.userCreate.events
       $('.volunteer-details').removeClass('hidden')
     else
       $('.volunteer-details').addClass('hidden')
+
+  'change #firstName': (evnt, template) ->
+    firstName = $('#firstName').val()
+    lastName = $('#lastName').val()
+    name = allcourt.prepNameForEmail firstName, lastName
+    unless $('#hasProfileAccess').prop('checked')
+      $('#email').val(name + '@has-no-email.co.nz')
+
+  'change #lastName': (evnt, template) ->
+    firstName = $('#firstName').val()
+    lastName = $('#lastName').val()
+    name = allcourt.prepNameForEmail firstName, lastName
+    unless $('#hasProfileAccess').prop('checked')
+      $('#email').val(name + '@has-no-email.co.nz')
+
 

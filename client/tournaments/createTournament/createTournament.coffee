@@ -25,12 +25,12 @@ Template.createTournament.tournaments = ->
 Template.createTournament.tournamentsExist = ->
   return Tournaments.find().count() > 0
 
-Template.createTournament.events 
+Template.createTournament.events
   'click #saveTournament': (evnt, template) ->
     firstDay = moment(template.find('#firstDate').value, 'DD MMM YYYY')
     lastDay = moment(template.find('#lastDate').value, 'DD MMM YYYY')
-    length = lastDay.diff(firstDay, 'days') 
-    options = 
+    length = lastDay.diff(firstDay, 'days')
+    options =
       tournamentName: template.find('#tournamentName').value
       slug: template.find('#tournamentName').value.replace(/\s/g, '')
       firstDay: firstDay.toDate()
@@ -38,7 +38,7 @@ Template.createTournament.events
       days: for count in [0..length]
         moment(firstDay).add('days', count).toDate()
     Meteor.call 'saveTournament', options, (err, id) ->
-        $('#tournamentName').val ''
+      $('#tournamentName').val ''
   'click [data-action=delete]': (evnt, template) ->
     id = $(evnt.currentTarget).data 'tournament-id'
     Tournaments.remove id

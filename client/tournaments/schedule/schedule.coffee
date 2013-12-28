@@ -15,7 +15,9 @@ setActiveDay = (activeDay) ->
 setActiveShift = (activeShiftDefId) ->
   tournament = Session.get('active-tournament')
   activeDay = moment(Session.get('active-day'))?.toISOString()
-  activeShift = (shift for shift in tournament.shifts when shift.shiftDefId is activeShiftDefId and moment(shift.day).toISOString() is activeDay)[0]
+  activeShift = (s for s in tournament.shifts \
+    when s.shiftDefId is activeShiftDefId \
+    and moment(shift.day).toISOString() is activeDay)[0]
   Session.set 'active-shift', activeShift
 
 getShiftStatus = (confirmed, needed) ->
@@ -40,7 +42,7 @@ getSortedShiftDefsForTeam = (tournament, teamId) ->
   shiftDefs
 
 getSortedShiftsForTeam = (tournament, teamId) ->
-  teamShifts = (shift for shift in tournament.shifts when shift.teamId is teamId)
+  teamShifts = (s for s in tournament.shifts when s.teamId is teamId)
   teamShifts.sort (shift1, shift2) ->
     date1 = new Date(shift1.startTime)
     date2 = new Date(shift2.startTime)
@@ -58,13 +60,16 @@ getSortedTournamentDays = (tournament) ->
 # not used in this file, but will be useful in preferences and setupShifts
 augmentDaysWithShifts = (days, shifts) ->
   shiftDays = for day in days
-    day.activeShifts = (shift for shift in shifts when moment(shift.day).toISOString() is moment(day.date).toISOString())
+    day.activeShifts = (s for s in shifts \
+      when moment(s.day).toISOString() is moment(day.date).toISOString())
     day
 
 augmentDayShiftsWithConfirmedCount = (days, shifts, confirmed) ->
   shiftDays = for day in days
-    day.activeShifts = for shift in shifts when moment(shift.day).toISOString() is moment(day.date).toISOString()
-      shift.confirmedCount = (c for c in confirmed when shift.shiftId is c.shiftId).length
+    day.activeShifts = for shift in shifts \
+    when moment(shift.day).toISOString() is moment(day.date).toISOString()
+      shift.confirmedCount = (c for c in confirmed \
+        when shift.shiftId is c.shiftId).length
       shift.status = getShiftStatus shift.confirmedCount, shift.count
       shift
     day
@@ -80,8 +85,10 @@ getVolunteers = (id, idType) ->
   tId = tournament._id
   schedule = Schedule.find(tournamentId: tId).fetch()
   registrants = Registrants.find(tournamentId: tId).fetch()
-  shifts = (shift for shift in tournament.shifts when moment(shift.day).toISOString() is moment(activeDay).toISOString() and shift[idType] is id)
-  for shift in shifts 
+  shifts = (shift for shift in tournament.shifts \
+    when moment(shift.day).toISOString() is moment(activeDay).toISOString() \
+    and shift[idType] is id)
+  for shift in shifts
     confirmed = for user in schedule when user.shiftId is shift.shiftId
       user.fullName = getFullName user.userId
       user
@@ -138,10 +145,16 @@ Template.schedule.showingAllDays = ->
   not Session.get('active-day')
 
 Template.schedule.showingOneDay = ->
-  Session.get('active-team') and Session.get('active-day') and not Session.get('active-shift')
+  team = Session.get('active-team')
+  day = Session.get('active-day')
+  shift = Session.get('active-shift')
+  team and day and not shift
 
 Template.schedule.showingOneShift = ->
-  Session.get('active-team') and Session.get('active-day') and Session.get('active-shift')
+  team = Session.get('active-team')
+  day = Session.get('active-day')
+  shift = Session.get('active-shift')
+  team and day and shift
 
 Template.schedule.weekDay = ->
   moment(Session.get('active-day')).format('ddd')
@@ -183,7 +196,7 @@ Template.schedule.shifts = ->
   days = getSortedTournamentDays tournament
   shiftDays = augmentDayShiftsWithConfirmedCount days, shifts, confirmed
 
-  result = 
+  result =
     defs: shiftDefs
     days: shiftDays
 

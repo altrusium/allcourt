@@ -37,11 +37,12 @@ getTournamentRegistrations = (userId) ->
   registrants = -> null until registrantsSubscription.ready()
   registrants = Registrants.find userId: userId
   registrants.map (reg) ->
-    t = Tournaments.findOne { _id: reg.tournamentId }, { fields: days: 0, shifts: 0, shiftDefs: 0 }
+    t = Tournaments.findOne { _id: reg.tournamentId },
+      { fields: days: 0, shifts: 0, shiftDefs: 0 }
     tourney = id: t._id, name: t.tournamentName
-    teamsRoleId = (teamObj.roleId for teamObj in t.teams when teamObj.teamId is reg.teams[0])[0]
-    roleObj = for r in t.roles when r.roleId is teamsRoleId
-      id: r.roleId, name: r.roleName 
+    tRoleId = (to.roleId for to in t.teams when to.teamId is reg.teams[0])[0]
+    roleObj = for r in t.roles when r.roleId is tRoleId
+      id: r.roleId, name: r.roleName
     tourney.role = roleObj[0]
     teamObj = for tTeam in t.teams when tTeam.teamId is reg.teams[0]
       id: tTeam.teamId, name: tTeam.teamName
@@ -54,7 +55,7 @@ emptySearchResults = ->
 
 setSearchableUserList = ->
   users = Meteor.users.find({}).map (user) ->
-    usr = 
+    usr =
       id: user._id
       slug: user.profile.slug
       email: user.profile.email
@@ -95,7 +96,7 @@ setActiveTeam = (forceChange) ->
 
 Template.users.created = ->
   setSearchableUserList()
-  
+
 Template.users.rendered = ->
   Session.set 'active-volunteer', null
 
@@ -133,11 +134,14 @@ Template.users.photoRoot = ->
 
 Template.users.users = ->
   if Session.get 'active-team'
-    Session.set 'search-results', getUserIdsOnTeam Session.get('active-team').teamId
+    Session.set 'search-results',
+      getUserIdsOnTeam Session.get('active-team').teamId
   else if Session.get 'active-role'
-    Session.set 'search-results', getUserIdsWithRole Session.get('active-role').roleId
+    Session.set 'search-results',
+      getUserIdsWithRole Session.get('active-role').roleId
   else if Session.get 'active-tournament'
-    Session.set 'search-results', getUserIdsAtTournament Session.get('active-tournament')._id
+    Session.set 'search-results',
+      getUserIdsAtTournament Session.get('active-tournament')._id
   Session.get 'search-results'
 
 Template.users.totalCount = ->

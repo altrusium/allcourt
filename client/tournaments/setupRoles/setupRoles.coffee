@@ -10,7 +10,8 @@ getSortedTournaments = ->
 getMyTournaments = ->
   results = []
   myId = Meteor.userId()
-  myTournamentIds = Registrants.find({ 'userId': myId }, fields: 'tournamentId': 1).fetch()
+  myTournamentIds = Registrants.find({ 'userId': myId },
+    fields: 'tournamentId': 1).fetch()
   getSortedTournaments().forEach (tournament) ->
     myTournamentIds.forEach (my) ->
       if my.tournamentId is tournament._id
@@ -72,7 +73,7 @@ Template.setupRoles.rolesExist = ->
 Template.setupRoles.roles = ->
   id = Session.get('active-tournament')._id
   unless id then return
-  tournament = Tournaments.findOne id, fields: roles: 1 
+  tournament = Tournaments.findOne id, fields: roles: 1
   return tournament.roles.sort (a, b) ->
     if a.roleName < b.roleName then return -1
     if a.roleName > b.roleName then return 1
@@ -87,7 +88,8 @@ Template.setupRoles.events
     id = Session.get('active-tournament')._id
     name = template.find('#roleName').value
     newRole = roleId: newId, roleName: name
-    defaultTeam = roleId: newId, teamId: newId, teamName: 'Default ' + name + ' Team'
+    defaultTeam = roleId: newId, teamId: newId, teamName: 'Default ' + name +
+      ' Team'
     Tournaments.update(id, $push: roles: newRole)
     Tournaments.update(id, $push: teams: defaultTeam)
     $('#roleName').val('').focus()
@@ -117,4 +119,4 @@ Template.setupRoles.events
 
   'click #deleteCancelled': (evnt, template) ->
     $('#deleteModal').hide()
-    
+
