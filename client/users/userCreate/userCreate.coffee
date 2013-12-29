@@ -54,53 +54,41 @@ clearFormValues = (template) ->
   $('#photoPlaceholder').addClass('empty').find('p, h4').remove()
   $('#photoImg').attr('src', '').fadeOut 400
 
+showSuccess = (msg) ->
+  Template.userMessages.showMessage
+    type: 'info',
+    title: 'Success!',
+    message: msg
+
+showError = (msg) ->
+  Template.userMessages.showMessage
+    type: 'error',
+    title: 'Uh oh!',
+    message: msg + ' Reason: ' + err.reason
+
 showResultOfVolunteerCreation = (err) ->
   if err
-    Template.userMessages.showMessage
-      type: 'error',
-      title: 'Uh oh!',
-      message: 'The new volunteer was not saved. Reason: ' + err.reason
+    showError 'The new volunteer was not saved.'
   else
-    Template.userMessages.showMessage
-      type: 'info',
-      title: 'Success!',
-      message: 'The new volunteer was saved successfully.'
+    showSuccess 'The new volunteer was saved successfully.'
 
 showResultOfVolunteerUpdate = (err) ->
   if err
-    Template.userMessages.showMessage
-      type: 'error',
-      title: 'Uh oh!',
-      message: 'The volunteer was not updated. Reason: ' + err.reason
+    showError 'The volunteer was not updated.'
   else
-    Template.userMessages.showMessage
-      type: 'info',
-      title: 'Success!',
-      message: 'The volunteer was updated successfully.'
+    showSuccess 'The volunteer was updated successfully.'
 
 showResultOfUserCreation = (err) ->
   if err
-    Template.userMessages.showMessage
-      type: 'error',
-      title: 'Uh oh!',
-      message: 'The new user was not saved. Reason: ' + err.reason
+    showError 'The new user was not saved.'
   else
-    Template.userMessages.showMessage
-      type: 'info',
-      title: 'Success!',
-      message: 'The new user was saved successfully.'
+    showSuccess 'The new user was saved successfully.'
 
 showResultOfUserUpdate = (err) ->
   if err
-    Template.userMessages.showMessage
-      type: 'error',
-      title: 'Uh oh!',
-      message: 'The user was not updated. Reason: ' + err.reason
+    showError 'The user was not updated.'
   else
-    Template.userMessages.showMessage
-      type: 'info',
-      title: 'Success!',
-      message: 'The user was updated successfully.'
+    showSuccess 'The user was updated successfully.'
 
 saveNewUserAndVolunteer = (userOptions, volunteerOptions) ->
   Meteor.call 'createNewUser', userOptions, (err, id) ->
@@ -138,17 +126,15 @@ Template.userCreate.userDetails = ->
   unless details then return hasProfileAccess: 'checked' # creating new user
   profile = details.profile
   details.isMale = profile.gender is 'male'
-  details.photoFilename = profile.photoFilename
-  if profile.photoFilename
+  $.extend details, profile
+  if details.photoFilename
     details.photoPath = photoHelper.photoRoot + profile.photoFilename
-  details.firstName = profile.firstName
-  details.lastName = profile.lastName
-  details.email = profile.email
   details.siteAdmin = if profile.admin then 'checked' else ''
   details.isNew = if profile.isNew then 'checked' else ''
   details.volunteer = if getActiveVolunteer() then 'checked'
 
-  if profile.email.indexOf(emailHelper.addressSuffix) > 1
+  if details.email.indexOf(emailHelper.addressSuffix) > 1
+    # user has a fake email and doesn't have access to their profile
     details.emailDisabled = ''
     details.hasProfileAccess = 'checked'
   else
