@@ -1,6 +1,9 @@
 {
   "packages": {
     "moment": {},
-    "iron-router": {}
+    "iron-router": {},
+    "bootstrap-datepicker2": {},
+    "jquery-ui-sortable": {},
+    "jquery-ui-touch-punch": {}
   }
 }

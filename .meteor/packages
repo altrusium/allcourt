@@ -7,7 +7,6 @@ preserve-inputs
 coffeescript
 stylus
 handlebars
-jquery
 bootstrap
 moment
 standard-app-packages
@@ -17,3 +16,7 @@ accounts-password
 accounts-ui
 email
 iron-router
+bootstrap-datepicker2
+jquery
+jquery-ui-sortable
+jquery-ui-touch-punch

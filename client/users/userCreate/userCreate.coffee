@@ -1,55 +1,12 @@
-updatePage = (file) ->
-  $('#photoImg').fadeIn(400).attr 'src', allcourt.photoRoot + file.key
-  $('#photoPlaceholder').removeClass('empty').find('h4, p, .loading').remove()
-  $('#photoFilename').val file.key
-  $('#pickPhoto').removeAttr 'disabled'
-
-storePhoto = (file) ->
-  filepicker.store file
-  , (storedFile) ->
-    updatePage storedFile
-  , (err) ->
-    console.log err
-    Template.userMessages.showMessage
-      type: 'error',
-      title: 'Photo upload error',
-      message: 'Please refresh the page and start over.
-        We apologise for the inconvenience.'
-
-resizePhoto = (file) ->
-  filepicker.convert file,
-    {width: 200, height: 200, align: 'faces', format: 'png', fit: 'crop'}
-    , (convertedFile) ->
-      storePhoto convertedFile
-    , (err) ->
-      console.log err
-      Template.userMessages.showMessage
-        type: 'error',
-        title: 'Photo upload error',
-        message: 'Please refresh the page and start over.
-          We apologise for the inconvenience.'
-
-processPhoto = ->
-  filepicker.pick mimetypes: 'image/*'
-  , (file) ->
-    $('#photoImg').attr 'src', ''
-    msg = '<h4 class="wait-message">Processing<br> your<br>
-      photo</h4><img src="/img/loading.gif" class="loading" /><p>
-      Please complete the form while you wait.</p>'
-    $(msg).appendTo '#photoPlaceholder'
-    $('#pickPhoto').attr 'disabled', 'disabled'
-    resizePhoto file
-  , (err) ->
-    console.log err
-
 initializeControls = ->
-  $('.birthDatepicker').datepicker format: 'dd M yyyy'
-  $('#birthdateIcon').click ->
-    $('#birthdate').datepicker 'show'
-  $('#pickPhoto').click ->
-    processPhoto()
-  $('#femaleGender, #maleGender').change ->
-    $('#photoPlaceholder').toggleClass 'male female'
+  $('#birthdate').datepicker format: 'dd M yyyy', autoclose: true
+
+createEmailAddress = ->
+  firstName = $('#firstName').val()
+  lastName = $('#lastName').val()
+  name = emailHelper.prepareName firstName, lastName
+  unless $('#hasProfileAccess').prop('checked')
+    $('#email').val(name + emailHelper.addressSuffix)
 
 getActiveVolunteer = ->
   id = Session.get('active-user')._id
@@ -183,7 +140,7 @@ Template.userCreate.userDetails = ->
   details.isMale = profile.gender is 'male'
   details.photoFilename = profile.photoFilename
   if profile.photoFilename
-    details.photoPath = allcourt.photoRoot + profile.photoFilename
+    details.photoPath = photoHelper.photoRoot + profile.photoFilename
   details.firstName = profile.firstName
   details.lastName = profile.lastName
   details.email = profile.email
@@ -191,13 +148,13 @@ Template.userCreate.userDetails = ->
   details.isNew = if profile.isNew then 'checked' else ''
   details.volunteer = if getActiveVolunteer() then 'checked'
 
-  if profile.email isnt 'no.email@tennisauckland.co.nz'
+  if profile.email.indexOf(emailHelper.addressSuffix) > 1
     details.emailDisabled = ''
     details.hasProfileAccess = 'checked'
   else
     details.hasProfileAccess = ''
     details.emailDisabled = 'disabled'
-    details.email = 'no.email@tennisauckland.co.nz'
+    details.email = 'no.email' + emailHelper.addressSuffix
 
   details
 
@@ -205,6 +162,12 @@ Template.userCreate.volunteerDetails = ->
   Session.get('active-volunteer') or { 'hidden': 'hidden' }
 
 Template.userCreate.events
+  'click #pickPhoto': (evnt, template) ->
+    photoHelper.processPhoto()
+
+  'click #birthdateIcon': (evnt, template) ->
+    $('#birthdate').datepicker 'show'
+
   'click #saveProfile': (event, template) ->
     activeUser = Session.get('active-user')
     userOptions = getUserFormValues template
@@ -219,12 +182,12 @@ Template.userCreate.events
   'change #hasProfileAccess': (evnt, template) ->
     firstName = $('#firstName').val()
     lastName = $('#lastName').val()
-    name = allcourt.prepNameForEmail firstName, lastName
+    name = emailHelper.prepareName firstName, lastName
     if $(evnt.currentTarget).prop('checked')
       $('#email').prop('disabled', false).val('')
       $('#siteAdmin').prop('disabled', false)
     else
-      $('#email').prop('disabled', true).val(name + '@has-no-email.co.nz')
+      $('#email').prop('disabled', true).val(name + emailHelper.addressSuffix)
       $('#siteAdmin').prop('disabled', true)
       $('#siteAdmin').prop('checked', false)
 
@@ -235,17 +198,15 @@ Template.userCreate.events
       $('.volunteer-details').addClass('hidden')
 
   'change #firstName': (evnt, template) ->
-    firstName = $('#firstName').val()
-    lastName = $('#lastName').val()
-    name = allcourt.prepNameForEmail firstName, lastName
-    unless $('#hasProfileAccess').prop('checked')
-      $('#email').val(name + '@has-no-email.co.nz')
+    createEmailAddress()
 
   'change #lastName': (evnt, template) ->
-    firstName = $('#firstName').val()
-    lastName = $('#lastName').val()
-    name = allcourt.prepNameForEmail firstName, lastName
-    unless $('#hasProfileAccess').prop('checked')
-      $('#email').val(name + '@has-no-email.co.nz')
+    createEmailAddress()
 
+  'change #femaleGender': (evnt, template) ->
+    if $(evnt.currentTarget).prop('checked')
+      $('#photoPlaceholder').removeClass('male').addClass('female')
 
+  'change #maleGender': (evnt, template) ->
+    if $(evnt.currentTarget).prop('checked')
+      $('#photoPlaceholder').removeClass('female').addClass('male')
