@@ -31,20 +31,20 @@
 }
 .mens.top-band {
 	/* the !important is so it will print */
-	background-color: #0075b0 !important; 
+	background-color: #0075b0 !important;
 }
 .womens.top-band {
 	/* the !important is so it will print */
 	background-color: #ced64b !important;
 }
 
-.fot-logo {
+.id-badge .fot-logo {
 	top: 60px;
 	left: 10px;
 	width: 70px;
 }
 
-.year {
+.id-badge .year {
 	top: 226px;
 	left: -8px;
 	color: #004a64 !important;
@@ -57,25 +57,25 @@
 	transform: rotate(-90deg);
 }
 
-.photo {
+.id-badge .photo {
 	top: 60px;
 	left: 100px;
 	width: 170px;
 }
 
-.full-name {
+.id-badge .full-name {
 	top: 238px;
 	left: 100px;
 	font-size: 26px;
 	font-weight: bold;
 }
-.function {
+.id-badge .function {
 	top: 264px;
 	left: 100px;
 	font-size: 26px;
 	font-weight: bold;
 }
-.access-code {
+.id-badge .access-code {
 	top: 190px;
 	left: 275px;
 	width: 200px;
