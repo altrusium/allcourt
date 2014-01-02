@@ -1,53 +1,3 @@
-updatePage = (file) ->
-  $('#photoImg').fadeIn(400).attr 'src', allcourt.photoRoot + file.key
-  $('#photoPlaceholder').removeClass('empty').find('h4, p, .loading').remove()
-  $('#photoFilename').val file.key
-  $('#pickPhoto').removeAttr 'disabled'
-
-storePhoto = (file) ->
-  filepicker.store file
-  , (storedFile) ->
-    updatePage storedFile
-  , (err) ->
-    console.log err
-    Template.userMessages.showMessage
-      type: 'error',
-      title: 'Photo upload error',
-      message: 'Please refresh the page and start over.
-        We apologise for the inconvenience.'
-
-resizePhoto = (file) ->
-  filepicker.convert file,
-    {width: 200, height: 200, align: 'faces', format: 'png', fit: 'crop'}
-    , (convertedFile) ->
-      storePhoto convertedFile
-    , (err) ->
-      console.log err
-      Template.userMessages.showMessage
-        type: 'error',
-        title: 'Photo upload error',
-        message: 'Please refresh the page and start over.
-          We apologise for the inconvenience.'
-
-processPhoto = ->
-  filepicker.pick mimetypes: 'image/*'
-  , (file) ->
-    $('#photoImg').attr 'src', ''
-    msg = '<h4 class="wait-message">Processing<br> your<br> photo</h4><img
-      src="/img/loading.gif" class="loading" /><p>Please complete the form
-      while you wait.</p>'
-    $(msg).appendTo '#photoPlaceholder'
-    $('#pickPhoto').attr 'disabled', 'disabled'
-    resizePhoto file
-  , (err) ->
-    console.log err
-
-initializeControls = ->
-  $('#pickPhoto').click ->
-    processPhoto()
-  $('#femaleGender, #maleGender').change ->
-    $('#photoPlaceholder').toggleClass 'male female'
-
 getSortedTournaments = ->
   tournaments = Tournaments.find {}, fields: tournamentName: 1, slug: 1, days: 1
   list = tournaments.fetch()
@@ -122,8 +72,10 @@ associateUserWithTournament = (userId) ->
   signup = Registrants.findOne { tournamentId: tId, userId: userId }
   if signup
     Session.set 'signup-id', signup._id
-    Registrants.update signup._id, $push: teams: teamId
+    # move this to a server-side Method.Call
+    Method.call 'addTeamToRegistrant', signup._id, teamId
   else
+    # move this to a server-side Method.Call
     Registrants.insert {
       userId: userId,
       teams: [teamId],
@@ -151,7 +103,6 @@ Template.setupRegistrants.created = ->
   Session.set 'view-prefs', ['1']
 
 Template.setupRegistrants.rendered = ->
-  initializeControls()
   if Meteor.user().profile.photoFile
     $('.photo-placeholder').removeClass 'empty'
   forceChange = false
@@ -245,6 +196,9 @@ Template.setupRegistrants.activeTeamName = ->
   return Session.get('active-team').teamName
 
 Template.setupRegistrants.events
+  'click #pickPhoto': (evnt, template) ->
+    photoHelper.processPhoto()
+
   'change #role': (evnt, template) ->
     forceChange = true
     setActiveRole forceChange
@@ -274,6 +228,7 @@ Template.setupRegistrants.events
     tId = Session.get('active-tournament')._id
     uId = $(evnt.currentTarget).data 'user'
     reg = Registrants.findOne 'tournamentId': tId, 'userId': uId
+    # TODO: This should be moved to a server-side Method.call
     Registrants.update reg?._id, $pull: teams: Session.get('active-team').teamId
     false
 
@@ -323,6 +278,14 @@ Template.setupRegistrants.events
       else
         associateUserWithTournament id
     Session.set 'adding-new-user', null
+
+  'change #femaleGender': (evnt, template) ->
+    if $(evnt.currentTarget).prop('checked')
+      $('#photoPlaceholder').removeClass('male').addClass('female')
+
+  'change #maleGender': (evnt, template) ->
+    if $(evnt.currentTarget).prop('checked')
+      $('#photoPlaceholder').removeClass('female').addClass('male')
 
   'click a[data-user-slug]': (evnt, template) ->
     userSlug = $(evnt.currentTarget).data('user-slug')

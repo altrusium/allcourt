@@ -18,13 +18,25 @@ Meteor.publish null, ->
 
 Meteor.publish 'schedule', ->
   return Schedule.find()
-  
+
 Meteor.publish 'volunteers', ->
   return Volunteers.find()
-  
+
 Meteor.publish 'tournaments', ->
   return Tournaments.find()
 
 Meteor.publish 'registrants', ->
   return Registrants.find()
 
+Meteor.publish 'user-list-with-team', (teamId, tournamentId) ->
+  selector = registrations: { teamId: teamId, tournamentId: tournamentId }
+  return Registrations.find selector
+
+Meteor.publish 'user-list-with-role', (roleId, tournamentId) ->
+  selector = registrations: { roleId: roleId, tournamentId: tournamentId }
+  return Registrations.find selector
+
+Meteor.publish 'user-list-with-name', (searchString) ->
+  registrations = Registrations.find({}).fetch()
+  searcher = new FuseSearch registrations, keys: ['fullName']
+  searcher.search searchString

@@ -1,51 +1,3 @@
-updatePage = (file) ->
-  $('#photoImg').fadeIn(400).attr 'src', allcourt.photoRoot + file.key
-  $('#photoPlaceholder').removeClass('empty').find('h4, p, .loading').remove()
-  $('#photoFilename').val file.key
-  $('#pickPhoto').removeAttr 'disabled'
-
-storePhoto = (file) ->
-  filepicker.store file
-  , (storedFile) ->
-    updatePage storedFile
-  , (err) ->
-    console.log err
-    Template.userMessages.showMessage
-      type: 'error',
-      title: 'Photo upload error',
-      message: 'Please refresh the page and start over.
-                We apologise for the inconvenience.'
-
-resizePhoto = (file) ->
-  filepicker.convert file,
-    {width: 200, height: 200, align: 'faces', format: 'png', fit: 'crop'}
-    , (convertedFile) ->
-      storePhoto convertedFile
-    , (err) ->
-      console.log err
-      Template.userMessages.showMessage
-        type: 'error',
-        title: 'Photo upload error',
-        message: 'Please refresh the page and start over.
-                  We apologise for the inconvenience.'
-
-processPhoto = ->
-  filepicker.pick mimetypes: 'image/*'
-  , (file) ->
-    $('#photoImg').attr 'src', ''
-    msg = '<h4 class="wait-message">Processing<br> your<br> photo</h4>
-      <img src="/img/loading.gif" class="loading" /><p>Please complete
-      the form while you wait.</p>'
-    $(msg).appendTo '#photoPlaceholder'
-    $('#pickPhoto').attr 'disabled', 'disabled'
-    resizePhoto file
-  , (err) ->
-    console.log err
-
-initializeControls = ->
-  $('#pickPhoto').click ->
-    processPhoto()
-
 emptySearchResults = ->
   Session.set 'search-results', null
   $('#search').val ''
@@ -223,11 +175,8 @@ Template.accreditation.created = ->
   Session.set 'active-tab', 'find'
   setSearchableUserList()
 
-Template.accreditation.rendered = ->
-  initializeControls()
-
 Template.accreditation.photoRoot = ->
-  return allcourt.photoRoot
+  return photoHelper.photoRoot
 
 Template.accreditation.findTabIsActive = ->
   if Session.get('active-tab') is 'find' then return 'active'
@@ -274,7 +223,7 @@ Template.accreditation.registrationDetails = ->
   details = {
     isMale: user.gender is 'male'
     photoFilename: user.photoFilename
-    photoPath: allcourt.photoRoot + user.photoFilename
+    photoPath: photoHelper.photoRoot + user.photoFilename
     firstName: user.firstName
     lastName: user.lastName
     function: registration.function
@@ -360,4 +309,15 @@ Template.accreditation.events =
       updateActiveRegistrant template
     else
       addNewRegistrant template
+
+  'click #pickPhoto': (evnt, template) ->
+    photoHelper.processPhoto()
+
+  'change #femaleGender': (evnt, template) ->
+    if $(evnt.currentTarget).prop('checked')
+      $('#photoPlaceholder').removeClass('male').addClass('female')
+
+  'change #maleGender': (evnt, template) ->
+    if $(evnt.currentTarget).prop('checked')
+      $('#photoPlaceholder').removeClass('female').addClass('male')
 

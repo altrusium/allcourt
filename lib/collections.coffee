@@ -2,6 +2,7 @@
 @Volunteers = new Meteor.Collection 'volunteers'
 @Registrants = new Meteor.Collection 'registrants'
 @Tournaments = new Meteor.Collection 'tournaments'
+@Registrations = new Meteor.Collection 'registrations'
 
 if Meteor.isClient
   @scheduleSubscription = Meteor.subscribe 'schedule'
@@ -24,7 +25,7 @@ Schedule.allow
     true
   remove: (userId, doc) ->
     Meteor.user().profile.admin
-    
+
 Volunteers.allow
   insert: (userId, doc) ->
     Meteor.userId() is doc._id or Meteor.user().profile.admin
@@ -48,4 +49,12 @@ Registrants.allow
     true
   remove: (userId, doc) ->
     Meteor.user().profile.admin
+
+Registrations.allow
+  insert: (userId, doc) ->
+    Meteor.userId() is doc._id or Meteor.user().profile.admin
+  update: (userId, doc) ->
+    Meteor.userId() is doc._id or Meteor.user().profile.admin
+  remove: (userId, doc) ->
+    Meteor.userId() is doc._id or Meteor.user().profile.admin
 
