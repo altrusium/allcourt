@@ -13,6 +13,7 @@ if Meteor.isServer
     this.userId is eventName
 
   userSearch.on 'user-search', (query) ->
-    results = Registrations.find {}
-
-    userSearch.emit this.userId, results
+    registrations = Registrations.find({}).fetch()
+    searcher = new FuseSearch registrations, keys: ['fullName']
+    results = searcher.search query
+    userSearch.emit this.userId, results.slice(0, 19)

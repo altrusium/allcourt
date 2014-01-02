@@ -60,7 +60,7 @@ showSuccess = (msg) ->
     title: 'Success!',
     message: msg
 
-showError = (msg) ->
+showError = (msg, err) ->
   Template.userMessages.showMessage
     type: 'error',
     title: 'Uh oh!',
@@ -68,25 +68,25 @@ showError = (msg) ->
 
 showResultOfVolunteerCreation = (err) ->
   if err
-    showError 'The new volunteer was not saved.'
+    showError 'The new volunteer was not saved.', err
   else
     showSuccess 'The new volunteer was saved successfully.'
 
 showResultOfVolunteerUpdate = (err) ->
   if err
-    showError 'The volunteer was not updated.'
+    showError 'The volunteer was not updated.', err
   else
     showSuccess 'The volunteer was updated successfully.'
 
 showResultOfUserCreation = (err) ->
   if err
-    showError 'The new user was not saved.'
+    showError 'The new user was not saved.', err
   else
     showSuccess 'The new user was saved successfully.'
 
 showResultOfUserUpdate = (err) ->
   if err
-    showError 'The user was not updated.'
+    showError 'The user was not updated.', err
   else
     showSuccess 'The user was updated successfully.'
 
@@ -161,9 +161,10 @@ Template.userCreate.events
     if activeUser # edit existing user
       userOptions._id = activeUser._id
       updateUserAndVolunteer userOptions, volunteerOptions
+      Router.go 'userDetails', userSlug: Session.get('active-user').profile.slug
     else # add new user
       saveNewUserAndVolunteer userOptions, volunteerOptions
-    Router.go 'userDetails', userSlug: Session.get('active-user').profile.slug
+      Router.go 'users'
 
   'change #hasProfileAccess': (evnt, template) ->
     firstName = $('#firstName').val()

@@ -39,17 +39,11 @@ setActiveTeam = ->
   Session.set 'active-team', activeTeam
 
 sendUserSearchQuery = (query) ->
-  userSearch.emit 'query', query
-
-listenForUserSearchResults = ->
-  userSearch.on 'userSearch', (results) ->
+  submitUserSearch query, (results) ->
     Session.set 'search-results', results
 
 
 
-
-Template.users.create = ->
-  listenForUserSearchResults()
 
 Template.users.rendered = ->
   Session.set 'active-volunteer', null

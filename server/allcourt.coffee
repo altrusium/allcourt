@@ -1,67 +1,4 @@
-getTournamentName = (tournamentId) ->
-  tournament = Tournaments.findOne tournamentId, fields: tournamentName: 1
-  tournament.tournamentName
-
-getRoleName = (teamId) ->
-  role = null
-  tournament = Tournaments.findOne tournamentId, fields: teams: 1, roles: 1
-  for team in tournament.teams when team.teamId is teamId
-    role = (role for role in tournament.roles when role.roleId is team.roleId)
-  role.roleName
-
-getTeamName = (teamId) ->
-  tournament = Tournaments.findOne tournamentId, fields: teams: 1
-  team = (team for team in tournament.teams when team.teamId is teamId)
-  team.teamName
-
-buildTeamRegistration = (registrantId) ->
-  registration = {}
-  registrant = Registrants.findOne registrantId
-  registration.registrantId = registrantId
-  registration.tournamentId = registrant.tournamentId
-  registration.tournamentName = getTournamentName registrant.tournamentId
-  registration.teamName = getTeamName registrant.teams[0]
-  registration.roleName = getRoleName registrant.teams[0]
-  registration.function = registrant.function
-  registration.accessCode = registrant.accessCode
-  registration
-
 Meteor.methods =
-
-  upsertUserRegistration: (user) ->
-    theUser = user
-    selector = {}
-    existing = Registrations.findOne _id:user.userId
-    if existing
-      selector._id = existing._id
-      if user.email then existing.email = user.email
-      if user.gender then existing.gender = user.gender
-      if user.fullName then existing.fullName = user.fullName
-      if user.photoFilename then existing.photoFilename = user.photoFilename
-      theUser = existing
-    result = Registrations.upsert selector, theUser
-
-  upsertTeamRegistration: (userId, reg) ->
-    teamRegistration = reg
-    existing = Registrations.findOne userId
-    unless existing then return
-    existingReg = _.find existing.registrations, (thisReg) ->
-      thisReg.registrantId is reg.registrantId
-    if existingReg
-      if reg.roleName then existingReg.roleName = reg.roleName
-      if reg.teamName then existingReg.teamName = reg.teamName
-      if reg.function then existingReg.function = reg.function
-      if reg.accessCode then existingReg.accessCode = reg.accessCode
-      if reg.registrantId then existingReg.registrantId = reg.registrantId
-      if reg.tournamentId then existingReg.tournamentId = reg.tournamentId
-      if reg.tournamentName then existingReg.tournamentName = reg.tournamentName
-      teamRegistration = existingReg
-    Meteor.call 'removeTeamRegistration', userId, reg.registrantId
-    existing.registrations.push teamRegistration
-    Registrations.update userId, existing
-
-  removeTeamRegistration: (userId, regId) ->
-    Registrations.update userId, $pull: registrations: registrantId: regId
 
   addTeamToRegistrant: (registrantId, teamId) ->
     existing = Registrants.findOne _id: registrantId
@@ -69,8 +6,8 @@ Meteor.methods =
       if team.teamId is teamId then found = team
     if found then return
     Registrants.update registrantId, $push: teams: teamId
-    teamRegistration = buildTeamRegistration registrantId
-    Meteor.call 'upsertTeamRegistration', existing.userId, teamRegistration
+    teamRegistration = modelHelpers.buildTeamRegistration registrantId
+    modelHelpers.upsertTeamRegistration existing.userId, teamRegistration
 
   updateRegistrant: (registrant) ->
     Registrants.update({
@@ -80,9 +17,10 @@ Meteor.methods =
       'function': registrant.function
       'accessCode': registrant.accessCode.toUpperCase()
     })
-    Meteor.call 'upsertUserRegistration', registrant
+    modelHelpers.upsertUserRegistration registrant
 
   createNewUser: (user) ->
+    console.log 'creating new user'
     newUser =
       email: user.email
       profile:
@@ -95,13 +33,16 @@ Meteor.methods =
         slug: user.firstName + user.lastName
         admin: user.admin
         isNew: user.isNew
-    newUserId = Accounts.createUser newUser
-    Meteor.call 'createRegistration',
+    console.log 'creating new registration'
+    modelHelpers.upsertUserRegistration {
       _id: newUserId
       email: newUser.email
+      slug: newUser.profile.slug
       gender: newUser.profile.gender
       fullName: newUser.profile.fullName
       photoFilename: newUser.profile.photoFilename
+    }
+    newUserId = Accounts.createUser newUser
 
   updateUser: (user) ->
     firstName = user.firstName
@@ -117,12 +58,15 @@ Meteor.methods =
       admin: user.admin,
       isNew: user.isNew
     }
-    Meteor.call 'createRegistration',
+    modelHelpers.upsertUserRegistration {
       _id: user._id
+      slug: user.slug
       email: user.email
       gender: user.gender
       fullName: user.fullName
       photoFilename: user.photoFilename
+    }
+    false
 
   createNewVolunteer: (volunteer) ->
     Volunteers.insert {
