@@ -47,7 +47,7 @@
 						<input id="search" type="text" class="search-query" placeholder="partial name of user">
 					</form>
 				</div>
-			</div>	
+			</div>
 		</div>
   </form>
 	<div class="container user-list row span12">
@@ -71,8 +71,8 @@
 				<div class="span10 user-info">
 					<a href="/user/{{slug}}" class="user-name">{{fullName}}</a><br>
 					<p class="user-email">Email: <a href="mailto:{{email}}">{{email}}</a></p>
-					{{#each this.tournaments}}
-					<p class="user-teams">{{name}} : {{role.name}} : {{role.team.name}}</p>
+					{{#each this.registrations}}
+					<p class="user-teams">{{tournamentName}} : {{roleName}} : {{teamName}}</p>
 					{{/each}}
 					{{#if isNew}}<span class="new-user">New Volunteer</span>{{/if}}
 				</div>

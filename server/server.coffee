@@ -29,14 +29,11 @@ Meteor.publish 'registrants', ->
   return Registrants.find()
 
 Meteor.publish 'user-list-with-team', (teamId, tournamentId) ->
-  selector = registrations: { teamId: teamId, tournamentId: tournamentId }
-  return Registrations.find selector
+  criteria = teamId: teamId, tournamentId: tournamentId
+  selector = registrations: $elemMatch: criteria
+  return Registrations.find selector, sort: fullName: 1
 
 Meteor.publish 'user-list-with-role', (roleId, tournamentId) ->
-  selector = registrations: { roleId: roleId, tournamentId: tournamentId }
-  return Registrations.find selector
-
-Meteor.publish 'user-list-with-name', (searchString) ->
-  registrations = Registrations.find({}).fetch()
-  searcher = new FuseSearch registrations, keys: ['fullName']
-  searcher.search searchString
+  criteria = roleId: roleId, tournamentId: tournamentId
+  selector = registrations: $elemMatch: criteria
+  return Registrations.find selector, sort: fullName: 1

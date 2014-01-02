@@ -1,101 +1,55 @@
-getUserIdsOnTeam = (teamId) ->
-  users = []
-  roleId = Session.get('active-role')?.roleId
+setUserIdsWithTeam = (teamId) ->
   tournamentId = Session.get('active-tournament')?._id
-  for user in Session.get('user-list')
-    for tournament in user.tournaments when tournament.id is tournamentId
-      if tournament.role?.team?.id is teamId then users.push user
-  users
+  # showBusyIndicator()
+  Meteor.subscribe 'user-list-with-team', teamId, tournamentId, ->
+    # hideBusyIndicator()
 
-getUserIdsWithRole = (roleId) ->
-  users = []
+setUserIdsWithRole = (roleId) ->
   tournamentId = Session.get('active-tournament')?._id
-  for user in Session.get('user-list')
-    for tournament in user.tournaments when tournament.id is tournamentId
-      if tournament.role?.id is roleId then users.push user
-  users
+  # showBusyIndicator()
+  Meteor.subscribe 'user-list-with-role', roleId, tournamentId, ->
+    # hideBusyIndicator()
 
-getUserIdsAtTournament = (tournamentId) ->
-  users = []
-  for user in Session.get('user-list')
-    for tournament in user.tournaments when tournament.id is tournamentId
-      users.push user
-  users
-
-sortUsers = (users) ->
-  sortedUsers = []
-  if users.length
-    sortedUsers = _.sortBy users, (user) ->
-      user?.fullName
-  sortedUsers
-
-getUserAccessCode = (userId) ->
-  # TODO: get access code from the registrants collection
-  return 'ABC'
-
-getTournamentRegistrations = (userId) ->
-  registrants = -> null until registrantsSubscription.ready()
-  registrants = Registrants.find userId: userId
-  registrants.map (reg) ->
-    t = Tournaments.findOne { _id: reg.tournamentId },
-      { fields: days: 0, shifts: 0, shiftDefs: 0 }
-    tourney = id: t._id, name: t.tournamentName
-    tRoleId = (to.roleId for to in t.teams when to.teamId is reg.teams[0])[0]
-    roleObj = for r in t.roles when r.roleId is tRoleId
-      id: r.roleId, name: r.roleName
-    tourney.role = roleObj[0]
-    teamObj = for tTeam in t.teams when tTeam.teamId is reg.teams[0]
-      id: tTeam.teamId, name: tTeam.teamName
-    if tourney.role then tourney.role.team = teamObj[0]
-    tourney
+resetCategoryFilters = ->
+  Session.set 'active-team', null
+  Session.set 'active-role', null
+  Session.set 'active-tournament', null
 
 emptySearchResults = ->
   Session.set 'search-results', null
   $('#search').val ''
 
-setSearchableUserList = ->
-  users = Meteor.users.find({}).map (user) ->
-    usr =
-      id: user._id
-      slug: user.profile.slug
-      email: user.profile.email
-      isNew: user.profile.isNew
-      fullName: user.profile.fullName
-      isMale: user.profile.gender is 'male'
-      accessCode: getUserAccessCode user._id
-      photoFilename: user.profile.photoFilename
-      tournaments: getTournamentRegistrations user._id
-  Session.set 'user-list', sortUsers users
-  emptySearchResults()
-
 setActiveTournament = (id) ->
   tournament = Tournaments.findOne _id: id
   Session.set 'active-tournament', tournament
 
-setActiveRole = (forceChange) ->
-  activeRole = Session.get('active-role')
-  if forceChange or not activeRole
-    rId = $('#role option:selected').val()
-    tournament = Session.get 'active-tournament'
-    activeRole = _.find tournament?.roles, (role) ->
-      if role.roleId is rId then return role
-    Session.set 'active-role', activeRole
+setActiveRole = ->
+  rId = $('#role option:selected').val()
+  tournament = Session.get 'active-tournament'
+  activeRole = _.find tournament?.roles, (role) ->
+    role.roleId is rId
+  Session.set 'active-role', activeRole
 
-setActiveTeam = (forceChange) ->
-  activeTeam = Session.get('active-team')
-  if forceChange or not activeTeam
-    tId = $('#team option:selected').val()
-    tournament = Session.get 'active-tournament'
-    role = Session.get 'active-role'
-    activeTeam = _.find tournament?.teams, (team) ->
-      if team.teamId is tId then return team
-    Session.set 'active-team', activeTeam
+setActiveTeam = ->
+  tId = $('#team option:selected').val()
+  tournament = Session.get 'active-tournament'
+  role = Session.get 'active-role'
+  activeTeam = _.find tournament?.teams, (team) ->
+    team.teamId is tId
+  Session.set 'active-team', activeTeam
+
+sendUserSearchQuery = (query) ->
+  userSearch.emit 'query', query
+
+listenForUserSearchResults = ->
+  userSearch.on 'userSearch', (results) ->
+    Session.set 'search-results', results
 
 
 
 
-Template.users.created = ->
-  setSearchableUserList()
+Template.users.create = ->
+  listenForUserSearchResults()
 
 Template.users.rendered = ->
   Session.set 'active-volunteer', null
@@ -133,19 +87,15 @@ Template.users.photoRoot = ->
   return allcourt.photoRoot
 
 Template.users.users = ->
+  if Session.get('search-results') then return Session.get('search-results')
   if Session.get 'active-team'
-    Session.set 'search-results',
-      getUserIdsOnTeam Session.get('active-team').teamId
+    setUserIdsWithTeam Session.get('active-team').teamId
   else if Session.get 'active-role'
-    Session.set 'search-results',
-      getUserIdsWithRole Session.get('active-role').roleId
-  else if Session.get 'active-tournament'
-    Session.set 'search-results',
-      getUserIdsAtTournament Session.get('active-tournament')._id
-  Session.get 'search-results'
+    setUserIdsWithRole Session.get('active-role').roleId
+  Registrations.find {}
 
 Template.users.totalCount = ->
-  Session.get('search-results')?.length
+  Registrations.find({}).count()
 
 
 
@@ -167,27 +117,21 @@ Template.users.events
     if $('option:selected', evnt.currentTarget).val() is 'allroles'
       Session.set 'active-role', null
     else
-      forceChange = true
-      setActiveRole forceChange
+      setActiveRole()
 
   'change #team': (evnt, template) ->
     emptySearchResults()
     if $('option:selected', evnt.currentTarget).val() is 'allteams'
       Session.set 'active-team', null
     else
-      forceChange = true
-      setActiveTeam forceChange
+      setActiveTeam()
 
   'keyup #search': (evnt, template) ->
     query = $(evnt.currentTarget).val()
-    unless query
+    if query
+      resetCategoryFilters()
+      sendUserSearchQuery query
+    else
       emptySearchResults()
-      return
-    Session.set 'active-team', null
-    Session.set 'active-role', null
-    Session.set 'active-tournament', null
-    users = Session.get 'user-list'
-    searcher = new Fuse users, keys: ['fullName']
-    results = searcher.search query
-    Session.set 'search-results', results
+    false
 

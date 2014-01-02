@@ -3,16 +3,25 @@
   "dependencies": {
     "basePackages": {
       "moment": {},
+      "streams": {},
       "iron-router": {},
       "bootstrap-datepicker2": {},
       "jquery-ui-sortable": {},
-      "jquery-ui-touch-punch": {}
+      "meteor-jquery-ui-touch-punch": {
+        "git": "https://github.com/locksmithdon/meteor-jquery-ui-touch-punch.git",
+        "branch": "master"
+      }
     },
     "packages": {
       "moment": {
         "git": "https://github.com/acreeger/meteor-moment.git",
         "tag": "v2.2.1",
         "commit": "9ee12e714afe56b189f53076447b7b54f3012065"
+      },
+      "streams": {
+        "git": "https://github.com/arunoda/meteor-streams.git",
+        "tag": "v0.1.17",
+        "commit": "9fcbbc9b7bf542827babc92089c19e730892a22f"
       },
       "iron-router": {
         "git": "https://github.com/EventedMind/iron-router.git",
@@ -29,9 +38,9 @@
         "tag": "v1.10.3",
         "commit": "4423bd4b28cd81df91400a6bcb2a3d82e72894dc"
       },
-      "jquery-ui-touch-punch": {
+      "meteor-jquery-ui-touch-punch": {
         "git": "https://github.com/locksmithdon/meteor-jquery-ui-touch-punch.git",
-        "tag": "v1.0.1",
+        "branch": "master",
         "commit": "9cdbc33dca60b4c4691399aa2dd6561880466f63"
       }
     }
