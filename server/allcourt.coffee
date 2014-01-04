@@ -20,7 +20,6 @@ Meteor.methods
     modelHelpers.upsertUserRegistration registrant
 
   createNewUser: (user) ->
-    console.log 'creating new user'
     newUser =
       email: user.email
       profile:
@@ -33,16 +32,15 @@ Meteor.methods
         slug: user.firstName + user.lastName
         admin: user.admin
         isNew: user.isNew
-    console.log 'creating new registration'
-    modelHelpers.upsertUserRegistration {
-      _id: newUserId
+    newUserId = Accounts.createUser newUser
+    modelHelpers.upsertUserRegistration newUserId, {
       email: newUser.email
       slug: newUser.profile.slug
       gender: newUser.profile.gender
       fullName: newUser.profile.fullName
       photoFilename: newUser.profile.photoFilename
     }
-    newUserId = Accounts.createUser newUser
+    newUserId
 
   updateUser: (user) ->
     firstName = user.firstName
@@ -58,8 +56,7 @@ Meteor.methods
       admin: user.admin,
       isNew: user.isNew
     }
-    modelHelpers.upsertUserRegistration {
-      _id: user._id
+    modelHelpers.upsertUserRegistration user._id, {
       slug: user.slug
       email: user.email
       gender: user.gender

@@ -36,24 +36,6 @@ getVolunteerFormValues = (template) ->
     postalCode: template.find('#postalCode').value
     notes: template.find('#notes').value
 
-clearFormValues = (template) ->
-  template.find('#photoFilename').value = ''
-  template.find('#firstName').value = ''
-  template.find('#lastName').value = ''
-  template.find('#birthdate').value = ''
-  template.find('input:radio[name=gender]:checked').value = ''
-  template.find('#shirtSize').value = 'M'
-  template.find('#email').value = ''
-  template.find('#homePhone').value = ''
-  template.find('#mobilePhone').value = ''
-  template.find('#address').value = ''
-  template.find('#suburb').value = ''
-  template.find('#city').value = ''
-  template.find('#postalCode').value = ''
-  template.find('#notes').value = ''
-  $('#photoPlaceholder').addClass('empty').find('p, h4').remove()
-  $('#photoImg').attr('src', '').fadeOut 400
-
 showSuccess = (msg) ->
   Template.userMessages.showMessage
     type: 'info',
@@ -90,6 +72,12 @@ showResultOfUserUpdate = (err) ->
   else
     showSuccess 'The user was updated successfully.'
 
+navigateToUserListing = ->
+  Router.go 'users'
+
+navigateToUserDetails = ->
+  Router.go 'userDetails', userSlug: Session.get('active-user').profile.slug
+
 saveNewUserAndVolunteer = (userOptions, volunteerOptions) ->
   Meteor.call 'createNewUser', userOptions, (err, id) ->
     showResultOfUserCreation err
@@ -97,8 +85,10 @@ saveNewUserAndVolunteer = (userOptions, volunteerOptions) ->
       if $('#isVolunteer').prop('checked')
         volunteerOptions._id = id
         Meteor.call 'createNewVolunteer', volunteerOptions, (vErr, vId) ->
-          if vId then clearFormValues template
           showResultOfVolunteerCreation vErr
+          navigateToUserListing()
+      else
+        navigateToUserListing()
 
 updateUserAndVolunteer = (userOptions, volunteerOptions) ->
   Meteor.call 'updateUser', userOptions, (err) ->
@@ -109,9 +99,14 @@ updateUserAndVolunteer = (userOptions, volunteerOptions) ->
         if Session.get('active-volunteer')
           Meteor.call 'updateVolunteer', volunteerOptions, (vErr) ->
             showResultOfVolunteerUpdate vErr
+            navigateToUserDetails()
         else
           Meteor.call 'createNewVolunteer', volunteerOptions, (vErr) ->
             showResultOfVolunteerCreation vErr
+            navigateToUserDetails()
+      else
+        # TODO: Delete existing Volunteer document if any
+        navigateToUserDetails()
 
 
 
@@ -125,6 +120,7 @@ Template.userCreate.userDetails = ->
   details = Session.get('active-user')
   unless details then return hasProfileAccess: 'checked' # creating new user
   profile = details.profile
+  details.email = profile.email
   details.isMale = profile.gender is 'male'
   $.extend details, profile
   if details.photoFilename
@@ -135,12 +131,11 @@ Template.userCreate.userDetails = ->
 
   if details.email.indexOf(emailHelper.addressSuffix) > 1
     # user has a fake email and doesn't have access to their profile
-    details.emailDisabled = ''
-    details.hasProfileAccess = 'checked'
-  else
     details.hasProfileAccess = ''
     details.emailDisabled = 'disabled'
-    details.email = 'no.email' + emailHelper.addressSuffix
+  else
+    details.emailDisabled = ''
+    details.hasProfileAccess = 'checked'
 
   details
 
@@ -161,10 +156,8 @@ Template.userCreate.events
     if activeUser # edit existing user
       userOptions._id = activeUser._id
       updateUserAndVolunteer userOptions, volunteerOptions
-      Router.go 'userDetails', userSlug: Session.get('active-user').profile.slug
     else # add new user
       saveNewUserAndVolunteer userOptions, volunteerOptions
-      Router.go 'users'
 
   'change #hasProfileAccess': (evnt, template) ->
     firstName = $('#firstName').val()

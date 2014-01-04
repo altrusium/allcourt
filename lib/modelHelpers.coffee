@@ -28,19 +28,18 @@
     registration.accessCode = registrant.accessCode
     registration
 
-  upsertUserRegistration: (user) ->
-    selector = {}
-    theUser = user
-    existing = Registrations.findOne _id:user.userId
-    if existing
-      selector._id = existing._id
+  upsertUserRegistration: (id, user) ->
+    existing = Registrations.findOne id, fields: _id: 0
+    if id and existing
       if user.slug then existing.slug = user.slug
       if user.email then existing.email = user.email
       if user.gender then existing.gender = user.gender
       if user.fullName then existing.fullName = user.fullName
       if user.photoFilename then existing.photoFilename = user.photoFilename
-      theUser = existing
-    result = Registrations.upsert selector, theUser
+      Registrations.update id, $set: existing
+    else
+      user._id = id
+      Registrations.insert user
 
   removeTeamRegistration: (userId, regId) ->
     Registrations.update userId, $pull: registrations: registrantId: regId
@@ -60,6 +59,6 @@
       if reg.tournamentId then existingReg.tournamentId = reg.tournamentId
       if reg.tournamentName then existingReg.tournamentName = reg.tournamentName
       teamRegistration = existingReg
-    removeTeamRegistration userId, reg.registrantId
+    modelHelpers.removeTeamRegistration userId, reg.registrantId
     existing.registrations.push teamRegistration
     Registrations.update userId, existing
