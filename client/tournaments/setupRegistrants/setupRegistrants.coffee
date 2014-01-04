@@ -244,6 +244,7 @@ Template.setupRegistrants.events
     uId = $(evnt.currentTarget).data 'user'
     checked = $(evnt.currentTarget).prop 'checked'
     reg = Registrants.findOne 'tournamentId': tId, 'userId': uId
+    # TODO: Move this to the server and Meteor.call it
     if checked
       Registrants.update reg._id, $set: isTeamLead: true
     else
@@ -271,9 +272,6 @@ Template.setupRegistrants.events
 
   'click #addUser': (evnt, template) ->
     userOptions = getUserFormValues template
-    if not $('#hasProfileAccess').prop('checked')
-      userOptions.email = userOptions.firstName + '.' + userOptions.lastName +
-        '@has-no-email.co.nz'
     Meteor.call 'createNewUser', userOptions, (err, id) ->
       if err
         Template.userMessages.showMessage

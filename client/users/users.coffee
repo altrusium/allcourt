@@ -40,6 +40,8 @@ setActiveTeam = ->
 
 sendUserSearchQuery = (query) ->
   submitUserSearch query, (results) ->
+    for user in results
+      user.isMale = user.gender is 'male'
     Session.set 'search-results', results
 
 
@@ -47,6 +49,9 @@ sendUserSearchQuery = (query) ->
 
 Template.users.rendered = ->
   Session.set 'active-volunteer', null
+
+Template.users.destroyed = ->
+  emptySearchResults()
 
 Template.users.tournaments = ->
   allcourt.getSortedTournaments()
