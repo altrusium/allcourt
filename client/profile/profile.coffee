@@ -9,6 +9,8 @@ getUserFormValues = (template) ->
     email: template.find('#email').value
     photoFilename: template.find('#photoFilename').value
     gender: template.find('input:radio[name=gender]:checked').value
+    isNew: Meteor.user().profile.isNew
+    admin: Meteor.user().profile.admin
 
 getVolunteerFormValues = (template) ->
   return values =
@@ -21,6 +23,24 @@ getVolunteerFormValues = (template) ->
     suburb: template.find('#suburb').value
     city: template.find('#city').value
     postalCode: template.find('#postalCode').value
+
+showSuccess = (msg) ->
+  Template.userMessages.showMessage
+    type: 'info',
+    title: 'Success!',
+    message: msg
+
+showError = (msg, err) ->
+  Template.userMessages.showMessage
+    type: 'error',
+    title: 'Uh oh!',
+    message: msg + ' Reason: ' + err.reason
+
+showResultOfProfileUpdate = (err) ->
+  if err
+    showError 'Your profile details were not saved.', err
+  else
+    showSuccess 'Your profile details were saved successfully.'
 
 
 
@@ -80,29 +100,11 @@ Template.profileEdit.events
     userOptions = getUserFormValues template
     # Todo: add exception handling for these 2 calls
     Meteor.call 'updateUser', userOptions, (err) ->
-      if err
-        Template.userMessages.showMessage
-          type: 'error',
-          title: 'Error. ',
-          message: 'Your profile details were not saved. Reason: ' + err.reason
-      else
-        Template.userMessages.showMessage
-          type: 'info',
-          title: 'Success!',
-          message: 'Your profile details were saved successfully.'
+      showResultOfProfileUpdate err
     if Volunteers.findOne Meteor.userId()
       volunteerOptions = getVolunteerFormValues template
       Meteor.call 'updateVolunteer', volunteerOptions, (err) ->
-        if err
-          Template.userMessages.showMessage
-            type: 'error',
-            title: 'Error.',
-            message: 'Your profile details were not saved. Reason: '+err.reason
-        else
-          Template.userMessages.showMessage
-            type: 'info',
-            title: 'Success!',
-            message: 'Your profile details were saved successfully.'
+        showResultOfProfileUpdate err
     Router.go 'profileDetails'
 
   'click #pickPhoto': (evnt, template) ->
