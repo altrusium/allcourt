@@ -38,7 +38,6 @@ Template.registrantDetails.events =
           message: 'The registrants information was not updated successfully.
             Please try again.'
       else
-        # show success message
         Template.userMessages.showMessage
           type: 'info'
           title: 'Success. '

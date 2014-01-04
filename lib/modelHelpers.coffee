@@ -23,7 +23,7 @@
     teamAndRole = modelHelpers.getTeamAndRole tournamentId, registrant.teams[0]
     reg.registrantId = registrantId
     reg.tournamentId = registrant.tournamentId
-    reg.tournamentName = tournament.TournamentName
+    reg.tournamentName = tournament.tournamentName
     reg.tournamentSlug = tournament.slug
     reg.teamId = teamAndRole[0].teamId
     reg.teamName = teamAndRole[0].teamName

@@ -23,15 +23,15 @@ Meteor.methods
     modelHelpers.removeTeamRegistration registrant.userId, registrantId
 
   updateRegistrant: (registrant) ->
-    Registrants.update({
+    existing = Registrants.findOne
       userId: registrant.userId
       tournamentId: registrant.tournamentId
-      }, $set: {
+    update =
       'function': registrant.function
       'accessCode': registrant.accessCode.toUpperCase()
-    })
-    registrant._id = registrant.userId
-    modelHelpers.upsertUserRegistration registrant
+    Registrants.update existing._id, $set: update
+    teamRegistration = modelHelpers.buildTeamRegistration existing._id
+    modelHelpers.upsertTeamRegistration existing.userId, teamRegistration
 
   createNewUser: (user) ->
     newUser =
