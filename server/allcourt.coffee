@@ -1,4 +1,4 @@
-Meteor.methods =
+Meteor.methods
 
   addTeamToRegistrant: (registrantId, teamId) ->
     existing = Registrants.findOne _id: registrantId
