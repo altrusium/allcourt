@@ -4,15 +4,17 @@ Meteor.methods
     registrantId = Registrants.insert details
     teamRegistration = modelHelpers.buildTeamRegistration registrantId
     modelHelpers.upsertTeamRegistration details.userId, teamRegistration
+    registrantId
 
   addTeamToRegistrant: (registrantId, teamId) ->
-    existing = Registrants.findOne _id: registrantId
+    existing = Registrants.findOne registrantId
     for team in existing.teams
-      if team.teamId is teamId then found = team
-    if found then return
+      if team is teamId then found = team
+    if found
+      teamRegistration = modelHelpers.buildTeamRegistration registrantId
+      modelHelpers.upsertTeamRegistration existing.userId, teamRegistration
+      return
     Registrants.update registrantId, $push: teams: teamId
-    teamRegistration = modelHelpers.buildTeamRegistration registrantId
-    modelHelpers.upsertTeamRegistration existing.userId, teamRegistration
 
   removeTeamFromRegistrant: (registrantId, teamId) ->
     registrant = Registrants.findOne registrantId
@@ -28,6 +30,7 @@ Meteor.methods
       'function': registrant.function
       'accessCode': registrant.accessCode.toUpperCase()
     })
+    registrant._id = registrant.userId
     modelHelpers.upsertUserRegistration registrant
 
   createNewUser: (user) ->
@@ -44,7 +47,8 @@ Meteor.methods
         admin: user.admin
         isNew: user.isNew
     newUserId = Accounts.createUser newUser
-    modelHelpers.upsertUserRegistration newUserId, {
+    modelHelpers.upsertUserRegistration {
+      _id: newUserId
       email: newUser.email
       slug: newUser.profile.slug
       gender: newUser.profile.gender
@@ -67,7 +71,8 @@ Meteor.methods
       admin: user.admin,
       isNew: user.isNew
     }
-    modelHelpers.upsertUserRegistration user._id, {
+    modelHelpers.upsertUserRegistration {
+      _id: user._id
       slug: user.slug
       email: user.email
       gender: user.gender

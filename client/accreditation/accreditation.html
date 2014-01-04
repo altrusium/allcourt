@@ -1,7 +1,7 @@
 <template name="accreditation">
 	{{> tabs}}
 	{{> userMessages}}
-	<div class="tabbable accreditation"> 
+	<div class="tabbable accreditation">
 	  <ul class="nav nav-tabs">
 	    <li class="find-tab {{findTabIsActive}}"><a href="#find-registrant-tab" data-toggle="tab">Find Registrant</a></li>
 	    <li class="add-edit-tab {{addEditTabIsActive}}"><a href="#add-edit-registrant-tab" data-toggle="tab">Add/Edit Registrant</a></li>
@@ -17,7 +17,7 @@
 									<input id="search" type="text" class="search-query" placeholder="partial name of user">
 								</form>
 							</div>
-						</div>	
+						</div>
 					</div>
 				</form>
 				<div class="container user-list row">
@@ -37,11 +37,16 @@
 							</div>
 							<div class="span10 user-info">
 								<p class="user-name">{{fullName}}</p>
-				        {{#each this.tournaments}}
-								<p class="user-teams">{{name}} : {{role.name}} : {{role.team.name}} : {{function}} : {{accessCode}} <br>
-		              <a href="#" data-details-link data-registration-id="{{regId}}">Edit Details</a>
+				        {{#each registrations}}
+								<p class="user-teams">
+                  {{#if tournamentName}}{{tournamentName}}{{/if}}
+                  {{#if roleName}} : {{roleName}}{{/if}}
+                  {{#if teamName}} : {{teamName}}{{/if}}
+                  {{#if function}} : {{function}}{{/if}}
+                  {{#if accessCode}} : {{accessCode}}{{/if}}<br>
+		              <a href="#" data-details-link data-user-id="{{../_id}}" data-registrant-id="{{registrantId}}">Edit Details</a>
 		              {{#if canPrintBadge}} -
-		              <a href="/registrant/{{this.registrantSlug}}/{{this.tournamentSlug}}/badge">Print Badge</a>
+		              <a href="/registrant/{{slug}}/{{this.tournamentSlug}}/badge">Print Badge</a>
 		              {{/if}}
 								</p>
 				        {{/each}}

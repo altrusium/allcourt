@@ -39,6 +39,7 @@ setActiveTeam = ->
   Session.set 'active-team', activeTeam
 
 sendUserSearchQuery = (query) ->
+  # submitUserSearch is global and defined in app/lib/streams.coffee
   submitUserSearch query, (results) ->
     for user in results
       user.isMale = user.gender is 'male'

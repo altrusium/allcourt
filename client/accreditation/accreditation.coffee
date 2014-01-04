@@ -1,13 +1,22 @@
+createEmailAddress = ->
+  firstName = $('#firstName').val()
+  lastName = $('#lastName').val()
+  name = emailHelper.prepareName firstName, lastName
+  address = name + emailHelper.addressSuffix
+
+sendUserSearchQuery = (query) ->
+  # submitUserSearch is global and defined in app/lib/streams.coffee
+  submitUserSearch query, (results) ->
+    for user in results
+      user.isMale = user.gender is 'male'
+      for reg in user.registrations
+        reg.slug = user.slug
+        reg.canPrintBadge = user.photoFilename and reg.accessCode
+    Session.set 'search-results', results
+
 emptySearchResults = ->
   Session.set 'search-results', null
   $('#search').val ''
-
-sortUsers = (users) ->
-  sortedUsers = []
-  if users.length
-    sortedUsers = _.sortBy users, (user) ->
-      user?.fullName
-  sortedUsers
 
 getSortedTournaments = ->
   tournaments = Tournaments.find {}, fields: tournamentName: 1, slug: 1, days: 1
@@ -21,133 +30,93 @@ getSortedTournaments = ->
   return list
 
 setActiveUser = (id) ->
-  user = Meteor.users.findOne _id: id
-  Session.set 'active-user', user
+  Session.set 'active-user', Meteor.users.findOne id
 
 setActiveTournament = (id) ->
   tournament = Tournaments.findOne _id: id
   Session.set 'active-tournament', tournament
 
 setActiveRegistration = (id) ->
-  registration = Registrants.findOne _id: id
+  registration = Registrants.findOne id
   Session.set 'active-registration', registration
 
-setActiveRole = (forceChange) ->
-  activeRole = Session.get('active-role')
-  if forceChange or not activeRole
-    rId = $('#role option:selected').val()
-    tournament = Session.get 'active-tournament'
-    activeRole = _.find tournament.roles, (role) ->
-      if role.roleId is rId then return role
-    Session.set 'active-role', activeRole
+setActiveRole = ->
+  rId = $('#role option:selected').val()
+  tournament = Session.get 'active-tournament'
+  activeRole = _.find tournament.roles, (role) ->
+    if role.roleId is rId then return role
+  Session.set 'active-role', activeRole
 
-setActiveTeam = (forceChange) ->
-  activeTeam = Session.get('active-team')
-  if forceChange or not activeTeam
-    tId = $('#team option:selected').val()
-    tournament = Session.get 'active-tournament'
-    role = Session.get 'active-role'
-    activeTeam = _.find tournament.teams, (team) ->
-      if team.teamId is tId then return team
-    Session.set 'active-team', activeTeam
+setActiveTeam = ->
+  tId = $('#team option:selected').val()
+  tournament = Session.get 'active-tournament'
+  role = Session.get 'active-role'
+  activeTeam = _.find tournament.teams, (team) ->
+    if team.teamId is tId then return team
+  Session.set 'active-team', activeTeam
 
 getActiveTournaments = ->
   list = getSortedTournaments()
   result = (t for t in list when new Date(t.days[t.days.length-1]) > new Date())
 
-getTournamentRegistrations = (userId) ->
-  registrants = -> null until registrantsSubscription.ready()
-  user = Meteor.users.findOne userId
-  registrants = Registrants.find userId: userId
-  registrants.map (reg) ->
-    t = Tournaments.findOne { _id: reg.tournamentId },
-        { fields: days: 0, shifts: 0, shiftDefs: 0 }
-    tourney = {
-      regId: reg._id,
-      id: t._id,
-      tournamentSlug: t.slug,
-      name: t.tournamentName,
-      function: reg.function,
-      accessCode: reg.accessCode,
-      registrantSlug: user.profile.slug,
-      canPrintBadge: user.profile?.photoFilename and reg.accessCode
-    }
-    teamsRoleId = (teamObj.roleId for teamObj in t.teams \
-      when teamObj.teamId is reg.teams[0])[0]
-    roleObj = for r in t.roles when r.roleId is teamsRoleId
-      id: r.roleId, name: r.roleName
-    tourney.role = roleObj[0]
-    teamObj = for tTeam in t.teams when tTeam.teamId is reg.teams[0]
-      id: tTeam.teamId, name: tTeam.teamName
-    if tourney.role then tourney.role.team = teamObj[0]
-    tourney
-
-setSearchableUserList = ->
-  users = Meteor.users.find({}).map (user) ->
-    usr =
-      id: user._id
-      email: user.profile.email
-      isNew: user.profile.isNew
-      fullName: user.profile.fullName
-      isMale: user.profile.gender is 'male'
-      photoFilename: user.profile.photoFilename
-      tournaments: getTournamentRegistrations user._id
-  Session.set 'user-list', sortUsers users
-  emptySearchResults()
-
 getUserFormValues = (template) ->
-  user = Session.get('active-user')
-  firstName = template.find('#firstName').value
-  lastName = template.find('#lastName').value
   values =
-    firstName: firstName
-    lastName: lastName
-    admin: user?.profile?.admin
-    isNew: user?.profile?.isNew
-    email: user?.profile?.email or firstName.replace(/\s/g, '').toLowerCase()+
-      '.'+lastName.replace(/\s/g, '').toLowerCase() + '@has-no-email.co.nz'
+    firstName: template.find('#firstName').value
+    lastName: template.find('#lastName').value
     photoFilename: template.find('#photoFilename').value
     gender: template.find('input:radio[name=gender]:checked').value
     function: template.find('#function').value
     accessCode: template.find('#accessCode').value
 
-associateUserWithTournament = (userId, userOptions) ->
-  tId = Session.get('active-tournament')._id
+updateRegistration = (userDetails) ->
   teamId = Session.get('active-team').teamId
-  registration = Registrants.findOne { tournamentId: tId, userId: userId }
-  if registration
-    Registrants.update registration._id, {
-      $push: {teams: teamId},
-      $set: {function: userOptions.function, accessCode: userOptions.accessCode}
-    }
-    setActiveRegistration registration._id
-    setActiveUser userId
-  else
-    Registrants.insert {
-      userId: userId,
-      teams: [teamId],
-      tournamentId: tId,
-      function: userOptions.function,
-      accessCode: userOptions.accessCode,
-      addedBy: Meteor.userId()
-    }, (err, id) ->
-      unless err
-        setActiveRegistration id
-        Template.userMessages.showMessage
-          type: 'info'
-          title: 'Success:'
-          message: 'User has been successfully registered.'
-        setActiveUser userId
-      else
-        Template.userMessages.showMessage
-          type: 'error'
-          title: 'Sign-up Failed:'
-          message: 'An error occurred while registering user. Please refresh
-            the browser and let us know if this continues.'
+  registrantId = Session.get('active-registration')._id
+  userDetails.userId = userDetails._id
+  userDetails.tournamentId = Session.get('active-tournament')._id
+  try
+    Meteor.call 'updateRegistrant', userDetails
+    Meteor.call 'addTeamToRegistrant', registrantId, teamId
+    setActiveUser userDetails._id
+    setActiveRegistration registrantId
+    Template.userMessages.showMessage
+      type: 'info'
+      title: 'Success:'
+      message: 'User has been successfully registered.'
+  catch err
+    Template.userMessages.showMessage
+      type: 'error'
+      title: 'Registration Failed:'
+      message: 'An error has occurred. Reason: ' + err.reason
+
+associateUserWithTournament = (userDetails) ->
+  details =
+    userId: userDetails._id
+    addedBy: Meteor.userId()
+    function: userDetails.function
+    accessCode: userDetails.accessCode
+    teams: [Session.get('active-team').teamId]
+    tournamentId: Session.get('active-tournament')._id
+  Meteor.call 'addRegistrant', details, (err, id) ->
+    unless err
+      Template.userMessages.showMessage
+        type: 'info'
+        title: 'Success:'
+        message: 'User has been successfully registered.'
+      setActiveUser userDetails._id
+      setActiveRegistration id
+    else
+      Template.userMessages.showMessage
+        type: 'error'
+        title: 'Sign-up Failed:'
+        message: 'An error occurred while registering user. Please refresh
+          the browser and let us know if this continues.'
 
 addNewRegistrant = (template) ->
-  userOptions = getUserFormValues template
-  Meteor.call 'createNewUser', userOptions, (err, id) ->
+  userDetails = getUserFormValues template
+  userDetails.email = createEmailAddress()
+  userDetails.isNew = false
+  userDetails.admin = false
+  Meteor.call 'createNewUser', userDetails, (err, id) ->
     if err
       Template.userMessages.showMessage
         type: 'error',
@@ -155,25 +124,33 @@ addNewRegistrant = (template) ->
         message: 'The new registrant was not saved successfully. Reason: ' +
           err.reason
     else
-      associateUserWithTournament id, userOptions
+      userDetails._id = id
+      associateUserWithTournament userDetails
 
-updateActiveRegistrant = (template) ->
-  userOptions = getUserFormValues template
-  Meteor.call 'updateUser', userOptions, (err) ->
+updateActiveRegistrant = (user, template) ->
+  userDetails = getUserFormValues template
+  userDetails._id = user._id
+  userDetails.email = user.profile.email
+  userDetails.isNew = user.profile.isNew
+  userDetails.admin = user.profile.admin
+  Meteor.call 'updateUser', userDetails, (err) ->
     if err
       Template.userMessages.showMessage
         type: 'error',
         title: 'Uh oh!',
         message: 'The user information was not updated. Reason: ' + err.reason
     else
-      associateUserWithTournament Session.get('active-user')._id, userOptions
+      updateRegistration userDetails
 
 
 
 
 Template.accreditation.created = ->
   Session.set 'active-tab', 'find'
-  setSearchableUserList()
+
+Template.accreditation.rendered = ->
+  if Session.get('active-user')?.profile.photoFilename
+    $('.photo-placeholder').removeClass 'empty'
 
 Template.accreditation.photoRoot = ->
   return photoHelper.photoRoot
@@ -220,15 +197,13 @@ Template.accreditation.registrationDetails = ->
   unless Session.get('active-user') then return {}
   user = Session.get('active-user').profile
   registration = Session.get('active-registration')
-  details = {
-    isMale: user.gender is 'male'
-    photoFilename: user.photoFilename
-    photoPath: photoHelper.photoRoot + user.photoFilename
-    firstName: user.firstName
-    lastName: user.lastName
-    function: registration.function
-    accessCode: registration.accessCode
-  }
+  unless (user and registration) then return {}
+  user.isMale = user.gender is 'male'
+  user.function = registration.function
+  user.accessCode = registration.accessCode
+  if user.photoFilename
+    user.photoPath = photoHelper.photoRoot + user.photoFilename
+  user
 
 Template.accreditation.userSlug = ->
   Session.get('active-user')?.profile?.slug
@@ -238,7 +213,7 @@ Template.accreditation.tournamentSlug = ->
 
 Template.accreditation.canPrintActiveBadge = ->
   Session.get('active-user')?.profile?.photoFilename and
-    Session.get('active-registration').accessCode
+    Session.get('active-registration')?.accessCode
 
 
 
@@ -246,30 +221,28 @@ Template.accreditation.events =
 
   'keyup #search': (evnt, template) ->
     query = $(evnt.currentTarget).val()
-    unless query
+    if query
+      sendUserSearchQuery query
+      Session.set 'active-team', null
+      Session.set 'active-role', null
+      Session.set 'active-tournament', null
+    else
       emptySearchResults()
-      return
-    Session.set 'active-team', null
-    Session.set 'active-role', null
-    Session.set 'active-tournament', null
-    users = Session.get 'user-list'
-    searcher = new Fuse users, keys: ['fullName']
-    results = searcher.search query
-    Session.set 'search-results', results
     false
 
   'click [data-details-link]': (evnt, template) ->
     anchor = $(evnt.currentTarget)
-    registrationId = anchor.data('registration-id')
-    setActiveRegistration registrationId
-    registration = Session.get('active-registration')
-    setActiveUser registration.userId
+    setActiveUser anchor.data 'user-id'
+    setActiveRegistration anchor.data 'registrant-id'
+    registration = Session.get 'active-registration'
     setActiveTournament registration.tournamentId
+
     team = (team for team in Session.get('active-tournament').teams \
       when team.teamId is registration.teams[0])[0]
     Session.set 'active-role', roleId: team?.roleId
     Session.set 'active-team', team
     Session.set 'active-tab', 'addEdit'
+    emptySearchResults()
     false
 
   'change #tournament': (evnt, template) ->
@@ -280,16 +253,11 @@ Template.accreditation.events =
     setActiveTournament id
 
   'change #role': (evnt, template) ->
-    forceChange = true
-    setActiveRole forceChange
-    setActiveTeam forceChange
+    setActiveRole()
+    setActiveTeam()
 
   'change #team': (evnt, template) ->
-    forceChange = true
-    setActiveTeam forceChange
-
-  'change input[name=gender]': (evnt, template) ->
-    $('.photo-placeholder').toggleClass 'male female'
+    setActiveTeam()
 
   'click .find-tab': (evnt, template) ->
     Session.set 'active-registration', null
@@ -305,8 +273,9 @@ Template.accreditation.events =
     false
 
   'click #saveRegistrant': (evnt, template) ->
-    if Session.get('active-user')
-      updateActiveRegistrant template
+    user = Session.get 'active-user'
+    if user
+      updateActiveRegistrant user, template
     else
       addNewRegistrant template
 
