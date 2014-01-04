@@ -1,5 +1,10 @@
 Meteor.methods
 
+  addRegistrant: (details) ->
+    registrantId = Registrants.insert details
+    teamRegistration = modelHelpers.buildTeamRegistration registrantId
+    modelHelpers.upsertTeamRegistration details.userId, teamRegistration
+
   addTeamToRegistrant: (registrantId, teamId) ->
     existing = Registrants.findOne _id: registrantId
     for team in existing.teams
@@ -8,6 +13,12 @@ Meteor.methods
     Registrants.update registrantId, $push: teams: teamId
     teamRegistration = modelHelpers.buildTeamRegistration registrantId
     modelHelpers.upsertTeamRegistration existing.userId, teamRegistration
+
+  removeTeamFromRegistrant: (registrantId, teamId) ->
+    registrant = Registrants.findOne registrantId
+    Registrants.update registrantId, $pull: teams: teamId
+    # TODO: If there are no more teams now, delete this registrant document
+    modelHelpers.removeTeamRegistration registrant.userId, registrantId
 
   updateRegistrant: (registrant) ->
     Registrants.update({
@@ -64,6 +75,12 @@ Meteor.methods
       photoFilename: user.photoFilename
     }
     false
+
+  deleteUser: (userId) ->
+    Meteor.users.remove userId
+    Volunteers.remove userId
+    Registrants.remove userId: userId
+    Registrations.remove userId
 
   createNewVolunteer: (volunteer) ->
     Volunteers.insert {

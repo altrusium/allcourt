@@ -5,19 +5,19 @@
   <ul class="breadcrumb">
     {{#with linkHelper}}
     <li>
-      <a href="{{pathFor 'tournamentDetails'}}">Details</a> 
+      <a href="{{pathFor 'tournamentDetails'}}">Details</a>
       <span class="divider">|</span>
     </li><li>
-      <a href="{{pathFor 'setupRoles'}}">Roles</a> 
+      <a href="{{pathFor 'setupRoles'}}">Roles</a>
       <span class="divider">|</span>
     </li><li>
-      <a href="{{pathFor 'setupTeams'}}">Teams</a> 
+      <a href="{{pathFor 'setupTeams'}}">Teams</a>
       <span class="divider">|</span>
     </li><li class="active">
       Registrants
       <span class="divider">|</span>
     </li><li>
-      <a href="{{pathFor 'setupShifts'}}">Volunteer Shifts</a> 
+      <a href="{{pathFor 'setupShifts'}}">Volunteer Shifts</a>
       <span class="divider">|</span>
     </li><li>
       <a href="{{pathFor 'schedule'}}">Volunteer Schedule</a>
@@ -92,7 +92,7 @@
           <tr>
             <td>{{fullName}}</td>
             <td>
-              <a href="#" data-action="register" data-id="{{id}}">Register</a>
+              <a href="#" data-action="register" data-id="{{_id}}">Register</a>
             </td>
           </tr>
           {{/each}}
@@ -181,7 +181,7 @@
         <div class="control-group">
           <div class="controls">
             <button type="button" id="addUser" class="btn btn-primary">Add User</button>
-            &nbsp; <a href="#" id="cancelAddUser">cancel</a> 
+            &nbsp; <a href="#" id="cancelAddUser">cancel</a>
           </div>
         </div>
       </form>

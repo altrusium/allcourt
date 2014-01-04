@@ -16,4 +16,4 @@ if Meteor.isServer
     registrations = Registrations.find({}).fetch()
     searcher = new FuseSearch registrations, keys: ['fullName']
     results = searcher.search query
-    userSearch.emit this.userId, results.slice(0, 19)
+    userSearch.emit this.userId, results.slice(0, 20)

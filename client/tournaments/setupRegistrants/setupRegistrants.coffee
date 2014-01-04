@@ -1,3 +1,10 @@
+createEmailAddress = ->
+  firstName = $('#firstName').val()
+  lastName = $('#lastName').val()
+  name = emailHelper.prepareName firstName, lastName
+  unless $('#hasProfileAccess').prop('checked')
+    $('#email').val(name + emailHelper.addressSuffix)
+
 getSortedTournaments = ->
   tournaments = Tournaments.find {}, fields: tournamentName: 1, slug: 1, days: 1
   list = tournaments.fetch()
@@ -51,12 +58,10 @@ emptySearchResults = ->
   Session.set 'search-results', null
   $('#search').val ''
 
-setSearchableUserList = ->
-  users = Meteor.users.find({}).map (user) ->
-    usr = id: user._id, fullName: user.profile.firstName +
-      ' ' + user.profile.lastName
-  Session.set 'user-list', users
-  emptySearchResults()
+sendUserSearchQuery = (query) ->
+  # submitUserSearch is global and defined in app/lib/streams.coffee
+  submitUserSearch query, (results) ->
+    Session.set 'search-results', results
 
 getUserFormValues = (template) ->
   values =
@@ -72,16 +77,14 @@ associateUserWithTournament = (userId) ->
   signup = Registrants.findOne { tournamentId: tId, userId: userId }
   if signup
     Session.set 'signup-id', signup._id
-    # move this to a server-side Method.Call
-    Method.call 'addTeamToRegistrant', signup._id, teamId
+    Meteor.call 'addTeamToRegistrant', signup._id, teamId
   else
-    # move this to a server-side Method.Call
-    Registrants.insert {
-      userId: userId,
-      teams: [teamId],
-      tournamentId: tId,
+    details =
+      userId: userId
+      teams: [teamId]
+      tournamentId: tId
       addedBy: Meteor.userId()
-    }, (err, id) ->
+    Meteor.call 'addRegistrant', details, (err, id) ->
       unless err
         Session.set 'signup-id', id
         Template.userMessages.showMessage
@@ -99,7 +102,6 @@ associateUserWithTournament = (userId) ->
 
 
 Template.setupRegistrants.created = ->
-  setSearchableUserList()
   Session.set 'view-prefs', ['1']
 
 Template.setupRegistrants.rendered = ->
@@ -172,7 +174,6 @@ Template.setupRegistrants.registrants = ->
   unless tId and teamId then return []
   Session.get('view-prefs').forEach (pref) ->
     Registrants.find({ tournamentId: tId }).forEach (reg) ->
-      # if _.contains reg.teams, teamId
       if reg.teams[pref-1] is teamId
         registrants.push [reg.userId, reg.isTeamLead]
   users = for reg in registrants
@@ -220,6 +221,12 @@ Template.setupRegistrants.events
     Session.set 'adding-new-user', true
     false
 
+  'change #firstName': (evnt, template) ->
+    createEmailAddress()
+
+  'change #lastName': (evnt, template) ->
+    createEmailAddress()
+
   'click #cancelAddUser': (evnt, template) ->
     Session.set 'adding-new-user', null
     false
@@ -228,8 +235,8 @@ Template.setupRegistrants.events
     tId = Session.get('active-tournament')._id
     uId = $(evnt.currentTarget).data 'user'
     reg = Registrants.findOne 'tournamentId': tId, 'userId': uId
-    # TODO: This should be moved to a server-side Method.call
-    Registrants.update reg?._id, $pull: teams: Session.get('active-team').teamId
+    teamId = Session.get('active-team').teamId
+    Meteor.call 'removeTeamFromRegistrant', reg?._id, teamId
     false
 
   'click [data-action=makeLead]': (evnt, template) ->
@@ -250,13 +257,11 @@ Template.setupRegistrants.events
 
   'keyup #search': (evnt, template) ->
     query = $(evnt.currentTarget).val()
-    unless query
+    if query
+      sendUserSearchQuery query
+    else
       emptySearchResults()
-      return
-    users = Session.get 'user-list'
-    searcher = new Fuse users, keys: ['fullName']
-    results = searcher.search query
-    Session.set 'search-results', results
+    false
 
   'change #viewPreferences [type=checkbox]': (evnt, template) ->
     evnt.preventDefault()
@@ -297,16 +302,11 @@ Template.setupRegistrants.events
     false
 
   'change #hasProfileAccess': (evnt, template) ->
+    firstName = $('#firstName').val()
+    lastName = $('#lastName').val()
+    name = emailHelper.prepareName firstName, lastName
     if $(evnt.currentTarget).prop('checked')
-      $('#email').prop('disabled', false)
+      $('#email').prop('disabled', false).val('')
     else
-      $('#email').prop('disabled', true).val('')
-
-  'change input[name=gender]': (evnt, template) ->
-    $('.photo-placeholder').toggleClass 'male female'
-
-
-
-
-
+      $('#email').prop('disabled', true).val(name + emailHelper.addressSuffix)
 

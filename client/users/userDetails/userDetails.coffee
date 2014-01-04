@@ -48,17 +48,18 @@ Template.userDetails.events =
 
   'click #deleteConfirmed': (evnt, template) ->
     id = Session.get('active-user')._id
-    Meteor.users.remove id, ->
-      Template.userMessages.showMessage
-        type: 'info',
-        title: 'Deleted!',
-        message: 'The user was deleted'
-      Router.go 'users'
-      Volunteers.remove id, ->
+    Meteor.call 'deleteUser', id, (err) ->
+      if err
+        Template.userMessages.showMessage
+          type: 'error',
+          title: 'Error!',
+          message: 'The user was not deleted. Reason: ' + err.reason
+      else
         Template.userMessages.showMessage
           type: 'info',
           title: 'Deleted!',
-          message: 'The volunteer was deleted'
+          message: 'The user was deleted'
+        Router.go 'users'
 
   'click #deleteCancelled': (evnt, template) ->
     $('#deleteModal').hide()

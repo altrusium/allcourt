@@ -4,29 +4,30 @@
     tournament = Tournaments.findOne tournamentId, fields: tournamentName: 1
     tournament.tournamentName
 
-  getRoleName: (teamId) ->
-    role = null
+  getTeamAndRole: (tournamentId, teamId) ->
+    theTeam = null
+    theRole = null
     tournament = Tournaments.findOne tournamentId, fields: teams: 1, roles: 1
     for team in tournament.teams when team.teamId is teamId
-      role = (role for role in tournament.roles when role.roleId is team.roleId)
-    role.roleName
-
-  getTeamName: (teamId) ->
-    tournament = Tournaments.findOne tournamentId, fields: teams: 1
-    team = (team for team in tournament.teams when team.teamId is teamId)
-    team.teamName
+      theRole = (r for r in tournament.roles when r.roleId is team.roleId)[0]
+      theTeam = team
+    [theTeam, theRole]
 
   buildTeamRegistration: (registrantId) ->
-    registration = {}
+    reg = {}
     registrant = Registrants.findOne registrantId
-    registration.registrantId = registrantId
-    registration.tournamentId = registrant.tournamentId
-    registration.tournamentName = getTournamentName registrant.tournamentId
-    registration.teamName = getTeamName registrant.teams[0]
-    registration.roleName = getRoleName registrant.teams[0]
-    registration.function = registrant.function
-    registration.accessCode = registrant.accessCode
-    registration
+    tournamentId = registrant.tournamentId
+    teamAndRole = modelHelpers.getTeamAndRole tournamentId, registrant.teams[0]
+    reg.registrantId = registrantId
+    reg.tournamentId = registrant.tournamentId
+    reg.tournamentName = modelHelpers.getTournamentName tournamentId
+    reg.teamId = teamAndRole[0].teamId
+    reg.teamName = teamAndRole[0].teamName
+    reg.roleId = teamAndRole[1].roleId
+    reg.roleName = teamAndRole[1].roleName
+    reg.function = registrant.function
+    reg.accessCode = registrant.accessCode
+    reg
 
   upsertUserRegistration: (id, user) ->
     existing = Registrations.findOne id, fields: _id: 0
@@ -39,6 +40,7 @@
       Registrations.update id, $set: existing
     else
       user._id = id
+      user.registrations = []
       Registrations.insert user
 
   removeTeamRegistration: (userId, regId) ->
@@ -51,7 +53,9 @@
     existingReg = _.find existing.registrations, (thisReg) ->
       thisReg.registrantId is reg.registrantId
     if existingReg
+      if reg.roleId then existingReg.roleId = reg.roleId
       if reg.roleName then existingReg.roleName = reg.roleName
+      if reg.teamId then existingReg.teamId = reg.teamId
       if reg.teamName then existingReg.teamName = reg.teamName
       if reg.function then existingReg.function = reg.function
       if reg.accessCode then existingReg.accessCode = reg.accessCode
@@ -62,3 +66,4 @@
     modelHelpers.removeTeamRegistration userId, reg.registrantId
     existing.registrations.push teamRegistration
     Registrations.update userId, existing
+
