@@ -106,4 +106,23 @@
 	width: 100px;
 }
 
+.id-badge .agreement {
+  top: 320px;
+  font-size: 9px;
+  width: 420px;
+  margin: 10px;
+  line-height: 11px;
+  -moz-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg);
+  /* Remove the next line to print double-sided cards. */
+  display: none;
+  /*
+     Unfortunately, I can't get any browsers to give
+     me the option to print double-sided at the moment :(
+  */
+}
+
 
