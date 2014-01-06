@@ -92,7 +92,9 @@ Template.users.users = ->
     setUserIdsWithTeam Session.get('active-team').teamId
   else if Session.get 'active-role'
     setUserIdsWithRole Session.get('active-role').roleId
-  Registrations.find {}
+  Registrations.find({}).map (reg, index, cursor) ->
+    reg.isMale = reg.gender is 'male'
+    reg
 
 Template.users.totalCount = ->
   Registrations.find({}).count()
