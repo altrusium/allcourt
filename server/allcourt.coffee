@@ -60,23 +60,26 @@ Meteor.methods
   updateUser: (user) ->
     firstName = user.firstName
     lastName = user.lastName
+    gender = user.gender || 'female'
+    fullName = firstName + ' ' + lastName
+    slug = firstName.replace(/\s/g,'') + lastName.replace(/\s/g,'')
     Meteor.users.update user._id, $set: profile: {
-      email: user.email.toLowerCase(),
-      firstName: firstName,
-      lastName: lastName,
-      fullName: firstName + ' ' + lastName,
-      photoFilename: user.photoFilename,
-      gender: user.gender || 'female',
-      slug: firstName.replace(/\s/g,'') + lastName.replace(/\s/g,''),
-      admin: user.admin,
+      email: user.email.toLowerCase()
+      firstName: firstName
+      lastName: lastName
+      fullName: fullName
+      photoFilename: user.photoFilename
+      gender: gender
+      slug: slug
+      admin: user.admin
       isNew: user.isNew
     }
     modelHelpers.upsertUserRegistration {
       _id: user._id
-      slug: user.slug
+      slug: slug
       email: user.email
-      gender: user.gender
-      fullName: user.fullName
+      gender: gender
+      fullName: fullName
       photoFilename: user.photoFilename
     }
     false
