@@ -31,8 +31,8 @@ Router.configure
   layoutTemplate: 'main'
   notFoundTemplate: 'notFound'
 
-Router.before mustBeSignedIn, except: ['home']
-Router.before mustBeAnAdmin, except: [
+Router.onBeforeAction mustBeSignedIn, except: ['home']
+Router.onBeforeAction mustBeAnAdmin, except: [
   'home',
   'profileDetails',
   'profileEdit',
@@ -60,13 +60,13 @@ Router.map ->
 
   this.route 'userCreate',
     path: '/user/create'
-    before: ->
+    onBeforeAction: ->
       Session.set 'active-user', null
 
   this.route 'userEdit',
     path: '/user/edit/:userSlug'
     template: 'userCreate'
-    before: ->
+    onBeforeAction: ->
       setActiveUser.call(this)
       setActiveVolunteer.call(this)
     data: ->
@@ -74,13 +74,13 @@ Router.map ->
 
   this.route 'userDetails',
     path: 'user/:userSlug'
-    before: setActiveUser
+    onBeforeAction: setActiveUser
     data: ->
       Session.get 'active-user'
 
   this.route 'userPreferences',
     path: 'user/:userSlug/preferences/:tournamentSlug'
-    before: ->
+    onBeforeAction: ->
       setActiveUser.call(this)
       setActiveTournament.call(this)
     data: ->
@@ -89,7 +89,7 @@ Router.map ->
   this.route 'registrantBadge',
     layoutTemplate: 'blank'
     path: 'registrant/:userSlug/:tournamentSlug/badge'
-    before: ->
+    onBeforeAction: ->
       setActiveUser.call(this)
       setActiveTournament.call(this)
     data: ->
@@ -97,7 +97,7 @@ Router.map ->
 
   this.route 'registrantDetails',
     path: 'registrant/:userSlug/:tournamentSlug'
-    before: ->
+    onBeforeAction: ->
       setActiveUser.call(this)
       setActiveTournament.call(this)
     data: ->
@@ -124,49 +124,49 @@ Router.map ->
 
   this.route 'setupRoles',
     path: '/:tournamentSlug/roles'
-    before: setActiveTournament
+    onBeforeAction: setActiveTournament
     data: ->
       Session.get 'active-tournament'
 
   this.route 'setupTeams',
     path: '/:tournamentSlug/teams'
-    before: setActiveTournament
+    onBeforeAction: setActiveTournament
     data: ->
       Session.get 'active-tournament'
 
   this.route 'setupRegistrants',
     path: '/:tournamentSlug/registrants'
-    before: setActiveTournament
+    onBeforeAction: setActiveTournament
     data: ->
       Session.get 'active-tournament'
 
   this.route 'setupShifts',
     path: '/:tournamentSlug/shifts'
-    before: setActiveTournament
+    onBeforeAction: setActiveTournament
     data: ->
       Session.get 'active-tournament'
 
   this.route 'register',
     path: '/:tournamentSlug/register'
-    before: setActiveTournament
+    onBeforeAction: setActiveTournament
     data: ->
       Session.get 'active-tournament'
 
   this.route 'preferences',
     path: '/:tournamentSlug/preferences'
-    before: setActiveTournament
+    onBeforeAction: setActiveTournament
     data: ->
       Session.get 'active-tournament'
 
   this.route 'schedule',
     path: '/:tournamentSlug/schedule'
-    before: setActiveTournament
+    onBeforeAction: setActiveTournament
     data: ->
       Session.get 'active-tournament'
 
   this.route 'userSchedule',
     path: '/:tournamentSlug/schedule/:userSlug'
-    before: ->
+    onBeforeAction: ->
       setActiveTournament.call(this)
       setActiveUser.call(this)
     data: ->
@@ -174,20 +174,7 @@ Router.map ->
 
   this.route 'tournamentDetails',
     path: '/:tournamentSlug'
-    before: setActiveTournament
+    onBeforeAction: setActiveTournament
     data: ->
       Session.get 'active-tournament'
 
-
-
-
-# Template is in allcourt.html
-Template.activeTournament.tournament = ->
-  Session.get 'active-tournament'
-
-
-# For debugging and styling
-# Session.set 'user-message',
-#   type: 'error'
-#   title: 'Back again!'
-#   message: 'Don\'t worry. I\'m not staying long'

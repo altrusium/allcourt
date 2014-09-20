@@ -4,19 +4,19 @@
 	<ul class="breadcrumb">
     {{#with linkHelper}}
     <li>
-      <a href="{{pathFor 'tournamentDetails'}}">Details</a> 
+      <a href="{{pathFor 'tournamentDetails'}}">Details</a>
       <span class="divider">|</span>
     </li><li>
-      <a href="{{pathFor 'setupRoles'}}">Roles</a> 
+      <a href="{{pathFor 'setupRoles'}}">Roles</a>
       <span class="divider">|</span>
     </li><li>
-      <a href="{{pathFor 'setupTeams'}}">Teams</a> 
+      <a href="{{pathFor 'setupTeams'}}">Teams</a>
       <span class="divider">|</span>
     </li><li>
-      <a href="{{pathFor 'setupRegistrants'}}">Registrants</a> 
+      <a href="{{pathFor 'setupRegistrants'}}">Registrants</a>
       <span class="divider">|</span>
     </li><li>
-      <a href="{{pathFor 'setupShifts'}}">Volunteer Shifts</a> 
+      <a href="{{pathFor 'setupShifts'}}">Volunteer Shifts</a>
       <span class="divider">|</span>
     </li><li class="active">
       Volunteer Schedule
@@ -43,7 +43,7 @@
 
       <ul class="nav nav-list span3">
 
-	      <li class="nav-header">Day</p>
+	    <li class="nav-header">Day</li>
       	<li data-day="" class="{{markSelectedDay}}"><a href="#">All Days</a></li>
         {{#each shifts.days}}
         <li data-day="{{date}}" class="{{markSelectedDay}}">
@@ -51,7 +51,7 @@
         </li>
         {{/each}}
 
-	      <li class="nav-header">Shift</p>
+	    <li class="nav-header">Shift</li>
       	<li data-shift="" class="{{markSelectedShift}}"><a href="#">All Shifts</a></li>
         {{#each shifts.defs}}
         <li data-shift="{{shiftDefId}}" class="{{markSelectedShift}}">
@@ -72,7 +72,7 @@
             <td>
               Date<br>
               and<br>
-              Shift 
+              Shift
             </td>
             {{#each shifts.defs}}
             <th>
@@ -97,6 +97,7 @@
           {{/each}}
         </tbody>
       </table>
+    </div>
     {{/if}}
 
     {{#if showingOneDay}}
@@ -139,30 +140,31 @@
           </tr>
         </tbody>
       </table>
+    </div>
     {{/if}}
 
     {{#if showingOneShift}}
     <div class="one-shift span8">
       <h2 class="column-header"><small>{{activeTeamName}} Shift for {{activeDate}} {{activeShiftTimes}}</small></h2>
       <p></p>
-    	<div class="row">
-    		<div class="span4">
+      <div class="row">
+        <div class="span4">
           {{#each shiftVolunteers}}
             {{#each confirmed}}
             <p data-user-id="{{userId}}" data-action="remove">
-            	<i class="action icon-remove" title="Remove"></i> 
+            	<i class="action icon-remove" title="Remove"></i>
             	<span class="confirmed">{{fullName}}</span>
             </p>
             {{/each}}
             {{#each backedOut}}
             <p data-user-id="{{userId}}" data-action="confirmRemove">
-            	<i class="action icon-ok" title="Confirm"></i> 
+            	<i class="action icon-ok" title="Confirm"></i>
             	<span class="backed-out">{{fullName}}</span>
             </p>
             {{/each}}
             {{#each keen}}
             <p data-user-id="{{userId}}" data-action="confirmAdd">
-            	<i class="action icon-ok" title="Confirm"></i> 
+            	<i class="action icon-ok" title="Confirm"></i>
             	<span class="keen">{{fullName}}</span>
             </p>
             {{/each}}
@@ -182,6 +184,5 @@
     </div>
     {{/if}}
 
-    </div>
 	</div>
 </template>

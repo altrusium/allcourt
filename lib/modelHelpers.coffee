@@ -1,5 +1,5 @@
 # This file basically keeps the Registrations collection in sync
-# with the other collections. Called by methods in allcourt.coffee.
+# with the other collections. Called by methods in methods.coffee.
 
 @modelHelpers =
 

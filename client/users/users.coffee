@@ -73,15 +73,15 @@ Template.users.teams = ->
 
 Template.users.markSelectedTournament = ->
   if this._id is Session.get('active-tournament')?._id
-    return 'selected=selected'
+    return 'selected'
 
 Template.users.markSelectedRole = ->
   if this.roleId is Session.get('active-role')?.roleId
-    return 'selected=selected'
+    return 'selected'
 
 Template.users.markSelectedTeam = ->
   if this.teamId is Session.get('active-team')?.teamId
-    return 'selected=selected'
+    return 'selected'
 
 Template.users.photoRoot = ->
   return allcourt.photoRoot

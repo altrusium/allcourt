@@ -3,7 +3,6 @@ Template.displayProfileDetails.profileDetails = ->
   details = user.profile || {}
   if details.photoFilename
     details.photoFile = allcourt.photoRoot + details.photoFilename
-  details.isMale = details.gender is 'male'
   details
 
 Template.displayProfileDetails.events =

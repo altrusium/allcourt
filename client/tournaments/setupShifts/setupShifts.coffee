@@ -36,7 +36,7 @@ Template.setupShifts.activeTeamName = ->
 
 Template.setupShifts.markSelectedTeam = ->
   if this.teamName is Session.get('active-team')?.teamName
-    return 'selected=selected'
+    return 'selected'
 
 Template.setupShifts.activeTournamentSlug = ->
   Session.get('active-tournament').slug

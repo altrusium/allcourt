@@ -55,11 +55,11 @@ Template.setupTeams.activeTournamentSlug = ->
 
 Template.setupTeams.markSelectedTournament = ->
   if this._id is Session.get('active-tournament')._id
-    return 'selected=selected'
+    return 'selected'
 
 Template.setupTeams.markSelectedRole = ->
   if this.roleId is Session.get('active-role')?.roleId
-    return 'selected=selected'
+    return 'selected'
 
 Template.setupTeams.teams = ->
   roleId = Session.get('active-role')?.roleId

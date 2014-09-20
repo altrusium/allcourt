@@ -175,7 +175,7 @@ Template.schedule.teams = ->
 
 Template.schedule.markSelectedTeam = ->
   if this.teamName is Session.get('active-team')?.teamName
-    return 'selected=selected'
+    return 'selected'
 
 Template.schedule.markSelectedDay = ->
   this.date = this.date or ''

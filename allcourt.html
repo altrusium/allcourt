@@ -6,27 +6,20 @@
 
   <body>
   	<div class="container">
-    	<h2><a href="/">All-Court</a> {{> activeTournament}}</h2>
-  	  {{yield}}
+      <h2><a href="/">All-Court</a> {{> activeTournament}}</h2>
+  	  {{> yield}}
   	</div>
   </body>
 </template>
 
 <template name="blank">
-  {{yield}}
-</template>
-
-<!-- Helper is in client.coffee -->
-<template name="activeTournament">
-	{{#if tournament.tournamentName}}
-		<span style="color: gray"> :: {{tournament.tournamentName}}</span>
-	{{/if}}
+  {{> yield}}
 </template>
 
 <template name="notAuthorised">
-	You are not authorised to view this page.
+  You are not authorised to view this page.
 </template>
 
 <template name="notFound">
-	Let! File not found.
+  Let! File not found.
 </template>

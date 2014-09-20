@@ -1,10 +1,5 @@
 {
   "packages": {
-    "moment": {},
-    "streams": {},
-    "iron-router": {},
-    "bootstrap-datepicker2": {},
-    "jquery-ui-sortable": {},
     "meteor-jquery-ui-touch-punch": {
       "git": "https://github.com/locksmithdon/meteor-jquery-ui-touch-punch.git"
     }

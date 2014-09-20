@@ -125,15 +125,15 @@ Template.setupRegistrants.activeTournamentSlug = ->
 
 Template.setupRegistrants.markSelectedTournament = ->
   if this._id is Session.get('active-tournament')._id
-    return 'selected=selected'
+    return 'selected'
 
 Template.setupRegistrants.markSelectedRole = ->
   if this.roleId is Session.get('active-role')?.roleId
-    return 'selected=selected'
+    return 'selected'
 
 Template.setupRegistrants.markSelectedTeam = ->
   if this.teamId is Session.get('active-team')?.teamId
-    return 'selected=selected'
+    return 'selected'
 
 Template.setupRegistrants.firstPreference = ->
   if _.contains Session.get('view-prefs'), '1' then 'checked' else ''

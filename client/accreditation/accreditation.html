@@ -34,7 +34,7 @@
 									{{else}}
 										<img src="/img/no-female-photo.jpg" class="user-photo">
 									{{/if}}
-								{{/if}}}
+								{{/if}}
 							</div>
 							<div class="span10 user-info">
 								<p class="user-name">{{fullName}}</p>
@@ -112,10 +112,10 @@
 		          <label class="control-label" for="gender">Gender</label>
 		          <div class="controls">
 		            <label class="radio inline">
-		              <input type="radio" id="maleGender" name="gender" value="male" {{#if isMale}}checked{{/if}}> male
+		              <input type="radio" id="maleGender" name="gender" value="male" checked={{isMale}}> male
 		            </label>
 		            <label class="radio inline">
-		              <input type="radio" id="femaleGender" name="gender" value="female" {{#unless isMale}}checked{{/unless}}> female
+		              <input type="radio" id="femaleGender" name="gender" value="female" checked={{isFemale}}> female
 		            </label>
 		          </div>
 		        </div>

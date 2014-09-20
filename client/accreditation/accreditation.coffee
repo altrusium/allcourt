@@ -183,15 +183,15 @@ Template.accreditation.teams = ->
 
 Template.accreditation.markSelectedTournament = ->
   if this._id is Session.get('active-tournament')?._id
-    return 'selected=selected'
+    return 'selected'
 
 Template.accreditation.markSelectedRole = ->
   if this.roleId is Session.get('active-role')?.roleId
-    return 'selected=selected'
+    return 'selected'
 
 Template.accreditation.markSelectedTeam = ->
   if this.teamId is Session.get('active-team')?.teamId
-    return 'selected=selected'
+    return 'selected'
 
 Template.accreditation.registrationDetails = ->
   unless Session.get('active-user') then return {}
@@ -199,6 +199,7 @@ Template.accreditation.registrationDetails = ->
   registration = Session.get('active-registration')
   unless (user and registration) then return {}
   user.isMale = user.gender is 'male'
+  user.isFemale = user.gender isnt 'male'
   user.function = registration.function
   user.accessCode = registration.accessCode
   if user.photoFilename

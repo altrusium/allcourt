@@ -53,10 +53,10 @@
 					<label class="control-label" for="gender">Gender</label>
 					<div class="controls">
 						<label class="radio inline">
-							<input type="radio" id="maleGender" name="gender" value="male" {{#if isMale}}checked{{/if}}> male
+							<input type="radio" id="maleGender" name="gender" value="male" checked={{isMale}}> male
 						</label>
 						<label class="radio inline">
-							<input type="radio" id="femaleGender" name="gender" value="female" {{#unless isMale}}checked{{/unless}}> female
+							<input type="radio" id="femaleGender" name="gender" value="female" checked={{isFemale}}> female
 						</label>
 					</div>
 				</div>

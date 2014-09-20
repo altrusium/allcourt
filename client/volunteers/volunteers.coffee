@@ -170,6 +170,7 @@ Template.volunteerCreate.detail = ->
   if volunteer.userDetails # editing, not creating
     profile = volunteer.userDetails.profile
     volunteer.isMale = profile.gender is 'male'
+    volunteer.isFemale = profile.gender isnt 'male'
     volunteer.photoFilename = profile.photoFilename
     if volunteer.photoFilename
       volunteer.photoPath = photoRoot + profile.photoFilename

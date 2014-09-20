@@ -5,8 +5,8 @@
       {{#if photoFilename}}
         <img class="volunteer-photo" src="{{photoFile}}"><br>
       {{else}}
-        <div class="{{#if isMale}}male{{else}}female{{/if}} photo-placeholder"></div>
-      {{/if}}}
+        <div class="{{gender}} photo-placeholder"></div>
+      {{/if}}
       <p>{{email}}</p>
       <p><a id="editProfile" href="#" data-volunteer-id="{{_id}}">Edit Profile</a></p>
     </div>

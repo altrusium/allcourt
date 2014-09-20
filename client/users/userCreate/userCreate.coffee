@@ -122,6 +122,7 @@ Template.userCreate.userDetails = ->
   profile = details.profile
   details.email = profile.email
   details.isMale = profile.gender is 'male'
+  details.isFemale = profile.gender isnt 'male'
   $.extend details, profile
   if details.photoFilename
     details.photoPath = photoHelper.photoRoot + profile.photoFilename
@@ -138,6 +139,9 @@ Template.userCreate.userDetails = ->
     details.hasProfileAccess = 'checked'
 
   details
+
+Template.userCreate.isSelected = (value, constant) ->
+  value == constant
 
 Template.userCreate.volunteerDetails = ->
   Session.get('active-volunteer') or { 'hidden': 'hidden' }

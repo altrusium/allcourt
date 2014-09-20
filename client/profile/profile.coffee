@@ -51,6 +51,7 @@ Template.profileDetails.details = ->
   if details.photoFilename
     details.photoFile = allcourt.photoRoot + details.photoFilename
   details.isMale = details.gender is 'male'
+  details.isFemale = details.gender isnt 'male'
   return details || {}
 
 Template.profileDetails.availableTournamentsExist = ->
