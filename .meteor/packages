@@ -3,20 +3,18 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-preserve-inputs
-coffeescript
-stylus
-handlebars
-bootstrap
-moment
-standard-app-packages
+meteor-platform
+mrt:moment
+iron:router
+lepozepo:streams
+mrt:jquery-ui-sortable
+deepwell:bootstrap-datepicker2
 accounts-facebook
 accounts-google
 accounts-password
-accounts-ui
-email
-iron-router
-bootstrap-datepicker2
-jquery
-jquery-ui-sortable
-streams
+coffeescript
+stylus
+bootstrap
+service-configuration
+alanning:roles
+
