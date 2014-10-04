@@ -86,9 +86,13 @@ Template.profileEdit.details = ->
   user = Meteor.user()
   details = user.profile || {}
   details.isMale = details.gender is 'male'
+  details.isFemale = details.gender isnt 'male'
   if details.photoFilename
     details.photoFile = allcourt.photoRoot + details.photoFilename
   return details
+
+Template.profileEdit.isSelected = (value, constant) ->
+  value == constant
 
 Template.profileEdit.volunteerDetails = ->
   return Volunteers.findOne Meteor.userId()

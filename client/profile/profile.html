@@ -75,19 +75,17 @@
 					<label class="control-label" for="shirtSize">Shirt Size</label>
 					<div class="controls">
 						<select id="shirtSize" class="input-small">
-							{{#select shirtSize}}
-							<option value=""></option>
-							<option value="3XS">3XS</option>
-							<option value="2XS">2XS</option>
-							<option value="XS">XS</option>
-							<option value="S">S</option>
-							<option value="M">M</option>
-							<option value="L">L</option>
-							<option value="XL">XL</option>
-							<option value="2XL">2XL</option>
-							<option value="3XL">3XL</option>
-							<option value="4XL">4XL</option>
-							{{/select}}
+							<option value="" selected={{isSelected shirtSize ''}}></option>
+							<option value="3XS" selected={{isSelected shirtSize '3XS'}}>3XS</option>
+							<option value="2XS" selected={{isSelected shirtSize '2XS'}}>2XS</option>
+							<option value="XS" selected={{isSelected shirtSize 'XS'}}>XS</option>
+							<option value="S" selected={{isSelected shirtSize 'S'}}>S</option>
+							<option value="M" selected={{isSelected shirtSize 'M'}}>M</option>
+							<option value="L" selected={{isSelected shirtSize 'L'}}>L</option>
+							<option value="XL" selected={{isSelected shirtSize 'XL'}}>XL</option>
+							<option value="2XL" selected={{isSelected shirtSize '2XL'}}>2XL</option>
+							<option value="3XL" selected={{isSelected shirtSize '3XL'}}>3XL</option>
+							<option value="4XL" selected={{isSelected shirtSize '4XL'}}>4XL</option>
 						</select>
 					</div>
 				</div>
