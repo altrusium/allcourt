@@ -2,7 +2,7 @@ userId = ''
 myTournaments = null
 
 getCalculatedAge = (birthdate) ->
-  if birthdate then moment().diff(moment(birthdate), 'years')
+  if birthdate then moment().diff(moment(birthdate, 'DD MMM YYYY'), 'years')
 
 getTeamInfo = (tournamentId, teamId) ->
   tournament = Tournaments.findOne tournamentId

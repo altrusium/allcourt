@@ -11,8 +11,14 @@ getTeamName = (teamId) ->
 Template.registrantDetails.fullName = ->
   Session.get('active-user').profile.fullName
 
+Template.registrantDetails.isMale = ->
+  Session.get('active-user').profile.gender
+
+Template.registrantDetails.photoRoot = ->
+  allcourt.photoRoot
+
 Template.registrantDetails.photoFilename = ->
-  allcourt.photoRoot + Session.get('active-user').profile.photoFilename
+  Session.get('active-user').profile.photoFilename
 
 Template.registrantDetails.function = ->
   registration = getActiveRegistration()

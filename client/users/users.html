@@ -12,7 +12,7 @@
         <select id="tournament">
           <option value="alltournaments">All Tournaments</option>
           {{#each tournaments}}
-          <option value="{{_id}}" {{markSelectedTournament}}>{{tournamentName}}</option>
+          <option value="{{_id}}" selected={{markSelectedTournament}}>{{tournamentName}}</option>
           {{/each}}
         </select>
       </div>
@@ -23,7 +23,7 @@
         <select id="role">
           <option value="allroles">All Roles</option>
           {{#each roles}}
-          <option value="{{roleId}}" {{markSelectedRole}}>{{roleName}}</option>
+          <option value="{{roleId}}" selected={{markSelectedRole}}>{{roleName}}</option>
           {{/each}}
         </select>
       </div>
@@ -34,7 +34,7 @@
         <select id="team">
           <option value="allteams">All Teams</option>
           {{#each teams}}
-          <option value="{{teamId}}" {{markSelectedTeam}}>{{teamName}}</option>
+          <option value="{{teamId}}" selected={{markSelectedTeam}}>{{teamName}}</option>
           {{/each}}
         </select>
       </div>

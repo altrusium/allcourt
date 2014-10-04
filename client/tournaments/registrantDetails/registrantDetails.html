@@ -5,10 +5,10 @@
   <div class="row">
     <div class="user-details span3">
       {{#if photoFilename}}
-        <img class="volunteer-photo" src="{{photoFilename}}"><br>
+        <img class="volunteer-photo" src="{{photoRoot}}{{photoFilename}}"><br>
       {{else}}
         <div class="{{#if isMale}}male{{else}}female{{/if}} photo-placeholder"></div>
-      {{/if}}}
+      {{/if}}
     </div>
     <div class="volunteer-details span4">
       <h3>{{fullName}}</h3>

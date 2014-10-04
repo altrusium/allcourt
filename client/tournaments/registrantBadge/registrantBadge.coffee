@@ -15,7 +15,11 @@ Template.registrantBadge.isMale = ->
   Session.get('active-user').profile.gender is 'male'
 
 Template.registrantBadge.photoFilename = ->
-  allcourt.photoRoot + Session.get('active-user').profile.photoFilename
+  photo = Session.get('active-user').profile.photoFilename
+  if photo
+    return allcourt.photoRoot
+  else
+    return ''
 
 Template.registrantBadge.fullName = ->
   Session.get('active-user').profile.fullName
