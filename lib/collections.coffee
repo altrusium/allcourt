@@ -12,11 +12,11 @@ if Meteor.isClient
 
 Meteor.users.allow
   insert: (userId, doc) ->
-    Meteor.user().profile.admin
+    Roles.userIsInRole Meteor.user(), 'admin'
   update: (userId, doc) ->
-    Meteor.user().profile.admin
+    Roles.userIsInRole Meteor.user(), 'admin'
   remove: (userId, doc) ->
-    Meteor.user().profile.admin
+    Roles.userIsInRole Meteor.user(), 'admin'
 
 Schedule.allow
   insert: (userId, doc) ->
@@ -24,23 +24,23 @@ Schedule.allow
   update: (userId, doc) ->
     true
   remove: (userId, doc) ->
-    Meteor.user().profile.admin
+    Roles.userIsInRole Meteor.user(), 'admin'
 
 Volunteers.allow
   insert: (userId, doc) ->
-    Meteor.userId() is doc._id or Meteor.user().profile.admin
+    Meteor.userId() is doc._id or Roles.userIsInRole Meteor.user(), 'admin'
   update: (userId, doc) ->
-    Meteor.userId() is doc._id or Meteor.user().profile.admin
+    Meteor.userId() is doc._id or Roles.userIsInRole Meteor.user(), 'admin'
   remove: (userId, doc) ->
-    Meteor.user().profile.admin
+    Roles.userIsInRole Meteor.user(), 'admin'
 
 Tournaments.allow
   insert: (userId, doc) ->
-    Meteor.user().profile.admin
+    Roles.userIsInRole Meteor.user(), 'admin'
   update: (userId, doc) ->
-    Meteor.user().profile.admin
+    Roles.userIsInRole Meteor.user(), 'admin'
   remove: (userId, doc) ->
-    Meteor.user().profile.admin
+    Roles.userIsInRole Meteor.user(), 'admin'
 
 Registrants.allow
   insert: (userId, doc) ->
@@ -48,13 +48,13 @@ Registrants.allow
   update: (userId, doc) ->
     true
   remove: (userId, doc) ->
-    Meteor.user().profile.admin
+    Roles.userIsInRole Meteor.user(), 'admin'
 
 Registrations.allow
   insert: (userId, doc) ->
-    Meteor.userId() is doc._id or Meteor.user().profile.admin
+    Meteor.userId() is doc._id or Roles.userIsInRole Meteor.user(), 'admin'
   update: (userId, doc) ->
-    Meteor.userId() is doc._id or Meteor.user().profile.admin
+    Meteor.userId() is doc._id or Roles.userIsInRole Meteor.user(), 'admin'
   remove: (userId, doc) ->
-    Meteor.userId() is doc._id or Meteor.user().profile.admin
+    Meteor.userId() is doc._id or Roles.userIsInRole Meteor.user(), 'admin'
 

@@ -88,10 +88,10 @@ Template.setupRoles.events
     id = Session.get('active-tournament')._id
     name = template.find('#roleName').value
     newRole = roleId: newId, roleName: name
-    defaultTeam = roleId: newId, teamId: newId, teamName: 'Default ' + name +
-      ' Team'
+    #defaultTeam = roleId: newId, teamId: newId, teamName: 'Default ' + name +
+    #  ' Team'
     Tournaments.update(id, $push: roles: newRole)
-    Tournaments.update(id, $push: teams: defaultTeam)
+    #Tournaments.update(id, $push: teams: defaultTeam)
     $('#roleName').val('').focus()
 
   'click #copyRoles': (evnt, template) ->

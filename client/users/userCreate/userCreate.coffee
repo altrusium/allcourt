@@ -117,21 +117,21 @@ Template.userCreate.rendered = ->
     $('.photo-placeholder').removeClass 'empty'
 
 Template.userCreate.userDetails = ->
-  details = Session.get('active-user')
-  unless details then return hasProfileAccess: true # creating new user
-  isAdmin = allcourt.isAdmin()
-  profile = details.profile
+  details = {}
+  user = Session.get('active-user')
+  unless user then return hasProfileAccess: true # creating new user
+  profile = user.profile
   details.email = profile.email
   details.isMale = profile.gender is 'male'
-  details.isFemale = profile.gender isnt 'male'
+  details.isFemale = profile.gender is 'female'
   $.extend details, profile
-  if details.photoFilename
+  if profile.photoFilename
     details.photoPath = photoHelper.photoRoot + profile.photoFilename
-  details.isAdmin = isAdmin
+  details.isAdmin = Roles.userIsInRole user, 'admin'
   details.isNew = profile.isNew
   details.isVolunteer = !! getActiveVolunteer()
 
-  if details.email.indexOf(emailHelper.addressSuffix) > 1
+  if profile.email.indexOf(emailHelper.addressSuffix) > 1
     # user has a fake email and doesn't have access to their profile
     details.hasProfileAccess = false
     details.emailDisabled = true
