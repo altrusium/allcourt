@@ -44,7 +44,6 @@ Meteor.methods
         photoFilename: user.photoFilename
         gender: user.gender || 'female'
         slug: user.firstName + user.lastName
-        admin: user.admin
         isNew: user.isNew
     newUserId = Accounts.createUser newUser
     modelHelpers.upsertUserRegistration {
@@ -55,6 +54,8 @@ Meteor.methods
       fullName: newUser.profile.fullName
       photoFilename: newUser.profile.photoFilename
     }
+    if user.admin
+      Roles.addUsersToRoles newUserId, ['admin']
     newUserId
 
   updateUser: (user) ->
@@ -71,7 +72,6 @@ Meteor.methods
       photoFilename: user.photoFilename
       gender: gender
       slug: slug
-      admin: user.admin
       isNew: user.isNew
     }
     modelHelpers.upsertUserRegistration {
@@ -82,6 +82,10 @@ Meteor.methods
       fullName: fullName
       photoFilename: user.photoFilename
     }
+    if user.admin
+      Roles.addUsersToRoles user._id, ['admin']
+    else
+      Roles.removeUsersFromRoles user._id, ['admin']
     false
 
   deleteUser: (userId) ->

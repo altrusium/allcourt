@@ -178,10 +178,13 @@ Template.volunteerCreate.detail = ->
     volunteer.lastName = profile.lastName
     volunteer.primaryEmail = profile.email
     volunteer.role = profile.role
-    volunteer.siteAdmin = if profile.admin then 'checked="checked"' else ''
+    volunteer.siteAdmin = allcourt.isAdmin()
   else
     volunteer.detail = {}
   return volunteer
+
+Template.volunteerCreate.isSelected = (value, constant) ->
+  value == constant
 
 Template.volunteerCreate.events
   'click #saveProfile': (event, template) ->

@@ -115,7 +115,6 @@ addNewRegistrant = (template) ->
   userDetails = getUserFormValues template
   userDetails.email = createEmailAddress()
   userDetails.isNew = false
-  userDetails.admin = false
   Meteor.call 'createNewUser', userDetails, (err, id) ->
     if err
       Template.userMessages.showMessage
@@ -132,7 +131,6 @@ updateActiveRegistrant = (user, template) ->
   userDetails._id = user._id
   userDetails.email = user.profile.email
   userDetails.isNew = user.profile.isNew
-  userDetails.admin = user.profile.admin
   Meteor.call 'updateUser', userDetails, (err) ->
     if err
       Template.userMessages.showMessage

@@ -10,7 +10,7 @@ getUserFormValues = (template) ->
     photoFilename: template.find('#photoFilename').value
     gender: template.find('input:radio[name=gender]:checked').value
     isNew: Meteor.user().profile.isNew
-    admin: Meteor.user().profile.admin
+    admin: allcourt.isAdmin()
 
 getVolunteerFormValues = (template) ->
   return values =

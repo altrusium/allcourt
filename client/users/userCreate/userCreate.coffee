@@ -118,7 +118,8 @@ Template.userCreate.rendered = ->
 
 Template.userCreate.userDetails = ->
   details = Session.get('active-user')
-  unless details then return hasProfileAccess: 'checked' # creating new user
+  unless details then return hasProfileAccess: true # creating new user
+  isAdmin = allcourt.isAdmin()
   profile = details.profile
   details.email = profile.email
   details.isMale = profile.gender is 'male'
@@ -126,17 +127,17 @@ Template.userCreate.userDetails = ->
   $.extend details, profile
   if details.photoFilename
     details.photoPath = photoHelper.photoRoot + profile.photoFilename
-  details.siteAdmin = if profile.admin then 'checked' else ''
-  details.isNew = if profile.isNew then 'checked' else ''
-  details.volunteer = if getActiveVolunteer() then 'checked'
+  details.isAdmin = isAdmin
+  details.isNew = profile.isNew
+  details.isVolunteer = !! getActiveVolunteer()
 
   if details.email.indexOf(emailHelper.addressSuffix) > 1
     # user has a fake email and doesn't have access to their profile
-    details.hasProfileAccess = ''
-    details.emailDisabled = 'disabled'
+    details.hasProfileAccess = false
+    details.emailDisabled = true
   else
-    details.emailDisabled = ''
-    details.hasProfileAccess = 'checked'
+    details.hasProfileAccess = true
+    details.emailDisabled = false
 
   details
 

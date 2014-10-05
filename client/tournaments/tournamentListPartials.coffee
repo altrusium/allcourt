@@ -27,7 +27,6 @@ allcourt.getActiveTournaments = ->
   mine = allcourt.getMyTournaments()
   list = allcourt.getSortedTournaments()
   active = (t for t in list when new Date(t.days[t.days.length-1]) > new Date())
-  # result = _.reject result, (tournament) ->
   result = _.reject active, (tournament) ->
     _.find mine, (myT) ->
       myT._id is tournament._id

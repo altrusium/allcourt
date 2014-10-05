@@ -63,7 +63,7 @@
 				<div class="control-group">
 					<div class="controls">
 						<label class="checkbox">
-							<input type="checkbox" id="siteAdmin" {{siteAdmin}}> Site Administrator
+							<input type="checkbox" id="siteAdmin" checked={{siteAdmin}}> Site Administrator
 						</label>
 					</div>
 				</div>
@@ -75,19 +75,17 @@
 					<label class="control-label" for="shirtSize">Shirt Size</label>
 					<div class="controls">
 						<select id="shirtSize" class="input-small">
-							{{#select shirtSize}}
-							<option value=""></option>
-							<option value="3XS">3XS</option>
-							<option value="2XS">2XS</option>
-							<option value="XS">XS</option>
-							<option value="S">S</option>
-							<option value="M">M</option>
-							<option value="L">L</option>
-							<option value="XL">XL</option>
-							<option value="2XL">2XL</option>
-							<option value="3XL">3XL</option>
-							<option value="4XL">4XL</option>
-							{{/select}}
+							<option value="" selected={{isSelected ''}}></option>
+							<option value="3XS" selected={{isSelected '3XS'}}>3XS</option>
+							<option value="2XS" selected={{isSelected '2XS'}}>2XS</option>
+							<option value="XS" selected={{isSelected 'XS'}}>XS</option>
+							<option value="S" selected={{isSelected 'S'}}>S</option>
+							<option value="M" selected={{isSelected 'M'}}>M</option>
+							<option value="L" selected={{isSelected 'L'}}>L</option>
+							<option value="XL" selected={{isSelected 'XL'}}>XL</option>
+							<option value="2XL" selected={{isSelected '2XL'}}>2XL</option>
+							<option value="3XL" selected={{isSelected '3XL'}}>3XL</option>
+							<option value="4XL" selected={{isSelected '4XL'}}>4XL</option>
 						</select>
 					</div>
 				</div>

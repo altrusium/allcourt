@@ -19,7 +19,7 @@
         <div class="control-group">
           <label class="control-label" for="email">Email</label>
           <div class="controls">
-            <input type="text" id="email" value="{{email}}" {{emailDisabled}} required>
+            <input type="text" id="email" value="{{email}}" readonly={{emailDisabled}} required>
           </div>
         </div>
         <div class="control-group">
@@ -48,28 +48,28 @@
         <div class="control-group">
           <div class="controls">
             <label class="checkbox">
-              <input type="checkbox" id="hasProfileAccess" {{hasProfileAccess}}> Can manage their profile
+              <input type="checkbox" id="hasProfileAccess" checked={{hasProfileAccess}}> Can manage their profile
             </label>
           </div>
         </div>
         <div class="control-group">
           <div class="controls">
             <label class="checkbox">
-              <input type="checkbox" id="siteAdmin" {{siteAdmin}} {{emailDisabled}}> Site Administrator
+              <input type="checkbox" id="siteAdmin" checked={{isAdmin}}> Site Administrator
             </label>
           </div>
         </div>
         <div class="control-group">
           <div class="controls">
             <label class="checkbox">
-              <input type="checkbox" id="isVolunteer" {{volunteer}}> Volunteer
+              <input type="checkbox" id="isVolunteer" checked={{isVolunteer}}> Volunteer
             </label>
           </div>
         </div>
         <div class="control-group">
           <div class="controls">
             <label class="checkbox">
-              <input type="checkbox" id="isNew" {{isNew}}> New
+              <input type="checkbox" id="isNew" checked={{isNew}}> New
             </label>
           </div>
         </div>
