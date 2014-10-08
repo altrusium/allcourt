@@ -18,3 +18,5 @@ bootstrap
 service-configuration
 alanning:roles
 email
+amr:parsley.js
+

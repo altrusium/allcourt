@@ -17,7 +17,7 @@
 	{{setTab ''}}
 	{{> userMessages}}
 	<div class="row">
-		<form method="post">
+		<form method="post" id="profileForm" data-parsley-validate>
 		<div class="span5">
       {{#with details}}
 			<form class="profile-edit form-horizontal">
@@ -32,28 +32,28 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label" for="email">Email</label>
+					<label class="control-label" for="email">Email *</label>
 					<div class="controls">
-						<input type="text" id="email" class="input-medium" value="{{email}}" required>
+						<input type="email" id="email" class="input-medium" value="{{email}}" data-parsley-error-message="Your email address is required" required>
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label" for="firstName">First Name</label>
+					<label class="control-label" for="firstName">First Name *</label>
 					<div class="controls">
-						<input type="text" id="firstName" class="input-medium" value="{{firstName}}" required>
+						<input type="text" id="firstName" class="input-medium" value="{{firstName}}" data-parsley-error-message="Your first name is required" required>
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label" for="lastName">Last Name</label>
+					<label class="control-label" for="lastName">Last Name *</label>
 					<div class="controls">
-						<input type="text" id="lastName" class="input-medium" value="{{lastName}}" required>
+						<input type="text" id="lastName" class="input-medium" value="{{lastName}}" data-parsley-error-message="Your last name is required" required>
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label" for="gender">Gender</label>
+					<label class="control-label" for="gender">Gender *</label>
 					<div class="controls">
 						<label class="radio inline">
-							<input type="radio" id="maleGender" name="gender" value="male" checked={{isMale}}> male
+							<input type="radio" id="maleGender" name="gender" value="male" checked={{isMale}} data-parsley-error-message="Your gender is required" required> male
 						</label>
 						<label class="radio inline">
 							<input type="radio" id="femaleGender" name="gender" value="female" checked={{isFemale}}> female
@@ -62,7 +62,7 @@
 				</div>
 				<div class="control-group">
 					<div class="controls">
-						<button type="button" id="saveProfile" class="btn btn-primary">Save Profile</button>
+						<input type="submit" id="saveProfile" value="Save Profile" class="btn btn-primary"/>
 					</div>
 				</div>
 			</form>
@@ -70,11 +70,11 @@
 		</div>
 		<div class="span5">
       {{#with volunteerDetails}}
-			<form class="form-horizontal">
+			<form class="form-horizontal" id="volunteerForm" data-parsley-validate >
 				<div class="control-group">
-					<label class="control-label" for="shirtSize">Shirt Size</label>
+					<label class="control-label" for="shirtSize">Shirt Size *</label>
 					<div class="controls">
-						<select id="shirtSize" class="input-small">
+						<select id="shirtSize" class="input-small" data-parsley-error-message="Your shirt size is required" required>
 							<option value="" selected={{isSelected shirtSize ''}}></option>
 							<option value="3XS" selected={{isSelected shirtSize '3XS'}}>3XS</option>
 							<option value="2XS" selected={{isSelected shirtSize '2XS'}}>2XS</option>
@@ -90,13 +90,13 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<label for="birthdate" class="control-label">Birthdate</label>
+					<label for="birthdate" class="control-label">Birthdate *</label>
 					<div class="controls">
 						<div class="input-append">
-							<input type="text" class="birthDatepicker input-small" id="birthdate" data-date-format="dd/mm/yyyy" value="{{birthdate}}" required>
+							<input type="text" class="birthDatepicker input-small" id="birthdate" data-date-format="dd/mm/yyyy" value="{{birthdate}}" data-parsley-errors-container="#dateMessage" data-parsley-error-message="Your birthdate is required" required>
 							<span class="add-on" id="birthdateIcon"><i class="icon-calendar"></i></span>
 						</div>
-						<span class="help-block">Not a valid date</span>
+						<div id="dateMessage"></div>
 					</div>
 				</div>
 				<div class="control-group">

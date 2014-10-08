@@ -1,3 +1,7 @@
+# Globals
+profileForm = null
+volunteerForm = null
+
 initializeControls = ->
   $('#birthdate').datepicker format: 'dd M yyyy', autoclose: true
 
@@ -79,6 +83,8 @@ Template.profileDetails.events =
 
 Template.profileEdit.rendered = ->
   initializeControls()
+  profileForm = $('#profileForm').parsley trigger: 'change'
+  volunteerForm = $('#volunteerForm').parsley trigger: 'change'
   if Meteor.user().profile.photoFile
     $('.photo-placeholder').removeClass 'empty'
 
@@ -86,7 +92,7 @@ Template.profileEdit.details = ->
   user = Meteor.user()
   details = user.profile || {}
   details.isMale = details.gender is 'male'
-  details.isFemale = details.gender isnt 'male'
+  details.isFemale = details.gender is 'female'
   if details.photoFilename
     details.photoFile = allcourt.photoRoot + details.photoFilename
   return details
@@ -103,6 +109,8 @@ Template.profileEdit.photoFilename = ->
 Template.profileEdit.events
   'click #saveProfile': (event, template) ->
     userOptions = getUserFormValues template
+    unless profileForm && profileForm.validate() then return false
+    unless volunteerForm && volunteerForm.validate() then return false
     # Todo: add exception handling for these 2 calls
     Meteor.call 'updateUser', userOptions, (err) ->
       showResultOfProfileUpdate err
