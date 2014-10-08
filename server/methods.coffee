@@ -105,6 +105,7 @@ Meteor.methods
       city: volunteer.city || '',
       suburb: volunteer.suburb || '',
       postalCode: volunteer.postalCode || '',
+      tennisClub: volunteer.tennisClub || '',
       notes: volunteer.notes || ''
     }
 
@@ -118,6 +119,7 @@ Meteor.methods
       city: volunteer.city,
       suburb: volunteer.suburb,
       postalCode: volunteer.postalCode,
+      tennisClub: volunteer.tennisClub,
       notes: volunteer.notes
     }
 

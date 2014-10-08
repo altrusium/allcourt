@@ -27,6 +27,7 @@ getVolunteerFormValues = (template) ->
     suburb: template.find('#suburb').value
     city: template.find('#city').value
     postalCode: template.find('#postalCode').value
+    tennisClub: template.find('#tennisClub').value
 
 showSuccess = (msg) ->
   Template.userMessages.showMessage
