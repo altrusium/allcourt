@@ -90,15 +90,13 @@ Template.preferences.teams = ->
   sortedTeams
 
 Template.preferences.acceptedShift = ->
-  if _.contains Session.get('accepted-shifts'), this.shiftId
-    return 'checked="checked"'
+  _.contains Session.get('accepted-shifts'), this.shiftId
 
 Template.preferences.activeTeamName = ->
   Session.get('active-team')?.teamName
 
-Template.preferences.markSelectedTeam = ->
-  if this.teamName is Session.get('active-team')?.teamName
-    return 'selected=selected'
+Template.preferences.hasTarget = (count) ->
+  count isnt '0'
 
 Template.preferences.topPickedTeam = ->
   Template.userPreferences.teams()[0].teamName

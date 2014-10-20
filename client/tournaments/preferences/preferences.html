@@ -4,27 +4,27 @@
 	<ul class="breadcrumb">
     {{#with linkHelper}}
     <li class="active">
-      Preferences 
+      Preferences
       <span class="divider">|</span>
     </li><li>
-      <a href="{{pathFor 'userSchedule'}}">Schedule</a> 
+      <a href="{{pathFor 'userSchedule'}}">Schedule</a>
     </li>
     {{/with}}
 	</ul>
 	{{> userMessages}}
 	<div class="row">
 		<div class="span5">
-			<h2 class="column-header"><small>Volunteer Preferences</small></h2> 
+			<h2 class="column-header"><small>Volunteer Preferences</small></h2>
 			{{#if teams}}
 			<div class="row"><div class="span6"></div></div>
 			<p>Sort (drag and drop) the following volunteer teams in the order of your preference. Only the order of the top 4 are saved.</p>
-			<p>After your team preferences are sorted, select all of the shifts you are available. You aren't expected to work during all of your selections; this is just to help the coordinators understand <strong>your availability</strong>.</p> 
+			<p>After your team preferences are sorted, select all of the shifts you are available. You aren't expected to work during all of your selections; this is just to help the coordinators understand <strong>your availability</strong>.</p>
 			<ul id="sortableTeams" class="sortable-teams nav nav-pills nav-stacked">
 				{{#each teams}}
 				<li id="{{teamId}}">
 					<a href="#">{{teamName}}
 						<!--
-						<i data-resorter="down" class="resorter icon-chevron-down pull-right"></i> 
+						<i data-resorter="down" class="resorter icon-chevron-down pull-right"></i>
 						<i data-resorter="up" class="resorter icon-chevron-up pull-right"></i>
 						-->
 					</a>
@@ -32,7 +32,7 @@
 				{{/each}}
 			</ul>
 			{{else}}
-			<p>Unfortunately no teams have been setup for this tournament yet. Once we've done this, you'll be able to specify your preferences and availability.</p> 
+			<p>Unfortunately no teams have been setup for this tournament yet. Once we've done this, you'll be able to specify your preferences and availability.</p>
 			<p>We intend to notify you via email as soon as the teams are loaded, but feel free to check back often just to be safe.</p>
 			{{/if}}
 		</div>
@@ -46,7 +46,7 @@
 						<td>
 							Date<br>
 							and<br>
-							Shift 
+							Shift
 						</td>
 						{{#each shifts.defs}}
 						<th>
@@ -63,7 +63,9 @@
 						<td><strong>{{dayOfWeek}}<br>{{dayOfMonth}}</strong></td>
 						{{#each activeShifts}}
 						<td>
-							<input type="checkbox" data-shift data-shift-id="{{shiftId}}" {{acceptedShift}}>
+            {{#if hasTarget count}}
+							<input type="checkbox" data-shift data-shift-id="{{shiftId}}" checked={{acceptedShift}}>
+            {{/if}}
 						</td>
 						{{/each}}
 					</tr>
