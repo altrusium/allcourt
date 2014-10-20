@@ -56,6 +56,8 @@ Meteor.methods
     }
     if user.admin
       Roles.addUsersToRoles newUserId, ['admin']
+    if user.proxy
+      Roles.addUsersToRoles newUserId, ['proxy']
     newUserId
 
   updateUser: (user) ->
@@ -86,6 +88,11 @@ Meteor.methods
       Roles.addUsersToRoles user._id, ['admin']
     else
       Roles.removeUsersFromRoles user._id, ['admin']
+
+    if user.proxy
+      Roles.addUsersToRoles user._id, ['proxy']
+    else
+      Roles.removeUsersFromRoles user._id, ['proxy']
     false
 
   deleteUser: (userId) ->

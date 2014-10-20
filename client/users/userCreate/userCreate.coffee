@@ -5,8 +5,7 @@ createEmailAddress = ->
   firstName = $('#firstName').val()
   lastName = $('#lastName').val()
   name = emailHelper.prepareName firstName, lastName
-  unless $('#hasProfileAccess').prop('checked')
-    $('#email').val(name + emailHelper.addressSuffix)
+  name + emailHelper.addressSuffix
 
 getActiveVolunteer = ->
   id = Session.get('active-user')._id
@@ -18,9 +17,10 @@ getUserFormValues = (template) ->
   values =
     firstName: template.find('#firstName').value
     lastName: template.find('#lastName').value
-    email: template.find('#email').value
+    email: template.find('#email')?.value || createEmailAddress()
     photoFilename: template.find('#photoFilename').value
     admin: if template.find('#siteAdmin:checked') then true else false
+    proxy: if template.find('#proxy:checked') then true else false
     isNew: if template.find('#isNew:checked') then true else false
     gender: template.find('input:radio[name=gender]:checked').value
 
@@ -34,6 +34,7 @@ getVolunteerFormValues = (template) ->
     suburb: template.find('#suburb').value
     city: template.find('#city').value
     postalCode: template.find('#postalCode').value
+    tennisClub: template.find('#tennisClub').value
     notes: template.find('#notes').value
 
 showSuccess = (msg) ->
@@ -78,36 +79,19 @@ navigateToUserListing = ->
 navigateToUserDetails = ->
   Router.go 'userDetails', userSlug: Session.get('active-user').profile.slug
 
-saveNewUserAndVolunteer = (userOptions, volunteerOptions) ->
+saveNewUser = (userOptions) ->
   Meteor.call 'createNewUser', userOptions, (err, id) ->
     showResultOfUserCreation err
-    unless err
-      if $('#isVolunteer').prop('checked')
-        volunteerOptions._id = id
-        Meteor.call 'createNewVolunteer', volunteerOptions, (vErr, vId) ->
-          showResultOfVolunteerCreation vErr
-          navigateToUserListing()
-      else
-        navigateToUserListing()
+    navigateToUserListing()
 
 updateUserAndVolunteer = (userOptions, volunteerOptions) ->
+  userOptions._id = volunteerOptions._id = Session.get('active-user')._id
   Meteor.call 'updateUser', userOptions, (err) ->
     showResultOfUserUpdate err
     unless err
-      if $('#isVolunteer').prop('checked')
-        volunteerOptions._id = Session.get('active-user')._id
-        if Session.get('active-volunteer')
-          Meteor.call 'updateVolunteer', volunteerOptions, (vErr) ->
-            showResultOfVolunteerUpdate vErr
-            navigateToUserDetails()
-        else
-          Meteor.call 'createNewVolunteer', volunteerOptions, (vErr) ->
-            showResultOfVolunteerCreation vErr
-            navigateToUserDetails()
-      else
-        # TODO: Delete existing Volunteer document if any
+      Meteor.call 'updateVolunteer', volunteerOptions, (vErr) ->
+        showResultOfVolunteerUpdate vErr
         navigateToUserDetails()
-
 
 
 Template.userCreate.rendered = ->
@@ -119,7 +103,7 @@ Template.userCreate.rendered = ->
 Template.userCreate.userDetails = ->
   details = {}
   user = Session.get('active-user')
-  unless user then return hasProfileAccess: true # creating new user
+  unless user then return proxied: true
   profile = user.profile
   details.email = profile.email
   details.isMale = profile.gender is 'male'
@@ -128,17 +112,10 @@ Template.userCreate.userDetails = ->
   if profile.photoFilename
     details.photoPath = photoHelper.photoRoot + profile.photoFilename
   details.isAdmin = Roles.userIsInRole user, 'admin'
+  details.proxy = Roles.userIsInRole user, 'proxy'
   details.isNew = profile.isNew
-  details.isVolunteer = !! getActiveVolunteer()
-
-  if profile.email.indexOf(emailHelper.addressSuffix) > 1
-    # user has a fake email and doesn't have access to their profile
-    details.hasProfileAccess = false
-    details.emailDisabled = true
-  else
-    details.hasProfileAccess = true
-    details.emailDisabled = false
-
+  # change this to: profile.addedBy isnt user._id
+  details.proxied = profile.email.indexOf(emailHelper.addressSuffix) > 1
   details
 
 Template.userCreate.isSelected = (value, constant) ->
@@ -162,31 +139,7 @@ Template.userCreate.events
       userOptions._id = activeUser._id
       updateUserAndVolunteer userOptions, volunteerOptions
     else # add new user
-      saveNewUserAndVolunteer userOptions, volunteerOptions
-
-  'change #hasProfileAccess': (evnt, template) ->
-    firstName = $('#firstName').val()
-    lastName = $('#lastName').val()
-    name = emailHelper.prepareName firstName, lastName
-    if $(evnt.currentTarget).prop('checked')
-      $('#email').prop('disabled', false).val('')
-      $('#siteAdmin').prop('disabled', false)
-    else
-      $('#email').prop('disabled', true).val(name + emailHelper.addressSuffix)
-      $('#siteAdmin').prop('disabled', true)
-      $('#siteAdmin').prop('checked', false)
-
-  'change #isVolunteer': (evnt, template) ->
-    if $(evnt.currentTarget).prop('checked')
-      $('.volunteer-details').removeClass('hidden')
-    else
-      $('.volunteer-details').addClass('hidden')
-
-  'change #firstName': (evnt, template) ->
-    createEmailAddress()
-
-  'change #lastName': (evnt, template) ->
-    createEmailAddress()
+      saveNewUser userOptions
 
   'change #femaleGender': (evnt, template) ->
     if $(evnt.currentTarget).prop('checked')

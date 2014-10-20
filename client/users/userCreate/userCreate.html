@@ -16,12 +16,14 @@
             <input type="hidden" id="photoFilename" value="{{photoFilename}}">
           </div>
         </div>
+        {{#unless proxied}}
         <div class="control-group">
           <label class="control-label" for="email">Email</label>
           <div class="controls">
-            <input type="text" id="email" value="{{email}}" readonly={{emailDisabled}} required>
+            <input type="email" id="email" class="input-medium" value="{{email}}" required>
           </div>
         </div>
+        {{/unless}}
         <div class="control-group">
           <label class="control-label" for="firstName">First Name</label>
           <div class="controls">
@@ -45,13 +47,7 @@
             </label>
           </div>
         </div>
-        <div class="control-group">
-          <div class="controls">
-            <label class="checkbox">
-              <input type="checkbox" id="hasProfileAccess" checked={{hasProfileAccess}}> Can manage their profile
-            </label>
-          </div>
-        </div>
+        {{#unless proxied}}
         <div class="control-group">
           <div class="controls">
             <label class="checkbox">
@@ -62,10 +58,11 @@
         <div class="control-group">
           <div class="controls">
             <label class="checkbox">
-              <input type="checkbox" id="isVolunteer" checked={{isVolunteer}}> Volunteer
+              <input type="checkbox" id="proxy" checked={{proxy}}> Registrant Proxy
             </label>
           </div>
         </div>
+        {{/unless}}
         <div class="control-group">
           <div class="controls">
             <label class="checkbox">
@@ -146,6 +143,12 @@
           <label class="control-label" for="postalCode">Postal Code</label>
           <div class="controls">
             <input type="text" id="postalCode" value="{{postalCode}}" class="input-small">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="tennisClub">Tennis Club</label>
+          <div class="controls">
+            <input type="text" id="tennisClub" value="{{tennisClub}}">
           </div>
         </div>
         <div class="control-group">
