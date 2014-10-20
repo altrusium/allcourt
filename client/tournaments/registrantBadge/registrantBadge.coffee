@@ -17,7 +17,7 @@ Template.registrantBadge.isMale = ->
 Template.registrantBadge.photoFilename = ->
   photo = Session.get('active-user').profile.photoFilename
   if photo
-    return allcourt.photoRoot
+    return allcourt.photoRoot + photo
   else
     return ''
 
