@@ -1,33 +1,38 @@
-validateInput = (target) ->
-  valid = true
-  if $(target).hasClass('btn') then return true
-  if target.value is ''
-    $(target).closest('.control-group').removeClass('success').addClass('error')
-    $(target).siblings('.required.help-inline').show()
-    valid = false
-  else
-    $(target).closest('.control-group').removeClass('error').addClass('success')
-    $(target).siblings('.required.help-inline').hide()
-  valid
+# Globals
+signInForm = null
+registerForm = null
+recoveryForm = null
+resetPasswordForm = null
 
-registrationPasswordsMatch = (form) ->
-  match = true
-  password1 = $('#registerPassword', form)
-  password2 = $('#registerConfirmPassword', form)
-  if password1.val() isnt password2.val()
-    password2.closest('.control-group').addClass('error').removeClass('success')
-    password2.siblings('.match.help-inline').show()
-    match = false
-  else
-    password2.closest('.control-group').removeClass('error').addClass('success')
-    password2.siblings('.match.help-inline').hide()
-  match
+Template.signIn.rendered = ->
+  config =
+    trigger: 'change'
+    errorClass: 'error'
+    successClass: 'success'
+    errorsWrapper: '<span class=\"help-inline\"></span>'
+    errorTemplate: '<span></span>'
+    classHandler: (el) ->
+      el.$element.closest('.control-group')
 
-registrationFormIsValid = (form) ->
-  valid = true
-  $('input', form).each ->
-    valid = valid and validateInput this
-  valid
+  signInForm = $('#signInForm').parsley config
+  registerForm = $('#registerForm').parsley config
+  if Session.get('active-home-tab') isnt 'reset'
+    recoveryForm = $('#recoveryForm').parsley config
+  else
+    resetPasswordForm = $('#resetPasswordForm').parsley config
+
+
+Template.signIn.resettingPassword = ->
+  Session.get('active-home-tab') is 'reset'
+
+Template.signIn.isActive = (tab) ->
+  if Session.get('active-home-tab') is tab is 'reset'
+    'active'
+  else if Session.get('active-home-tab') isnt 'reset' and tab is 'signin'
+    'active'
+  else
+    false
+
 
 Template.signIn.events
   'click #facebookButton': (evnt, template) ->
@@ -50,7 +55,7 @@ Template.signIn.events
 
   'submit #signInForm': (evnt, template) ->
     evnt.preventDefault()
-    unless registrationFormIsValid(evnt.currentTarget) then return
+    unless signInForm and signInForm.validate() then return
     Meteor.loginWithPassword { email: template.find('#signInEmail').value },
       template.find('#signInPassword').value, (err) ->
         if err
@@ -64,8 +69,7 @@ Template.signIn.events
 
   'submit #registerForm': (evnt, template) ->
     evnt.preventDefault()
-    unless registrationFormIsValid(evnt.currentTarget) then return
-    unless registrationPasswordsMatch(evnt.currentTarget) then return
+    unless registerForm and registerForm.validate() then return
     email = template.find('#registerEmail').value
     firstName = template.find('#firstName').value
     lastName = template.find('#lastName').value
@@ -79,6 +83,7 @@ Template.signIn.events
         lastName: lastName
         fullName: firstName + ' ' + lastName
         slug: firstName + lastName
+
     Accounts.createUser options, (err) ->
       if err
         Template.userMessages.showMessage
@@ -97,8 +102,10 @@ Template.signIn.events
 
   'submit #recoveryForm': (evnt, template) ->
     evnt.preventDefault()
+    unless recoveryForm and recoveryForm.validate() then return
     email = template.find('#recoverEmail').value
     template.find('#recoverEmail').value = ''
+
     Template.userMessages.showMessage
       type: 'info',
       timeout: 10000,
@@ -119,9 +126,26 @@ Template.signIn.events
             help you recover your password.'
     false
 
-  'keydown, blur input': (evnt, template) ->
-    validateInput evnt.currentTarget
-    true
+  'submit #resetPasswordForm': (evnt, template) ->
+    evnt.preventDefault()
+    unless resetPasswordForm and resetPasswordForm.validate() then return
+    password = template.find('#resetPassword').value
+    token = Session.get 'reset-token'
 
-
+    Accounts.resetPassword token, password, (err) ->
+      if err
+        Template.userMessages.showMessage
+          type: 'error',
+          title: 'Password not reset.',
+          message: 'Unable to reset your password.
+            Please use the most recent password recovery email.'
+      else
+        Template.userMessages.showMessage
+          type: 'info',
+          title: 'Success.',
+          message: 'Your password has been changed successfully.'
+          Session.set 'active-home-tab', 'home'
+          Session.set 'reset-token', null
+          Router.go '/'
+    false
 

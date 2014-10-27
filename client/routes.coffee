@@ -31,7 +31,11 @@ Router.configure
   layoutTemplate: 'main'
   notFoundTemplate: 'notFound'
 
-Router.onBeforeAction mustBeSignedIn, except: ['home']
+Router.onBeforeAction mustBeSignedIn, except: [
+  'home',
+  'resetPassword',
+  'verifyEmail']
+
 Router.onBeforeAction mustBeAnAdmin, except: [
   'home',
   'profileDetails',
@@ -45,6 +49,22 @@ Router.onBeforeAction mustBeAnAdmin, except: [
 Router.map ->
   this.route 'home',
     path: '/'
+
+  this.route 'resetPassword',
+    path: '/resetPassword/:token',
+    template: 'home'
+    onBeforeAction: ->
+      Session.set 'active-home-tab', 'reset'
+      Session.set 'reset-token', this.params.token
+
+  this.route 'verifyEmail',
+    path: '/verifyEmail/:token'
+    template: 'home'
+    onBeforeAction: ->
+      Session.set 'email-verification-token', this.params.token
+
+  this.route 'enrollAccount',
+    path: '/enrollAccount'
 
   this.route 'profileDetails',
     path: '/profile'

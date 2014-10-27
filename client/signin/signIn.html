@@ -4,13 +4,17 @@
 
 	<div class="tabbable">
 	  <ul class="nav nav-tabs">
-	    <li class="active"><a href="#sign-in-tab" data-toggle="tab">Sign in</a></li>
-	    <li><a href="#register-tab" data-toggle="tab">Register</a></li>
-	    <li><a href="#recover-tab" data-toggle="tab">Recover password</a></li>
+	    <li class="{{isActive 'signin'}}"><a href="#sign-in-tab" data-toggle="tab">Sign in</a></li>
+	    <li class="{{isActive 'register'}}"><a href="#register-tab" data-toggle="tab">Register</a></li>
+      {{#if resettingPassword}}
+  	    <li class="{{isActive 'reset'}}"><a href="#reset-tab" data-toggle="tab">Reset password</a></li>
+      {{else}}
+        <li class="{{isActive 'recover'}}"><a href="#recover-tab" data-toggle="tab">Recover password</a></li>
+      {{/if}}
 	  </ul>
 	  <div class="tab-content">
-	    <div class="tab-pane active" id="sign-in-tab">
-	      <form id="signInForm" name="signInForm" class="form-horizontal">
+	    <div class="tab-pane {{isActive 'signin'}}" id="sign-in-tab">
+	      <form id="signInForm" name="signInForm" class="form-horizontal" novalidate="novalidate">
 				  <div class="control-group">
 				    <label class="control-label" for="inputEmail">Facebook</label>
 				    <div class="controls">
@@ -32,15 +36,13 @@
 				  <div id="signInEmailGroup" class="control-group">
 				    <label class="control-label" for="signInEmail">Email</label>
 				    <div class="controls">
-				      <input type="text" id="signInEmail" placeholder="Email" required>
-				      <span class="required help-inline">Required</span>
+				      <input type="email" id="signInEmail" placeholder="Email" required  data-parsley-error-message="Your email address is required">
 				    </div>
 				  </div>
 				  <div id="signInPasswordGroup" class="control-group">
 				    <label class="control-label" for="signInPassword">Password</label>
 				    <div class="controls">
-				      <input type="password" id="signInPassword" placeholder="Password" required>
-				      <span class="required help-inline">Required</span>
+				      <input type="password" id="signInPassword" placeholder="Password"  data-parsley-error-message="Your password is required" required>
 				    </div>
 				  </div>
 				  <div class="control-group">
@@ -78,37 +80,31 @@
 				  <div id="registerFirstNameGroup" class="control-group">
 				    <label class="control-label" for="firstName">First Name</label>
 				    <div class="controls">
-				      <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
-				      <span class="required help-inline">Required</span>
+				      <input type="text" id="firstName" name="firstName" placeholder="First Name" required data-parsley-error-message="Your first name is required">
 				    </div>
 				  </div>
 				  <div id="registerLastNameGroup" class="control-group">
 				    <label class="control-label" for="lastName">Surname</label>
 				    <div class="controls">
-				      <input type="text" id="lastName" name="lastName" placeholder="Surname" required>
-				      <span class="required help-inline">Required</span>
+				      <input type="text" id="lastName" name="lastName" placeholder="Surname" required data-parsley-error-message="Your surname is required">
 				    </div>
 				  </div>
 				  <div id="registerEmailGroup" class="control-group">
 				    <label class="control-label" for="registerEmail">Email</label>
 				    <div class="controls">
-				      <input type="text" id="registerEmail" name="registerEmail" placeholder="Email" required>
-				      <span class="required help-inline">Required</span>
+				      <input type="email" id="registerEmail" name="registerEmail" placeholder="Email" required data-parsley-error-message="Your email address is required">
 				    </div>
 				  </div>
 				  <div id="registerPasswordGroup" class="control-group">
 				    <label class="control-label" for="registerPassword">Password</label>
 				    <div class="controls">
-				      <input type="password" id="registerPassword" name="registerPassword" placeholder="Password" required>
-				      <span class="required help-inline">Required</span>
+				      <input type="password" id="registerPassword" name="registerPassword" placeholder="Password" required data-parsley-error-message="A password is required">
 				    </div>
 				  </div>
 				  <div id="registerConfirmPasswordGroup" class="control-group">
 				    <label class="control-label" for="registerConfirmPassword">Confirm Password</label>
 				    <div class="controls">
-				      <input type="password" id="registerConfirmPassword" name="registerConfirmPassword" placeholder="Password again" required>
-				      <span class="match help-inline">Passwords don't match</span>
-				      <span class="required help-inline">Required</span>
+				      <input type="password" id="registerConfirmPassword" name="registerConfirmPassword" placeholder="Password again" required data-parsley-equalto="#registerPassword" data-parsley-error-message="The passwords must match">
 				    </div>
 				  </div>
 				  <div class="control-group">
@@ -123,13 +119,35 @@
 				  </div>
 				</form>
 	    </div>
+      {{#if resettingPassword}}
+      <div class="tab-pane active" id="reset-tab">
+        <form id="resetPasswordForm" name="resetForm" class="form-horizontal">
+          <div id="resetPassword1Group" class="control-group">
+            <label class="control-label" for="resetPassword">Password</label>
+            <div class="controls">
+              <input type="password" id="resetPassword" name="resetPassword" required data-parsley-error-message="A password is required">
+            </div>
+          </div>
+          <div id="resetPassword2Group" class="control-group">
+            <label class="control-label" for="resetConfirmPassword">Confirm password</label>
+            <div class="controls">
+              <input type="password" id="resetConfirmPassword" name="resetConfirmPassword" data-parsley-equalto="#resetPassword" required data-parsley-error-message="The passwords must match">
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="controls">
+              <button type="submit" class="btn btn-primary">Save new password</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      {{else}}
 	    <div class="tab-pane" id="recover-tab">
 	      <form id="recoveryForm" name="recoveryForm" class="form-horizontal">
 				  <div id="recoveryEmailGroup" class="control-group">
 				    <label class="control-label" for="recoverEmail">Email</label>
 				    <div class="controls">
-				      <input type="text" id="recoverEmail" name="recoverEmail" placeholder="Email" required>
-				      <span class="required help-inline">Required</span>
+				      <input type="email" id="recoverEmail" name="recoverEmail" placeholder="Email" required data-parsley-error-message="Your email address is required">
 				    </div>
 				  </div>
 				  <div class="control-group">
@@ -139,6 +157,7 @@
 				  </div>
 				</form>
 	    </div>
+      {{/if}}
 	  </div>
 	</div>
 </template>
