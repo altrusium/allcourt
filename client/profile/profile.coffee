@@ -112,6 +112,7 @@ Template.profileEdit.photoFilename = ->
 
 Template.profileEdit.events
   'click #saveProfile': (event, template) ->
+    event.preventDefault()
     userOptions = getUserFormValues template
     unless profileForm and profileForm.validate() then return false
     # Todo: add exception handling for these 2 calls
