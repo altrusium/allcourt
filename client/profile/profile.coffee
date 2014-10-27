@@ -86,6 +86,9 @@ Template.profileEdit.rendered = ->
   initializeControls()
   profileForm = $('#profileForm').parsley trigger: 'change'
   volunteerForm = $('#volunteerForm').parsley trigger: 'change'
+  $('#birthdate').datepicker format: 'dd M yyyy'
+  $('#birthdateIcon').click ->
+    $('#birthdate').datepicker 'show'
   if Meteor.user().profile.photoFile
     $('.photo-placeholder').removeClass 'empty'
 
