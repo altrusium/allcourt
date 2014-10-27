@@ -113,12 +113,12 @@ Template.profileEdit.photoFilename = ->
 Template.profileEdit.events
   'click #saveProfile': (event, template) ->
     userOptions = getUserFormValues template
-    unless profileForm && profileForm.validate() then return false
-    unless volunteerForm && volunteerForm.validate() then return false
+    unless profileForm and profileForm.validate() then return false
     # Todo: add exception handling for these 2 calls
     Meteor.call 'updateUser', userOptions, (err) ->
       showResultOfProfileUpdate err
     if Volunteers.findOne Meteor.userId()
+      unless volunteerForm and volunteerForm.validate() then return false
       volunteerOptions = getVolunteerFormValues template
       Meteor.call 'updateVolunteer', volunteerOptions, (err) ->
         showResultOfProfileUpdate err
