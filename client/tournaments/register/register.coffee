@@ -111,7 +111,7 @@ Template.register.events
         message: 'To continue, you must agree to the terms by checking the box.'
     else
       associateUserWithTournament userId
-      if Session.get('active-team').teamName = 'Volunteer'
+      if $("#role option:selected").text() is 'Volunteer'
         createNewVolunteer _id: userId, (err) ->
           if err
             Template.userMessages.showMessage
@@ -119,5 +119,7 @@ Template.register.events
               title: 'Uh oh! '
               message: 'There was an error creating your volunteer record.
                 Reason: ' + err.reason
-      Router.go 'preferences', tournamentSlug: slug
+        Router.go 'preferences', tournamentSlug: slug
+      else
+        Router.go 'profileEdit'
     false
