@@ -1,15 +1,9 @@
-setRegistrationId = ->
+setActiveRegistrant = ->
   userId = Meteor.userId()
   tId = Session.get('active-tournament')._id
   reg = -> null until registrantsSubscription.ready()
   reg = Registrants.findOne { userId: userId, tournamentId: tId }
-  Session.set 'reg-id', reg._id
-
-setAcceptedShifts = ->
-  signupId = Session.get 'reg-id'
-  signup = -> null until registrantsSubscription.ready()
-  signup = Registrants.findOne { _id: signupId }
-  Session.set 'accepted-shifts', signup.shifts
+  Session.set 'active-registrant', reg
 
 getVolunteerRoleId = ->
   tournament = Session.get('active-tournament')
@@ -24,13 +18,11 @@ setActiveTeam = ->
   Session.set 'active-team', activeTeam
 
 getTeamPreferences = ->
-  signupId = Session.get 'reg-id'
-  signup = -> null until registrantsSubscription.ready()
-  signup = Registrants.findOne { _id: signupId }
-  signup and signup.teams or []
+  registrant = Session.get 'active-registrant'
+  registrant and registrant.teams or []
 
 saveTeamPreferences = (prefs) ->
-  signupId = Session.get 'reg-id'
+  signupId = Session.get('active-registrant')._id
   Registrants.update(
     { _id: signupId },
     { $set: teams: prefs},
@@ -46,8 +38,7 @@ saveTeamPreferences = (prefs) ->
 
 
 Template.preferences.created = ->
-  setRegistrationId()
-  setAcceptedShifts()
+  setActiveRegistrant()
 
 Template.preferences.rendered = ->
   $('#sortableTeams').disableSelection()
@@ -56,6 +47,7 @@ Template.preferences.rendered = ->
     stop: (evnt, ui) ->
       teams = $('#sortableTeams').sortable('toArray').slice(0, 4)
       saveTeamPreferences teams
+      setActiveTeam()
   setActiveTeam()
 
 Template.preferences.linkHelper = ->
@@ -90,16 +82,13 @@ Template.preferences.teams = ->
   sortedTeams
 
 Template.preferences.acceptedShift = ->
-  _.contains Session.get('accepted-shifts'), this.shiftId
+  _.contains Session.get('active-registrant').shifts, this.shiftId
 
 Template.preferences.activeTeamName = ->
   Session.get('active-team')?.teamName
 
 Template.preferences.hasTarget = (count) ->
   count isnt '0'
-
-Template.preferences.topPickedTeam = ->
-  Template.userPreferences.teams()[0].teamName
 
 # This function is identical to Template.setupShifts.shifts
 Template.preferences.shifts = ->
@@ -139,14 +128,11 @@ Template.preferences.shifts = ->
     days: shiftDays
 
 Template.preferences.events
-  'change #team': (evnt, template) ->
-    setActiveTeam()
-
   'change #shiftTable [data-shift]': (evnt, template) ->
     input = $(evnt.currentTarget)
     id = input.data 'shift-id'
     checked = input.is ':checked'
-    signupId = Session.get 'reg-id'
+    signupId = Session.get('active-registrant')._id
     showSaved = (action) ->
       Template.userMessages.showMessage
         type: 'info'
