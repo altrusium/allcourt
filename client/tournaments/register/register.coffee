@@ -41,12 +41,12 @@ associateUserWithTournament = (userId) ->
   teamId = Session.get('active-team').teamId
   teamName = Session.get('active-team').teamName
   signup = Registrants.findOne { tournamentId: tId, userId: userId }
-  Registrants.insert {
+  details =
     userId: userId,
     teams: [teamId],
     tournamentId: tId,
     addedBy: Meteor.userId()
-  }, (err, id) ->
+  Meteor.call 'addRegistrant', details, (err, id) ->
     unless err
       Session.set 'reg-id', id
       setAcceptedShifts()
