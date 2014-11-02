@@ -27,8 +27,11 @@ Meteor.methods
       userId: registrant.userId
       tournamentId: registrant.tournamentId
     update =
-      'function': registrant.function
-      'accessCode': registrant.accessCode.toUpperCase()
+      'function': registrant.function || ''
+      'accessCode': registrant.accessCode?.toUpperCase() || ''
+      'isApproved': registrant.isApproved
+      'isTeamLead': registrant.isTeamLead
+      'isUserProxy': registrant.isUserProxy
     Registrants.update existing._id, $set: update
     teamRegistration = modelHelpers.buildTeamRegistration existing._id
     modelHelpers.upsertTeamRegistration existing.userId, teamRegistration
@@ -44,6 +47,7 @@ Meteor.methods
         photoFilename: user.photoFilename
         gender: user.gender || 'female'
         slug: user.firstName + user.lastName
+        addedBy: user.addedBy || 'self'
         isNew: user.isNew
     newUserId = Accounts.createUser newUser
     modelHelpers.upsertUserRegistration {
@@ -73,6 +77,7 @@ Meteor.methods
       fullName: fullName
       photoFilename: user.photoFilename
       gender: gender
+      addedBy: user.addedBy
       slug: slug
       isNew: user.isNew
     }
