@@ -1,0 +1,140 @@
+<template name="userRegistration">
+	{{> tabs}}
+  {{setTab 'tournaments'}}
+  <ul class="breadcrumb">
+    {{#with linkHelper}}
+      <li><a href="{{pathFor 'preferences'}}">Preferences</a></li>
+      <!--
+      <span class="divider">|</span>
+      <li><a href="{{pathFor 'userSchedule'}}">My Schedule</a></li>
+      -->
+      {{#if isTeamLead}}
+        <span class="divider">|</span>
+        <li><a href="{{pathFor 'teamSchedule'}}">Team Schedule</a></li>
+      {{/if}}
+      <span class="divider">|</span>
+      <li class="active">Register Users</li>
+    {{/with}}
+  </ul>
+	{{> userMessages}}
+	<div class="tabbable accreditation">
+	  <ul class="nav nav-tabs">
+      <li class="registered-tab {{registeredTabIsActive}}"><a href="#registered-tab" data-toggle="tab">Registered</a></li>
+	    <li class="not-registered-tab {{notRegisteredTabIsActive}}"><a href="#not-registered-tab" data-toggle="tab">Not Registered</a></li>
+	    <li class="add-edit-tab {{addEditTabIsActive}}"><a href="#add-edit-registrant-tab" data-toggle="tab">Add/Edit Registrant</a></li>
+	  </ul>
+	  <div class="tab-content">
+      <div class="tab-pane {{registeredTabIsActive}}" id="registered-tab">
+        <div class="container user-list row">
+          {{#each registeredUsers}}
+          <div class="container-fluid">
+            <div class="row-fluid">
+              <div class="span2">
+                {{#if photoFilename}}
+                  <img src="{{photoRoot}}{{photoFilename}}" class="user-photo">
+                {{else}}
+                  {{#if isMale}}
+                    <img src="/img/no-male-photo.jpg" class="user-photo">
+                  {{else}}
+                    <img src="/img/no-female-photo.jpg" class="user-photo">
+                  {{/if}}
+                {{/if}}
+              </div>
+              <div class="span10 user-info">
+                <p class="user-name">{{fullName}}</p>
+              </div>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+	    <div class="tab-pane {{notRegisteredTabIsActive}}" id="not-registered-tab">
+				<div class="container user-list row">
+					{{#each notRegisteredUsers}}
+					<div class="container-fluid">
+						<div class="row-fluid">
+							<div class="span2">
+								{{#if photoFilename}}
+									<img src="{{photoRoot}}{{photoFilename}}" class="user-photo">
+								{{else}}
+									{{#if isMale}}
+										<img src="/img/no-male-photo.jpg" class="user-photo">
+									{{else}}
+										<img src="/img/no-female-photo.jpg" class="user-photo">
+									{{/if}}
+								{{/if}}
+							</div>
+							<div class="span10 user-info">
+								<p class="user-name">{{fullName}}</p>
+							</div>
+						</div>
+					</div>
+					{{/each}}
+				</div>
+	    </div>
+	    <div class="tab-pane {{addEditTabIsActive}}" id="add-edit-registrant-tab">
+	    	<div class="span3">
+		      <h2><small>Tournament</small></h2>
+          <span>{{tournamentName}}</span>
+		      <h2><small>Role</small></h2>
+          <span>{{roleName}}</span>
+		      <h2><small>Team</small></h2>
+          <span>{{teamName}}</span>
+			  </div>
+		    <div class="span5">
+		      <form class="user-create form-horizontal">
+		      {{#with registrationDetails}}
+		        <div id="photoPlaceholder" class="{{#if isMale}}male{{else}}female{{/if}} empty photo-placeholder">
+		          <img src="{{photoPath}}" id="photoImg">
+		        </div>
+		        <div class="control-group">
+		          <label class="control-label" for="photo">Photo</label>
+		          <div class="controls">
+		            <button id="pickPhoto" type="button" class="btn input-medium">Select File</button>
+		            <input type="hidden" id="photoFilename" value="{{photoFilename}}">
+		          </div>
+		        </div>
+		        <div class="control-group">
+		          <label class="control-label" for="gender">Gender</label>
+		          <div class="controls">
+		            <label class="radio inline">
+		              <input type="radio" id="maleGender" name="gender" value="male" checked={{isMale}}> male
+		            </label>
+		            <label class="radio inline">
+		              <input type="radio" id="femaleGender" name="gender" value="female" checked={{isFemale}}> female
+		            </label>
+		          </div>
+		        </div>
+		        <div class="control-group">
+		          <label class="control-label" for="firstName">First Name</label>
+		          <div class="controls">
+		            <input type="text" id="firstName" class="input-medium" value="{{firstName}}" required>
+		          </div>
+		        </div>
+		        <div class="control-group">
+		          <label class="control-label" for="lastName">Last Name</label>
+		          <div class="controls">
+		            <input type="text" id="lastName" class="input-medium" value="{{lastName}}" required>
+		          </div>
+		        </div>
+		        <div class="control-group">
+		          <label class="control-label" for="function">Function</label>
+		          <div class="controls">
+		            <input type="text" id="function" class="input-medium" value="{{function}}" required>
+		          </div>
+		        </div>
+			      {{/with}}
+		        <div class="control-group">
+		          <div class="controls">
+		            <button type="button" id="saveRegistrant" class="btn btn-primary">Save</button>
+		            {{#if canPrintActiveBadge}}
+		            <a href="/registrant/{{userSlug}}/{{tournamentSlug}}/badge">Print Badge</a>
+		            {{/if}}
+		          </div>
+		        </div>
+		      </form>
+		    </div>
+	    </div>
+    </div>
+  </div>
+</template>

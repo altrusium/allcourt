@@ -12,6 +12,10 @@
         <span class="divider">|</span>
         <li><a href="{{pathFor 'teamSchedule'}}">Team Schedule</a></li>
       {{/if}}
+      {{#if isUserProxy}}
+        <span class="divider">|</span>
+        <li><a href="{{pathFor 'userRegistration'}}">Register Users</a></li>
+      {{/if}}
     {{/with}}
 	</ul>
 	{{> userMessages}}

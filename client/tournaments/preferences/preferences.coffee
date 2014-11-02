@@ -68,6 +68,10 @@ Template.preferences.isTeamLead = ->
   reg = getRegistrant()
   reg.isTeamLead
 
+Template.preferences.isUserProxy = ->
+  reg = getRegistrant()
+  reg.isUserProxy
+
 Template.preferences.activeTournamentSlug = ->
   Session.get('active-tournament').slug
 

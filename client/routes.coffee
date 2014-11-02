@@ -47,6 +47,7 @@ Router.onBeforeAction mustBeAnAdmin, except: [
   'preferences',
   'userSchedule',
   'teamSchedule',
+  'userRegistration'
 ]
 
 Router.map ->
@@ -147,6 +148,12 @@ Router.map ->
 
   this.route 'teamSchedule',
     path: '/:tournamentSlug/teamSchedule'
+    onBeforeAction: setActiveTournament
+    data: ->
+      Session.get 'active-tournament'
+
+  this.route 'userRegistration',
+    path: '/:tournamentSlug/userRegistration'
     onBeforeAction: setActiveTournament
     data: ->
       Session.get 'active-tournament'
