@@ -132,11 +132,20 @@ Template.setupRegistrants.events
     Meteor.call 'removeTeamFromRegistrant', reg?._id, teamId
     false
 
+  'click [data-action=approve]': (evnt, template) ->
+    reg = getRegistrant $(evnt.currentTarget).data 'user'
+    reg.isApproved = $(evnt.currentTarget).prop 'checked'
+    Meteor.call 'updateRegistrant', reg
+
   'click [data-action=makeLead]': (evnt, template) ->
     reg = getRegistrant $(evnt.currentTarget).data 'user'
     reg.isTeamLead = $(evnt.currentTarget).prop 'checked'
     Meteor.call 'updateRegistrant', reg
 
+  'click [data-action=makeProxy]': (evnt, template) ->
+    reg = getRegistrant $(evnt.currentTarget).data 'user'
+    reg.isUserProxy = $(evnt.currentTarget).prop 'checked'
+    Meteor.call 'updateRegistrant', reg
 
   'change #viewPreferences [type=checkbox]': (evnt, template) ->
     evnt.preventDefault()

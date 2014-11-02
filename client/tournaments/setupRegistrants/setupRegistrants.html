@@ -79,6 +79,7 @@
             <th>User</th>
             <th>Approved</th>
             <th>Team Lead</th>
+            <th>User Proxy</th>
             <th>Remove</th>
           </tr>
         </thead>
@@ -87,10 +88,13 @@
           <tr>
             <td><a href="/user/{{slug}}/preferences/{{activeTournamentSlug}}">{{fullName}}</a></td>
             <td>
-              <input type="checkbox" class="checkbox" data-action="approve" data-user="{{id}}" {{approved}}>
+              <input type="checkbox" class="checkbox" data-action="approve" data-user="{{id}}" checked={{approvedChecked}}>
             </td>
             <td>
               <input type="checkbox" class="checkbox" data-action="makeLead" data-user="{{id}}" checked={{teamLeadChecked}}>
+            </td>
+            <td>
+              <input type="checkbox" class="checkbox" data-action="makeProxy" data-user="{{id}}" checked={{userProxyChecked}}>
             </td>
             <td>
               <a href="#" data-action="delete" data-user="{{id}}"><i class="icon-remove"></i></a>
