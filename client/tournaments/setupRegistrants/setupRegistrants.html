@@ -51,14 +51,6 @@
           </div>
         </div>
         <div class="control-group">
-          <label for="search" class="control-label">Register an existing user</label>
-          <input id="search" type="text" placeholder="Partial name of user">
-        </div>
-        <div class="control-group">
-          <label for="addUser" class="control-label">Looked and can't find them?</label>
-          <a id="addNewUser" href="#">Add new user</a>
-        </div>
-        <div class="control-group">
           <div id="viewPreferences" class="controls">
             <span>Show volunteers whereby this is their</span>
             <label class="checkbox">
@@ -79,26 +71,6 @@
       </form>
     </div>
     <div class="span8">
-      {{#if searchResults}}
-      <h2 class="column-header"><small>Possible user matches</small></h2>
-      <table class="table table-hover table-striped">
-        <thead>
-          <tr>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each searchResults}}
-          <tr>
-            <td>{{fullName}}</td>
-            <td>
-              <a href="#" data-action="register" data-id="{{_id}}">Register</a>
-            </td>
-          </tr>
-          {{/each}}
-        </tbody>
-      </table>
-      {{/if}}
       {{#if registrantsExist}}
       <h2 class="column-header"><small>Team: {{activeTeamName}}</small></h2>
       <table class="table table-hover table-striped">
@@ -113,7 +85,6 @@
         <tbody>
           {{#each registrants}}
           <tr>
-            <!-- <td><a href="#" data-user-slug="{{slug}}">{{fullName}}</a></td> -->
             <td><a href="/user/{{slug}}/preferences/{{activeTournamentSlug}}">{{fullName}}</a></td>
             <td>
               <input type="checkbox" class="checkbox" data-action="approve" data-user="{{id}}" {{approved}}>
@@ -128,63 +99,6 @@
           {{/each}}
         </tbody>
       </table>
-      {{/if}}
-      {{#if addingNewUser}}
-      <form class="add-new-registrant form-vertical">
-        <h2 class="column-header"><small>New User</small></h2>
-        <div id="photoPlaceholder" class="female empty photo-placeholder">
-          <img src="{{photoPath}}" id="photoImg">
-        </div>
-        <div class="control-group">
-          <label class="control-label" for="photo">Photo</label>
-          <div class="controls">
-            <button id="pickPhoto" type="button" class="btn input-medium">Select File</button>
-            <input type="hidden" id="photoFilename">
-          </div>
-        </div>
-        <div class="control-group">
-          <label class="control-label" for="email">Email</label>
-          <div class="controls">
-            <input type="text" id="email" required>
-          </div>
-        </div>
-        <div class="control-group">
-          <label class="control-label" for="firstName">First Name</label>
-          <div class="controls">
-            <input type="text" id="firstName" class="input-medium" required>
-          </div>
-        </div>
-        <div class="control-group">
-          <label class="control-label" for="lastName">Last Name</label>
-          <div class="controls">
-            <input type="text" id="lastName" class="input-medium" required>
-          </div>
-        </div>
-        <div class="control-group">
-          <label class="control-label" for="gender">Gender</label>
-          <div class="controls">
-            <label class="radio inline">
-              <input type="radio" id="maleGender" name="gender" value="male"> male
-            </label>
-            <label class="radio inline">
-              <input type="radio" id="femaleGender" name="gender" value="female" checked> female
-            </label>
-          </div>
-        </div>
-        <div class="control-group">
-          <div class="controls">
-            <label class="checkbox">
-              <input type="checkbox" id="hasProfileAccess" checked> Can manage their own profile
-            </label>
-          </div>
-        </div>
-        <div class="control-group">
-          <div class="controls">
-            <button type="button" id="addUser" class="btn btn-primary">Add User</button>
-            &nbsp; <a href="#" id="cancelAddUser">cancel</a>
-          </div>
-        </div>
-      </form>
       {{/if}}
     </div>
   </div>
