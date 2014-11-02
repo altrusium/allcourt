@@ -17,15 +17,17 @@ setActiveUser = ->
 onlyShow = (template, router) ->
   router.render()
   router.render(template)
-  router.stop()
 
-mustBeSignedIn = ->
+mustBeSignedIn = (pause) ->
   unless Meteor.user()
     onlyShow 'home', this
+    pause()
   window.scrollTo 0, 0
 
-mustBeAnAdmin = ->
-  unless allcourt.isAdmin() then onlyShow 'notFound', this
+mustBeAnAdmin = (pause) ->
+  unless allcourt.isAdmin()
+    onlyShow 'notFound', this
+    pause()
 
 Router.configure
   layoutTemplate: 'main'
@@ -43,7 +45,8 @@ Router.onBeforeAction mustBeAnAdmin, except: [
   'tournaments',
   'register',
   'preferences',
-  'userSchedule'
+  'userSchedule',
+  'teamSchedule',
 ]
 
 Router.map ->
@@ -141,6 +144,12 @@ Router.map ->
 
   this.route 'createTournament',
     path: '/tournament/create'
+
+  this.route 'teamSchedule',
+    path: '/:tournamentSlug/teamSchedule'
+    onBeforeAction: setActiveTournament
+    data: ->
+      Session.get 'active-tournament'
 
   this.route 'setupRoles',
     path: '/:tournamentSlug/roles'

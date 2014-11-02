@@ -175,11 +175,13 @@ Template.setupRegistrants.registrants = ->
   Session.get('view-prefs').forEach (pref) ->
     Registrants.find({ tournamentId: tId }).forEach (reg) ->
       if reg.teams[pref-1] is teamId
-        registrants.push [reg.userId, reg.isTeamLead]
+        registrants.push [reg.userId, reg.isApproved, reg.isTeamLead, reg.isUserProxy]
   users = for reg in registrants
     user = Meteor.users.findOne({ _id: reg[0] })?.profile
-    if reg[1] then user.teamLeadChecked = 'checked'
-    user and user.id = reg[0]
+    user.id = reg[0]
+    user.approvedChecked = !!reg[1]
+    user.teamLeadChecked = !!reg[2]
+    user.userProxyChecked = !!reg[3]
     user
   _.sortBy users, (user) ->
     user?.fullName
@@ -240,21 +242,9 @@ Template.setupRegistrants.events
     false
 
   'click [data-action=makeLead]': (evnt, template) ->
-    tId = Session.get('active-tournament')._id
-    uId = $(evnt.currentTarget).data 'user'
-    checked = $(evnt.currentTarget).prop 'checked'
-    reg = Registrants.findOne 'tournamentId': tId, 'userId': uId
-    # TODO: Move this to the server and Meteor.call it
-    if checked
-      Registrants.update reg._id, $set: isTeamLead: true
-    else
-      Registrants.update reg._id, $unset: isTeamLead: ''
-
-  'click [data-action=register]': (evnt, template) ->
-    userId = $(evnt.currentTarget).data 'id'
-    associateUserWithTournament userId
-    emptySearchResults()
-    false
+    reg = getRegistrant $(evnt.currentTarget).data 'user'
+    reg.isTeamLead = $(evnt.currentTarget).prop 'checked'
+    Meteor.call 'updateRegistrant', reg
 
   'keyup #search': (evnt, template) ->
     query = $(evnt.currentTarget).val()

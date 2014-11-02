@@ -3,12 +3,15 @@
 	{{setTab 'tournaments'}}
 	<ul class="breadcrumb">
     {{#with linkHelper}}
-    <li class="active">
-      Preferences
+      <li class="active">Preferences</li>
+      <!--
       <span class="divider">|</span>
-    </li><li>
-      <a href="{{pathFor 'userSchedule'}}">Schedule</a>
-    </li>
+      <li><a href="{{pathFor 'userSchedule'}}">My Schedule</a></li>
+      -->
+      {{#if isTeamLead}}
+        <span class="divider">|</span>
+        <li><a href="{{pathFor 'teamSchedule'}}">Team Schedule</a></li>
+      {{/if}}
     {{/with}}
 	</ul>
 	{{> userMessages}}

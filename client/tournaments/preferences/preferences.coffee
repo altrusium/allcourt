@@ -11,6 +11,11 @@ setAcceptedShifts = ->
   signup = Registrants.findOne { _id: signupId }
   Session.set 'accepted-shifts', signup.shifts
 
+getRegistrant = ->
+  tId = Session.get('active-tournament')._id
+  uId = Meteor.userId()
+  reg = Registrants.findOne tournamentId: tId, userId: uId
+
 getVolunteerRoleId = ->
   tournament = Session.get('active-tournament')
   role = (role for role in tournament.roles when role.roleName is 'Volunteer')
@@ -58,6 +63,10 @@ Template.preferences.rendered = ->
 
 Template.preferences.linkHelper = ->
   allcourt.getTournamentLinkHelper()
+
+Template.preferences.isTeamLead = ->
+  reg = getRegistrant()
+  reg.isTeamLead
 
 Template.preferences.activeTournamentSlug = ->
   Session.get('active-tournament').slug

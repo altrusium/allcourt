@@ -24,7 +24,7 @@ Schedule.allow
   update: (userId, doc) ->
     true
   remove: (userId, doc) ->
-    Roles.userIsInRole Meteor.user(), 'admin'
+    true
 
 Volunteers.allow
   insert: (userId, doc) ->

@@ -1,0 +1,17 @@
+<template name="teamSchedule">
+  {{> tabs}}
+  {{setTab 'tournaments'}}
+  <ul class="breadcrumb">
+    {{#with linkHelper}}
+      <li><a href="{{pathFor 'preferences'}}">Preferences</a></li>
+      <!--
+      <span class="divider">|</span>
+      <li><a href="{{pathFor 'userSchedule'}}">My Schedule</a></li>
+      -->
+      <span class="divider">|</span>
+      <li class="active">Team Schedule</li>
+    {{/with}}
+  </ul>
+  {{> userMessages}}
+  {{> scheduling}}
+</template>
