@@ -62,20 +62,6 @@ associateUserWithTournament = (userId) ->
         message: 'A registration error occurred. Please refresh your browser
           and let us know if this continues.'
 
-createNewVolunteer = (options, callback) ->
-  Volunteers.insert {
-    _id: options._id,
-    birthdate: options.birthdate || '',
-    shirtSize: options.shirtSize || '',
-    homePhone: options.homePhone || '',
-    mobilePhone: options.mobilePhone || '',
-    address: options.address || '',
-    city: options.city || '',
-    suburb: options.suburb || '',
-    postalCode: options.postalCode || '',
-    notes: options.notes || ''
-  }, callback
-
 
 
 
@@ -112,7 +98,7 @@ Template.register.events
     else
       associateUserWithTournament userId
       if $("#role option:selected").text() is 'Volunteer'
-        createNewVolunteer _id: userId, (err) ->
+        Meteor.call 'createNewVolunteer', _id: userId, (err) ->
           if err
             Template.userMessages.showMessage
               type: 'error'
