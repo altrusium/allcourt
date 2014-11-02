@@ -5,6 +5,12 @@ setActiveRegistrant = ->
   reg = Registrants.findOne { userId: userId, tournamentId: tId }
   Session.set 'active-registrant', reg
 
+setAcceptedShifts = ->
+  signupId = Session.get 'reg-id'
+  signup = -> null until registrantsSubscription.ready()
+  signup = Registrants.findOne { _id: signupId }
+  Session.set 'accepted-shifts', signup.shifts
+
 getVolunteerRoleId = ->
   tournament = Session.get('active-tournament')
   role = (role for role in tournament.roles when role.roleName is 'Volunteer')
