@@ -40,6 +40,8 @@ Router.onBeforeAction mustBeSignedIn, except: [
 
 Router.onBeforeAction mustBeAnAdmin, except: [
   'home',
+  'resetPassword',
+  'verifyEmail',
   'profileDetails',
   'profileEdit',
   'tournaments',
