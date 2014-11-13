@@ -4,18 +4,30 @@ createEmailAddress = ->
   name = emailHelper.prepareName firstName, lastName
   address = name + emailHelper.addressSuffix
 
-sendUserSearchQuery = (query) ->
-  # submitUserSearch is global and defined in app/lib/streams.coffee
-  submitUserSearch query, (results) ->
-    for user in results
-      user.isMale = user.gender is 'male'
-      for reg in user.registrations
-        reg.slug = user.slug
-    Session.set 'search-results', results
+setActiveContext = ->
+  tournament = Session.get('active-tournament')
+  teams = tournament.teams
+  roles = tournament.roles
+  proxyReg = Registrants.findOne
+    userId: Meteor.userId()
+    tournamentId: tournament._id
+  team = (team for team in teams \
+    when team.teamId is proxyReg.teams[0])[0]
+  Session.set 'active-team', team
+  role = (role for role in roles \
+    when role.roleId is team.roleId)[0]
+  Session.set 'active-role', role
 
-emptySearchResults = ->
-  Session.set 'search-results', null
-  $('#search').val ''
+getPossibleRegistrants = ->
+  # get ID of active tournament
+  tId = Session.get('active-tournament')._id
+  # get signed in user's registration
+  proxyId = Meteor.userId()
+  reg = Registrations.findOne proxyId
+  instance = (r for r in reg.registrations when r.tournamentId is tId)
+  role = r.roleName
+  team = r.teamName
+  registrations = Registrations.find { registrations: $elemMatch: roleName: role, teamName: team }, {sort: fullName: 1}
 
 setActiveUser = (id) ->
   Session.set 'active-user', Meteor.users.findOne id
@@ -31,6 +43,13 @@ getUserFormValues = (template) ->
     photoFilename: template.find('#photoFilename').value
     gender: template.find('input:radio[name=gender]:checked').value
     function: template.find('#function').value
+
+getExistingUserDetails = (id) ->
+  user = Session.get 'active-user'
+  details = user.profile
+  details._id = user._id
+  details.isNew = false
+  details
 
 updateRegistration = (userDetails) ->
   teamId = Session.get('active-team').teamId
@@ -103,21 +122,48 @@ updateActiveRegistrant = (user, template) ->
     else
       updateRegistration userDetails
 
+unregisterUserFromTournament = (userId) =>
+  tournamentId = Session.get('active-tournament')._id
+  Meteor.call 'unregisterUserFromTournament', userId, tournamentId, (err) ->
+    if err
+      Template.userMessages.showMessage
+        type: 'error',
+        title: 'Uh oh!',
+        message: 'The user was not unregistered. Reason: ' + err.reason
 
 
 
 Template.userRegistration.created = ->
+  setActiveContext()
   Session.set 'active-tab', 'registered'
-
-Template.userRegistration.rendered = ->
-  if Session.get('active-user')?.profile.photoFilename
-    $('.photo-placeholder').removeClass 'empty'
 
 Template.userRegistration.linkHelper = ->
   allcourt.getTournamentLinkHelper()
 
 Template.userRegistration.photoRoot = ->
   return photoHelper.photoRoot
+
+Template.userRegistration.notRegisteredUsers = ->
+  notRegistered = []
+  tId = Session.get('active-tournament')._id
+  possibles = getPossibleRegistrants().fetch()
+  for reg in possibles
+    found = 0
+    for r in reg.registrations
+      if r.tournamentId is tId then found++
+      reg.registration = reg.registration || r
+    if not found then notRegistered.push reg
+  notRegistered
+
+Template.userRegistration.registeredUsers = ->
+  registered = []
+  tId = Session.get('active-tournament')._id
+  possibles = getPossibleRegistrants().fetch()
+  for reg in possibles
+    for r in reg.registrations when r.tournamentId is tId
+      reg.registration = r
+      registered.push reg
+  registered
 
 Template.userRegistration.registeredTabIsActive = ->
   if Session.get('active-tab') is 'registered' then return 'active'
@@ -128,17 +174,14 @@ Template.userRegistration.notRegisteredTabIsActive = ->
 Template.userRegistration.addEditTabIsActive = ->
   if Session.get('active-tab') is 'addEdit' then return 'active'
 
-Template.userRegistration.users = ->
-  Session.get 'search-results'
-
 Template.userRegistration.tournamentName = ->
-  return 'Temporary Tournament Name'
+  return Session.get('active-tournament').tournamentName
 
 Template.userRegistration.roleName = ->
-  return 'Temporary Role Name'
+  return Session.get('active-role').roleName
 
 Template.userRegistration.teamName = ->
-  return 'Temporary Team Name'
+  return Session.get('active-team').teamName
 
 Template.userRegistration.registrationDetails = ->
   unless Session.get('active-user') then return {}
@@ -152,41 +195,31 @@ Template.userRegistration.registrationDetails = ->
     user.photoPath = photoHelper.photoRoot + user.photoFilename
   user
 
-Template.userRegistration.userSlug = ->
-  Session.get('active-user')?.profile?.slug
-
-Template.userRegistration.tournamentSlug = ->
-  Session.get('active-tournament')?.slug
-
 
 
 Template.userRegistration.events =
 
-  'keyup #search': (evnt, template) ->
-    query = $(evnt.currentTarget).val()
-    if query
-      sendUserSearchQuery query
-      Session.set 'active-team', null
-      Session.set 'active-role', null
-      Session.set 'active-tournament', null
-    else
-      emptySearchResults()
-    false
-
-  'click [data-details-link]': (evnt, template) ->
+  'click [data-edit]': (evnt, template) ->
     anchor = $(evnt.currentTarget)
     setActiveUser anchor.data 'user-id'
-    setActiveRegistration anchor.data 'registrant-id'
-    registration = Session.get 'active-registration'
-    setActiveTournament registration.tournamentId
-
-    team = (team for team in Session.get('active-tournament').teams \
-      when team.teamId is registration.teams[0])[0]
-    Session.set 'active-role', roleId: team?.roleId
-    Session.set 'active-team', team
+    if anchor.data 'registrant-id'
+      setActiveRegistration anchor.data 'registrant-id'
+      registration = Session.get 'active-registration'
     Session.set 'active-tab', 'addEdit'
-    emptySearchResults()
     false
+
+  'click [data-register]': (evnt, template) ->
+    anchor = $(evnt.currentTarget)
+    userId = anchor.data 'user-id'
+    setActiveUser userId
+    user = getExistingUserDetails userId
+    associateUserWithTournament user
+
+
+  'click [data-unregister]': (evnt, template) ->
+    anchor = $(evnt.currentTarget)
+    userId = anchor.data 'user-id'
+    unregisterUserFromTournament userId
 
   'click .registered-tab': (evnt, template) ->
     Session.set 'active-registration', null
@@ -202,9 +235,6 @@ Template.userRegistration.events =
     Session.set 'active-registration', null
     Session.set 'active-user', null
     Session.set 'active-tab', 'addEdit'
-
-  'submit .navbar-search': (evnt, template) ->
-    false
 
   'click #saveRegistrant': (evnt, template) ->
     user = Session.get 'active-user'

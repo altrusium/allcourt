@@ -13,6 +13,9 @@ Meteor.publish 'tournaments', ->
 Meteor.publish 'registrants', ->
   return Registrants.find()
 
+Meteor.publish 'registrations', ->
+  return Registrations.find()
+
 Meteor.publish 'user-list-with-team', (teamId, tournamentId) ->
   criteria = teamId: teamId, tournamentId: tournamentId
   selector = registrations: $elemMatch: criteria

@@ -26,12 +26,15 @@ Meteor.methods
     existing = Registrants.findOne
       userId: registrant.userId
       tournamentId: registrant.tournamentId
+    isApproved = if registrant.isApproved is undefined then existing.isApproved else registrant.isApproved
+    isTeamLead = if registrant.isTeamLead is undefined then existing.isTeamLead else registrant.isTeamLead
+    isUserProxy = if registrant.isUserProxy is undefined then existing.isUserProxy else registrant.isUserProxy
     update =
       'function': registrant.function || ''
       'accessCode': registrant.accessCode?.toUpperCase() || ''
-      'isApproved': registrant.isApproved
-      'isTeamLead': registrant.isTeamLead
-      'isUserProxy': registrant.isUserProxy
+      'isApproved': isApproved
+      'isTeamLead': isTeamLead
+      'isUserProxy': isUserProxy
     Registrants.update existing._id, $set: update
     teamRegistration = modelHelpers.buildTeamRegistration existing._id
     modelHelpers.upsertTeamRegistration existing.userId, teamRegistration
@@ -107,6 +110,7 @@ Meteor.methods
     Registrations.remove userId
 
   createNewVolunteer: (volunteer) ->
+    # Rewrite this with more coffee flavour
     Volunteers.insert {
       _id: volunteer._id,
       birthdate: volunteer.birthdate || '',
@@ -168,6 +172,14 @@ Meteor.methods
         startTime: newShiftDef.startTime
         shiftDefId: newShiftDef.shiftDefId
       Tournaments.update shift.tournamentId, $push: shifts: newShift
+
+  unregisterUserFromTournament: (userId, tournamentId) =>
+    registrant = Registrants.findOne userId: userId, tournamentId: tournamentId
+    if registrant
+      Registrants.remove _id: registrant._id
+      Registrations.update userId, $pull: registrations: registrantId: registrant._id
+    else
+      throw 'Registrant not found for this tournament'
 
   sendVerificationEmail: (userId) ->
     Accounts.sendVerificationEmail userId
