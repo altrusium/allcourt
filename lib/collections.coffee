@@ -9,7 +9,6 @@ if Meteor.isClient
   @volunteersSubscription = Meteor.subscribe 'volunteers'
   @tournamentsSubscription = Meteor.subscribe 'tournaments'
   @registrantsSubscription = Meteor.subscribe 'registrants'
-  @registrationsSubscription = Meteor.subscribe 'registrations'
 
 Meteor.users.allow
   insert: (userId, doc) ->

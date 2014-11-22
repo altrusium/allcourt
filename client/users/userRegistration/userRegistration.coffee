@@ -18,16 +18,16 @@ setActiveContext = ->
     when role.roleId is team.roleId)[0]
   Session.set 'active-role', role
 
-getPossibleRegistrants = ->
-  # get ID of active tournament
+getPossibleRegistrants = (callback) ->
   tId = Session.get('active-tournament')._id
-  # get signed in user's registration
   proxyId = Meteor.userId()
-  reg = Registrations.findOne proxyId
-  instance = (r for r in reg.registrations when r.tournamentId is tId)
-  role = r.roleName
-  team = r.teamName
-  registrations = Registrations.find { registrations: $elemMatch: roleName: role, teamName: team }, {sort: fullName: 1}
+  Meteor.call 'getRegistration', proxyId, (err, reg) ->
+    if err then return
+    instance = (r for r in reg.registrations when r.tournamentId is tId)
+    role = r.roleName
+    team = r.teamName
+    criteria = registrations: $elemMatch: roleName: role, teamName: team
+    Meteor.call 'getRegistrations', criteria, callback
 
 setActiveUser = (id) ->
   Session.set 'active-user', Meteor.users.findOne id
@@ -131,10 +131,28 @@ unregisterUserFromTournament = (userId) =>
         title: 'Uh oh!',
         message: 'The user was not unregistered. Reason: ' + err.reason
 
+updateUserRegistrations = ->
+  registered = []
+  notRegistered = []
+  tId = Session.get('active-tournament')._id
+  getPossibleRegistrants (err, possibles) ->
+    if err then return
+    for reg in possibles
+      found = 0
+      for r in reg.registrations
+        if r.tournamentId is tId
+          found++
+          reg.registration = r
+          registered.push reg
+        reg.registration = reg.registration || r
+      if not found then notRegistered.push reg
+    Session.set 'nonRegistered', notRegistered
+    Session.set 'registered', registered
 
 
 Template.userRegistration.created = ->
   setActiveContext()
+  updateUserRegistrations()
   Session.set 'active-tab', 'registered'
 
 Template.userRegistration.linkHelper = ->
@@ -144,26 +162,10 @@ Template.userRegistration.photoRoot = ->
   return photoHelper.photoRoot
 
 Template.userRegistration.notRegisteredUsers = ->
-  notRegistered = []
-  tId = Session.get('active-tournament')._id
-  possibles = getPossibleRegistrants().fetch()
-  for reg in possibles
-    found = 0
-    for r in reg.registrations
-      if r.tournamentId is tId then found++
-      reg.registration = reg.registration || r
-    if not found then notRegistered.push reg
-  notRegistered
+  Session.get 'nonRegistered'
 
 Template.userRegistration.registeredUsers = ->
-  registered = []
-  tId = Session.get('active-tournament')._id
-  possibles = getPossibleRegistrants().fetch()
-  for reg in possibles
-    for r in reg.registrations when r.tournamentId is tId
-      reg.registration = r
-      registered.push reg
-  registered
+  Session.get 'registered'
 
 Template.userRegistration.registeredTabIsActive = ->
   if Session.get('active-tab') is 'registered' then return 'active'
@@ -214,12 +216,14 @@ Template.userRegistration.events =
     setActiveUser userId
     user = getExistingUserDetails userId
     associateUserWithTournament user
+    updateUserRegistrations()
 
 
   'click [data-unregister]': (evnt, template) ->
     anchor = $(evnt.currentTarget)
     userId = anchor.data 'user-id'
     unregisterUserFromTournament userId
+    updateUserRegistrations()
 
   'click .registered-tab': (evnt, template) ->
     Session.set 'active-registration', null

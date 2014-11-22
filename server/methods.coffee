@@ -39,6 +39,12 @@ Meteor.methods
     teamRegistration = modelHelpers.buildTeamRegistration existing._id
     modelHelpers.upsertTeamRegistration existing.userId, teamRegistration
 
+  getRegistration: (id) ->
+    Registrations.findOne id
+
+  getRegistrations: (criteria) ->
+    Registrations.find(criteria).fetch()
+
   createNewUser: (user) ->
     newUser =
       email: user.email
