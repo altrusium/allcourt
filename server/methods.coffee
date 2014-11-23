@@ -1,10 +1,13 @@
 Meteor.methods
 
   addRegistrant: (details) ->
-    registrantId = Registrants.insert details
-    teamRegistration = modelHelpers.buildTeamRegistration registrantId
-    modelHelpers.upsertTeamRegistration details.userId, teamRegistration
-    registrantId
+    # look for existing document
+    existing = Registrants.find {userId: details.userId, tournamentId: details.tournamentId}
+    unless existing
+      registrantId = Registrants.insert details
+      teamRegistration = modelHelpers.buildTeamRegistration registrantId
+      modelHelpers.upsertTeamRegistration details.userId, teamRegistration
+    existing._id || registrantId
 
   addTeamToRegistrant: (registrantId, teamId) ->
     existing = Registrants.findOne registrantId
