@@ -111,6 +111,19 @@ associateUserWithTournament = (userDetails) ->
         message: 'An error occurred while registering user. Please refresh
           the browser and let us know if this continues.'
 
+addVolunteerRecord = (id) ->
+  isVolunteer = $("#role option:selected").text() is 'Volunteer'
+  if isVolunteer
+    volunteer = Volunteers.findOne id
+    unless volunteer
+      Meteor.call 'createNewVolunteer', _id: id, (err) ->
+        if err
+          Template.userMessages.showMessage
+            type: 'error'
+            title: 'Uh oh! '
+            message: 'There was an error creating your volunteer record.
+              Reason: ' + err.reason
+
 addNewRegistrant = (template) ->
   userDetails = getUserFormValues template
   userDetails.email = createEmailAddress()
@@ -124,6 +137,7 @@ addNewRegistrant = (template) ->
           err.reason
     else
       userDetails._id = id
+      addVolunteerRecord id
       associateUserWithTournament userDetails
 
 updateActiveRegistrant = (user, template) ->

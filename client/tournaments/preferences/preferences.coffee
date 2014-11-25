@@ -147,6 +147,9 @@ Template.preferences.shifts = ->
     days: shiftDays
 
 Template.preferences.events
+  'change #team': (evnt, template) ->
+    setActiveTeam()
+
   'change #shiftTable [data-shift]': (evnt, template) ->
     input = $(evnt.currentTarget)
     id = input.data 'shift-id'

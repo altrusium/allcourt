@@ -163,6 +163,3 @@ Template.userPreferences.events
       Registrants.update { _id: signupId }, { $pull: shifts: id }, (err) ->
         unless err then showSaved 'Removed'
     setAcceptedShifts()
-
-  'click #continueButton': (evnt, template) ->
-    Router.go 'profileEdit'

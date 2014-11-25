@@ -33,7 +33,7 @@ setAcceptedShifts = ->
   signup = Registrants.findOne { _id: signupId }
   Session.set 'accepted-shifts', signup.shifts
 
-associateUserWithTournament = (userId) ->
+associateUserWithTournament = (userId, callback) ->
   setActiveTeam()
   tId = Session.get('active-tournament')._id
   roleName = Session.get('active-role').roleName
@@ -55,6 +55,7 @@ associateUserWithTournament = (userId) ->
         type: 'info'
         title: 'Success:'
         message: 'You have successfully registered. Thank you!'
+      callback()
     else
       Template.userMessages.showMessage
         type: 'error'
@@ -89,6 +90,7 @@ Template.register.events
   'click #registerButton': (evnt, template) ->
     userId = Meteor.userId()
     slug = Session.get('active-tournament').slug
+    isVolunteer = $("#role option:selected").text() is 'Volunteer'
     if not $('#agreed').prop('checked')
       window.scrollTo 0, 0
       Template.userMessages.showMessage
@@ -96,16 +98,19 @@ Template.register.events
         title: 'Agree? '
         message: 'To continue, you must agree to the terms by checking the box.'
     else
-      associateUserWithTournament userId
-      if $("#role option:selected").text() is 'Volunteer'
-        Meteor.call 'createNewVolunteer', _id: userId, (err) ->
-          if err
-            Template.userMessages.showMessage
-              type: 'error'
-              title: 'Uh oh! '
-              message: 'There was an error creating your volunteer record.
-                Reason: ' + err.reason
-        Router.go 'preferences', tournamentSlug: slug
-      else
-        Router.go 'profileEdit'
+      if isVolunteer
+        volunteer = Volunteers.findOne Meteor.userId()
+        unless volunteer
+          Meteor.call 'createNewVolunteer', _id: userId, (err) ->
+            if err
+              Template.userMessages.showMessage
+                type: 'error'
+                title: 'Uh oh! '
+                message: 'There was an error creating your volunteer record.
+                  Reason: ' + err.reason
+      associateUserWithTournament userId, ->
+        if isVolunteer
+          Router.go 'preferences', tournamentSlug: slug
+        else
+          Router.go 'profileEdit'
     false

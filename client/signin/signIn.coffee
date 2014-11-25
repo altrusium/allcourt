@@ -70,35 +70,13 @@ Template.signIn.events
   'submit #registerForm': (evnt, template) ->
     evnt.preventDefault()
     unless registerForm and registerForm.validate() then return
-    email = template.find('#registerEmail').value
     firstName = template.find('#firstName').value
     lastName = template.find('#lastName').value
-    options =
-      email: email
-      username: email
-      password: template.find('#registerPassword').value
-      profile:
-        email: email
-        firstName: firstName
-        lastName: lastName
-        fullName: firstName + ' ' + lastName
-        slug: firstName + lastName
-
-    Accounts.createUser options, (err) ->
-      if err
-        Template.userMessages.showMessage
-          type: 'error',
-          title: err.reason || 'Registration unsuccessful.',
-          message: err.details || 'Unable to save your registration. Please try
-            again and let us know if you continue to experience issues.'
-      else
-        Meteor.call 'sendVerificationEmail', Meteor.userId()
-        Template.userMessages.showMessage
-          type: 'info',
-          title: 'Success!',
-          message: 'Please check your email so you
-            can verify your email address.'
-    false
+    email = template.find('#registerEmail').value
+    newUser = new models.NewUser(firstName, lastName, email)
+    newUser.password = template.find('#registerPassword').value
+    services.accountService.createNewUser newUser
+    return false
 
   'submit #recoveryForm': (evnt, template) ->
     evnt.preventDefault()
