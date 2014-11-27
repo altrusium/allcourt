@@ -31,11 +31,11 @@
 }
 .mens.top-band {
 	/* the !important is so it will print */
-	background-color: #0075b0 !important;
+	background-color: #003a4e !important;
 }
 .womens.top-band {
 	/* the !important is so it will print */
-	background-color: #ced64b !important;
+	background-color: #aaabad !important;
 }
 
 .id-badge .fot-logo {
@@ -80,7 +80,7 @@
 	left: 275px;
 	width: 200px;
 	text-align: center;
-	font-size: 80px;
+	font-size: 60px;
 	font-weight: bold;
 }
 
