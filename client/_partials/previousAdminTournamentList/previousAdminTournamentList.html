@@ -1,0 +1,10 @@
+<template name="previousAdminTournamentList">
+  {{#if previousTournaments}}
+  <h2 class="column-header"><small>Previous Tournaments</small></h2>
+  <ul>
+    {{#each previousTournaments}}
+    <li><a href="/{{slug}}">{{tournamentName}}</a></li>
+    {{/each}}
+  </ul>
+  {{/if}}
+</template>

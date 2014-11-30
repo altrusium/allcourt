@@ -1,0 +1,10 @@
+<template name="activeAdminTournamentList">
+  {{#if activeTournaments}}
+  <h2 class="column-header"><small>Active Tournaments</small></h2>
+  <ul>
+    {{#each activeTournaments}}
+    <li><a href="/{{slug}}">{{tournamentName}}</a></li>
+    {{/each}}
+  </ul>
+  {{/if}}
+</template>
