@@ -14,7 +14,7 @@ Meteor.methods
         addedBy: user.addedBy || 'self'
         isNew: user.isNew
     newUserId = Accounts.createUser newUser
-    modelHelpers.upsertUserRegistration {
+    serverMethods.upsertUserRegistration {
       _id: newUserId
       email: newUser.email
       slug: newUser.profile.slug
@@ -45,7 +45,7 @@ Meteor.methods
       slug: slug
       isNew: user.isNew
     }
-    modelHelpers.upsertUserRegistration {
+    serverMethods.upsertUserRegistration {
       _id: user._id
       slug: slug
       email: user.email

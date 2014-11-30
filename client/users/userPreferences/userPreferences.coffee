@@ -3,7 +3,7 @@ setRegistrationId = ->
   tId = Session.get('active-tournament')._id
   reg = -> null until registrantsSubscription.ready()
   reg = Registrants.findOne { userId: userId, tournamentId: tId }
-  Session.set 'reg-id', reg._id
+  Session.set 'active-registrant', reg
 
 setAcceptedShifts = ->
   signupId = Session.get 'reg-id'
@@ -17,30 +17,15 @@ getVolunteerRoleId = ->
   role[0].roleId
 
 setActiveTeam = ->
-  tId = $('#team option:selected').val()
+  teamId = $('#sortableTeams').sortable('toArray')[0]
   tournament = Session.get 'active-tournament'
   activeTeam = _.find tournament.teams, (team) ->
-    if team.teamId is tId then return team
+    if team.teamId is teamId then return team
   Session.set 'active-team', activeTeam
 
 getTeamPreferences = ->
-  signupId = Session.get 'reg-id'
-  signup = -> null until registrantsSubscription.ready()
-  signup = Registrants.findOne { _id: signupId }
-  signup and signup.teams or []
-
-saveTeamPreferences = (prefs) ->
-  signupId = Session.get 'reg-id'
-  Registrants.update(
-    { _id: signupId },
-    { $set: teams: prefs},
-    { $upsert: 1 }, (err) ->
-      Template.userMessages.showMessage
-        type: 'info'
-        title: 'Saved:'
-        message: 'The order of your team preferences have been saved.'
-        timeout: 2000
-  )
+  registrant = Session.get 'active-registrant'
+  registrant and registrant.teams or []
 
 
 
@@ -50,13 +35,15 @@ Template.userPreferences.created = ->
   setAcceptedShifts()
 
 Template.userPreferences.rendered = ->
-  setActiveTeam()
   $('#sortableTeams').disableSelection()
   $('#sortableTeams').sortable
     forcePlaceholderSize: true
     stop: (evnt, ui) ->
+      registrantId = Session.get('active-registrant')._id
       teams = $('#sortableTeams').sortable('toArray').slice(0, 4)
-      saveTeamPreferences teams
+      services.registrationService.saveTeamPreferences registrantId, teams
+      setActiveTeam()
+  setActiveTeam()
 
 Template.userPreferences.linkHelper = ->
   allcourt.getTournamentLinkHelper()
@@ -149,7 +136,7 @@ Template.userPreferences.events
     input = $(evnt.currentTarget)
     id = input.data 'shift-id'
     checked = input.is ':checked'
-    signupId = Session.get 'reg-id'
+    signupId = Session.get('active-registrant')._id
     showSaved = (action) ->
       Template.userMessages.showMessage
         type: 'info'

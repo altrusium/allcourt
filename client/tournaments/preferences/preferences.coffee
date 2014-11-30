@@ -32,19 +32,6 @@ getTeamPreferences = ->
   registrant = Session.get 'active-registrant'
   registrant and registrant.teams or []
 
-saveTeamPreferences = (prefs) ->
-  signupId = Session.get('active-registrant')._id
-  Registrants.update(
-    { _id: signupId },
-    { $set: teams: prefs},
-    { $upsert: 1 }, (err) ->
-      Template.userMessages.showMessage
-        type: 'info'
-        title: 'Saved:'
-        message: 'The order of your team preferences have been saved.'
-        timeout: 2000
-  )
-
 
 
 
@@ -56,8 +43,9 @@ Template.preferences.rendered = ->
   $('#sortableTeams').sortable
     forcePlaceholderSize: true
     stop: (evnt, ui) ->
+      registrantId = Session.get('active-registrant')._id
       teams = $('#sortableTeams').sortable('toArray').slice(0, 4)
-      saveTeamPreferences teams
+      services.registrationService.saveTeamPreferences registrantId, teams
       setActiveTeam()
   setActiveTeam()
 
@@ -147,8 +135,6 @@ Template.preferences.shifts = ->
     days: shiftDays
 
 Template.preferences.events
-  'change #team': (evnt, template) ->
-    setActiveTeam()
 
   'change #shiftTable [data-shift]': (evnt, template) ->
     input = $(evnt.currentTarget)

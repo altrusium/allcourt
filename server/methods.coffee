@@ -1,12 +1,10 @@
-Meteor.methods
+@serverMethods =
 
   addRegistrant: (details) ->
-    existing = Registrants.findOne {userId: details.userId, tournamentId: details.tournamentId}
+    existing = Registrants.findOne { userId: details.userId, tournamentId: details.tournamentId }
     unless existing
       registrantId = Registrants.insert details
-      # console.log 'id: ' + registrantId
-      teamRegistration = modelHelpers.buildTeamRegistration registrantId
-      modelHelpers.upsertTeamRegistration details.userId, teamRegistration
+      serverMethods.upsertTeamRegistration details.userId, registrantId
     existing?._id || registrantId
 
   addTeamToRegistrant: (registrantId, teamId) ->
@@ -14,8 +12,7 @@ Meteor.methods
     for team in existing.teams
       if team is teamId then found = team
     if found
-      teamRegistration = modelHelpers.buildTeamRegistration registrantId
-      modelHelpers.upsertTeamRegistration existing.userId, teamRegistration
+      serverMethods.upsertTeamRegistration existing.userId, registrantId
       return
     Registrants.update registrantId, $push: teams: teamId
 
@@ -23,7 +20,7 @@ Meteor.methods
     registrant = Registrants.findOne registrantId
     Registrants.update registrantId, $pull: teams: teamId
     # TODO: If there are no more teams now, delete this registrant document
-    modelHelpers.removeTeamRegistration registrant.userId, registrantId
+    serverMethods.removeTeamRegistration registrant.userId, registrantId
 
   updateRegistrant: (registrant) ->
     existing = Registrants.findOne
@@ -39,8 +36,7 @@ Meteor.methods
       'isTeamLead': isTeamLead
       'isUserProxy': isUserProxy
     Registrants.update existing._id, $set: update
-    teamRegistration = modelHelpers.buildTeamRegistration existing._id
-    modelHelpers.upsertTeamRegistration existing.userId, teamRegistration
+    serverMethods.upsertTeamRegistration existing.userId, existing._id
 
   getRegistration: (id) ->
     Registrations.findOne id
@@ -133,3 +129,75 @@ Meteor.methods
   sendEmail: (options) ->
     this.unblock()
     Email.send options
+
+  getTournament: (tournamentId) ->
+    Tournaments.findOne tournamentId, fields: tournamentName:1, slug:1
+
+  getTeamAndRole: (tournamentId, teamId) ->
+    theTeam = null
+    theRole = null
+    tournament = Tournaments.findOne tournamentId, fields: teams: 1, roles: 1
+    for team in tournament.teams when team.teamId is teamId
+      theRole = (r for r in tournament.roles when r.roleId is team.roleId)[0]
+      theTeam = team
+    [theTeam, theRole]
+
+  buildTeamRegistration: (registrantId) ->
+    reg = {}
+    registrant = Registrants.findOne registrantId
+    tournamentId = registrant.tournamentId
+    tournament = serverMethods.getTournament tournamentId
+    teamAndRole = serverMethods.getTeamAndRole tournamentId, registrant.teams[0]
+    reg.registrantId = registrantId
+    reg.tournamentId = registrant.tournamentId
+    reg.tournamentName = tournament.tournamentName
+    reg.tournamentSlug = tournament.slug
+    reg.teamId = teamAndRole[0].teamId
+    reg.teamName = teamAndRole[0].teamName
+    reg.roleId = teamAndRole[1].roleId
+    reg.roleName = teamAndRole[1].roleName
+    reg.function = registrant.function
+    reg.accessCode = registrant.accessCode
+    reg
+
+  upsertUserRegistration: (user) ->
+    existing = Registrations.findOne user._id, fields: _id: 0
+    if existing
+      if user.slug then existing.slug = user.slug
+      if user.email then existing.email = user.email
+      if user.gender then existing.gender = user.gender
+      if user.fullName then existing.fullName = user.fullName
+      if user.photoFilename then existing.photoFilename = user.photoFilename
+      Registrations.update user._id, $set: existing
+    else
+      user.registrations = []
+      Registrations.insert user
+
+  removeTeamRegistration: (userId, regId) ->
+    Registrations.update userId, $pull: registrations: registrantId: regId
+
+  upsertTeamRegistration: (userId, registrantId) ->
+    teamRegistration = serverMethods.buildTeamRegistration registrantId
+    reg = teamRegistration
+    existing = Registrations.findOne userId
+    unless existing then return # couldn't find the registration
+    existingReg = _.find existing.registrations, (thisReg) ->
+      thisReg.registrantId is reg.registrantId
+    if existingReg
+      if reg.roleId then existingReg.roleId = reg.roleId
+      if reg.roleName then existingReg.roleName = reg.roleName
+      if reg.teamId then existingReg.teamId = reg.teamId
+      if reg.teamName then existingReg.teamName = reg.teamName
+      if reg.function then existingReg.function = reg.function
+      if reg.accessCode then existingReg.accessCode = reg.accessCode
+      if reg.registrantId then existingReg.registrantId = reg.registrantId
+      if reg.tournamentId then existingReg.tournamentId = reg.tournamentId
+      if reg.tournamentName then existingReg.tournamentName = reg.tournamentName
+      if reg.tournamentSlug then existingReg.tournamentSlug = reg.tournamentSlug
+      teamRegistration = existingReg
+    else
+      existing.registrations.push teamRegistration
+    serverMethods.removeTeamRegistration userId, reg.registrantId
+    Registrations.update userId, existing
+
+Meteor.methods serverMethods
