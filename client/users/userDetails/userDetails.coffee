@@ -32,7 +32,7 @@ Template.userDetails.photoRoot = ->
 
 Template.userDetails.myTournamentsExist = ->
   userId = Session.get('active-user')._id
-  myTournaments = allcourt.userTournaments userId
+  myTournaments = services.tournamentService.userTournaments userId
 
 Template.userDetails.myTournaments = ->
   result = for myT in myTournaments

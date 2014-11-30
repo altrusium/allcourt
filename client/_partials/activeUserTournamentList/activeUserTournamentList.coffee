@@ -1,3 +1,3 @@
 Template.activeUserTournamentList.activeTournaments = ->
-  tournamentService.getActiveTournaments()
+  tournamentService.getMyActiveTournaments()
 

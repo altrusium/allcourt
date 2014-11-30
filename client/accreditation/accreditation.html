@@ -39,18 +39,23 @@
 							<div class="span10 user-info">
 								<p class="user-name">{{fullName}}</p>
 				        {{#each registrations}}
-								<p class="user-teams">
-                  {{#if tournamentName}}{{tournamentName}}{{/if}}
-                  {{#if roleName}} : {{roleName}}{{/if}}
-                  {{#if teamName}} : {{teamName}}{{/if}}
-                  {{#if function}} : {{function}}{{/if}}
-                  {{#if accessCode}} : {{accessCode}}{{/if}}<br>
-		              <a href="#" data-details-link data-user-id="{{../_id}}" data-registrant-id="{{registrantId}}">Edit Details</a>
-		              {{#if canPrintBadge}} -
-		              <a href="/registrant/{{slug}}/{{this.tournamentSlug}}/badge">Print Badge</a>
-		              {{/if}}
-								</p>
+  								<p class="user-teams">
+                    {{#if tournamentName}}{{tournamentName}}{{/if}}
+                    {{#if roleName}} : {{roleName}}{{/if}}
+                    {{#if teamName}} : {{teamName}}{{/if}}
+                    {{#if function}} : {{function}}{{/if}}
+                    {{#if accessCode}} : {{accessCode}}{{/if}}<br>
+  		              <a href="#" data-details-link data-user-id="{{../_id}}" data-registrant-id="{{registrantId}}">Edit Details</a>
+  		              {{#if canPrintBadge}} -
+  		              <a href="/registrant/{{slug}}/{{this.tournamentSlug}}/badge">Print Badge</a>
+  		              {{/if}}
+  								</p>
 				        {{/each}}
+                {{#each availables}}
+                  <p class="user-teams">
+                    {{name}}: <a href="#" data-register-link data-tournament-id="{{id}}" data-user-id="{{../_id}}">register</a>
+                  </p>
+                {{/each}}
 							</div>
 						</div>
 					</div>

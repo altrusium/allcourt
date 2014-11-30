@@ -55,7 +55,7 @@ Template.users.destroyed = ->
   emptySearchResults()
 
 Template.users.tournaments = ->
-  allcourt.getSortedTournaments()
+  services.tournamentService.getSortedTournaments()
 
 Template.users.roles = ->
   tournament = Session.get 'active-tournament'

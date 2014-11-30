@@ -5,29 +5,26 @@ createEmailAddress = ->
   address = name + emailHelper.addressSuffix
 
 sendUserSearchQuery = (query) ->
+  activeTournaments = services.tournamentService.getAllActiveTournaments()
+  activeIds = (t._id for t in activeTournaments)
   # submitUserSearch is global and defined in app/lib/streams.coffee
   submitUserSearch query, (results) ->
     for user in results
       user.isMale = user.gender is 'male'
+      registrations = user.registrations
+      user.registrations = (r for r in registrations when r.tournamentId in activeIds)
+      regIds = (r.tournamentId for r in user.registrations)
       for reg in user.registrations
         reg.slug = user.slug
         reg.canPrintBadge = user.photoFilename and reg.accessCode
+      user.availables = for t in activeTournaments when t._id not in regIds
+        id: t._id
+        name: t.tournamentName
     Session.set 'search-results', results
 
 emptySearchResults = ->
   Session.set 'search-results', null
   $('#search').val ''
-
-getSortedTournaments = ->
-  tournaments = Tournaments.find {}, fields: tournamentName: 1, slug: 1, days: 1
-  list = tournaments.fetch()
-  list.sort (t1, t2) ->
-    date1 = new Date(t1.days[0])
-    date2 = new Date(t2.days[0])
-    if date1 > date2 then return -1
-    if date1 < date2 then return 1
-    return 0
-  return list
 
 setActiveUser = (id) ->
   Session.set 'active-user', Meteor.users.findOne id
@@ -54,10 +51,6 @@ setActiveTeam = ->
   activeTeam = _.find tournament.teams, (team) ->
     if team.teamId is tId then return team
   Session.set 'active-team', activeTeam
-
-getActiveTournaments = ->
-  list = getSortedTournaments()
-  result = (t for t in list when new Date(t.days[t.days.length-1]) > new Date())
 
 getUserFormValues = (template) ->
   values =
@@ -177,7 +170,7 @@ Template.accreditation.users = ->
   Session.get 'search-results'
 
 Template.accreditation.tournaments = ->
-  getActiveTournaments()
+  services.tournamentService.getAllActiveTournaments()
 
 Template.accreditation.roles = ->
   tournament = Session.get 'active-tournament'
@@ -209,11 +202,10 @@ Template.accreditation.registrationDetails = ->
   unless Session.get('active-user') then return {}
   user = Session.get('active-user').profile
   registration = Session.get('active-registration')
-  unless (user and registration) then return {}
   user.isMale = user.gender is 'male'
   user.isFemale = user.gender isnt 'male'
-  user.function = registration.function
-  user.accessCode = registration.accessCode
+  user.function = registration?.function
+  user.accessCode = registration?.accessCode
   if user.photoFilename
     user.photoPath = photoHelper.photoRoot + user.photoFilename
   user
@@ -242,6 +234,14 @@ Template.accreditation.events =
     else
       emptySearchResults()
     false
+
+  'click [data-register-link]': (evnt, template) ->
+    anchor = $(evnt.currentTarget)
+    setActiveUser anchor.data 'user-id'
+    setActiveTournament anchor.data 'tournament-id'
+    Session.set 'active-role', null
+    Session.set 'active-team', null
+    Session.set 'active-tab', 'addEdit'
 
   'click [data-details-link]': (evnt, template) ->
     anchor = $(evnt.currentTarget)
@@ -287,8 +287,16 @@ Template.accreditation.events =
 
   'click #saveRegistrant': (evnt, template) ->
     user = Session.get 'active-user'
+    registrant = Session.get 'active-registration'
     if user
-      updateActiveRegistrant user, template
+      if registrant
+        updateActiveRegistrant user, template
+      else
+        userDetails = getUserFormValues template
+        userDetails.email = user.profile.email
+        userDetails._id = user._id
+        user.isNew = false
+        associateUserWithTournament userDetails
     else
       addNewRegistrant template
 

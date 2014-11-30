@@ -27,18 +27,16 @@ services.tournamentService =
     myId = Meteor.userId()
     this.userTournaments myId
 
-  getActiveTournaments: ->
-    mine = this.getMyTournaments()
+  getAllActiveTournaments: ->
     list = this.getSortedTournaments()
-    active = (t for t in list when new Date(t.days[t.days.length-1]) > new Date())
+    (t for t in list when new Date(t.days[t.days.length-1]) > new Date())
+
+  getMyActiveTournaments: ->
+    mine = this.getMyTournaments()
+    active = this.getAllActiveTournaments()
     result = _.reject active, (tournament) ->
       _.find mine, (myT) ->
         myT._id is tournament._id
-
-  getActiveAdminTournaments: ->
-    mine = this.getMyTournaments()
-    list = this.getSortedTournaments()
-    active = (t for t in list when new Date(t.days[t.days.length-1]) > new Date())
 
   getPreviousTournaments: ->
     list = this.getSortedTournaments()
