@@ -4,6 +4,7 @@ setRegistrationId = ->
   reg = -> null until registrantsSubscription.ready()
   reg = Registrants.findOne { userId: userId, tournamentId: tId }
   Session.set 'active-registrant', reg
+  Session.set 'reg-id', reg._id
 
 setAcceptedShifts = ->
   signupId = Session.get 'reg-id'
