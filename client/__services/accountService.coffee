@@ -32,3 +32,5 @@ services.accountService =
           message: 'Please check your email so you can verify your email address.'
         Meteor.call 'addRegistration', newUser
 
+  returnsOpposite: (start) ->
+    return !!!start

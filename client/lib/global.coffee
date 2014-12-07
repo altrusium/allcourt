@@ -11,3 +11,11 @@ allcourt.getTournamentLinkHelper = ->
     userSlug: Session.get('active-user') or Meteor.user().profile.slug
   }
 
+allcourt.getNoPhotoPath = (gender) ->
+  path = '/img/no-female-photo.jpg'
+  if gender is 'male'
+    path = '/img/no-male-photo.jpg'
+  path
+
+
+

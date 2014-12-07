@@ -29,6 +29,10 @@
   cursor: pointer;
 }
 
+.scheduling .volunteer {
+  cursor: pointer;
+}
+
 .confirmed {
 
 }
@@ -39,4 +43,9 @@
 
 .keen {
   color: silver;
+}
+
+.info-photo {
+  height: 200px;
+  width: 200px;
 }

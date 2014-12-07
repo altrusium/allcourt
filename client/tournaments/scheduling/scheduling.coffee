@@ -78,10 +78,21 @@ augmentDayShiftsWithConfirmedCount = (days, shifts, confirmed) ->
       shift
     day
 
-getFullName = (id) ->
+getDetails = (id) ->
   user = Meteor.users.findOne(id)
+  volly = Volunteers.findOne(id)
   unless user then console.log "No user: "+id
-  user?.profile?.fullName
+  profile = user?.profile or {}
+  photo = allcourt.getNoPhotoPath user.profile.gender
+  if profile.photoFilename
+    photo = allcourt.photoRoot + profile.photoFilename
+  details =
+    photo: photo
+    userId: user._id
+    email: profile.email
+    fullName: profile.fullName
+    phone: volly?.mobilePhone or volly?.homePhone
+  details
 
 getVolunteers = (id, idType) ->
   activeDay = Session.get('active-day')
@@ -94,11 +105,9 @@ getVolunteers = (id, idType) ->
     and shift[idType] is id)
   for shift in shifts
     confirmed = for user in schedule when user.shiftId is shift.shiftId
-      user.fullName = getFullName user.userId
-      user
+      getDetails user.userId
     keen = for user in registrants when _.contains(user.shifts, shift.shiftId)
-      user.fullName = getFullName user.userId
-      user
+      getDetails user.userId
     # keep only the ones who have not backed out (those no longer keen)
     shift.confirmed = _.filter confirmed, (reg) ->
       _.contains _.pluck(keen, 'userId'), reg.userId
@@ -127,6 +136,15 @@ removeUserFromShift = (userId) ->
   )
   Schedule.remove schedule._id
 
+setSelectedUserInfo = (userId) ->
+  user = Meteor.users.findOne userId
+  volunteer = Volunteers.findOne userId
+  info =
+    email: user.profile.email
+    name: user.profile.fullName
+    photo: allcourt.photoRoot + user.profile.photoFilename
+    phone: volunteer.mobilePhone or volunteer.homePhone
+
 
 
 
@@ -138,6 +156,10 @@ Template.scheduling.created = ->
 
 Template.scheduling.rendered = ->
   setActiveTeam()
+  $('body').on('click', (evnt) ->
+    if $(evnt.target).data('toggle') isnt 'popover' and $(evnt.target).parents('.popover.in').length is 0
+      $('.scheduling .volunteer').popover('destroy')
+  )
 
 Template.scheduling.isAdmin = ->
   allcourt.isAdmin()
@@ -231,7 +253,7 @@ Template.scheduling.events
   'click li[data-day]': (evnt, template) ->
     setActiveDay $(evnt.currentTarget).data('day')
     if Session.get('active-day')
-      setActiveShift Session.get('active-shift').shiftDefId
+      setActiveShift Session.get('active-day').shiftDefId
     else
       unsetActiveShift()
     false
@@ -248,4 +270,19 @@ Template.scheduling.events
       addUserToActiveShift userId
     else
       removeUserFromShift userId
+
+  'click .scheduling .volunteer': (evnt, template) ->
+    $('.scheduling .volunteer').popover('destroy')
+    $elem = $(evnt.target)
+    options =
+      html: true
+      container: 'body'
+      placement: 'left'
+      title: ->
+        title = $elem.data('user-name')
+        return title
+      content: ->
+        content = $elem.next('.popover-content').html()
+        return content
+    $elem.popover(options).popover('show')
 

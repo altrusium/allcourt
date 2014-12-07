@@ -80,7 +80,7 @@
     {{/if}}
 
     {{#if showingOneDay}}
-    <div class="span8">
+    <div class="span8 scheduling">
       <h2 class="column-header"><small>{{activeTeamName}} Shifts for {{activeDate}}</small></h2>
       <p></p>
       <table class="table table-condensed">
@@ -106,13 +106,40 @@
             {{#each dayVolunteers}}
             <td>
               {{#each confirmed}}
-              <p class="confirmed" data-volunteer-id="{{userId}}">{{fullName}}</p>
+              <p data-user-id="{{userId}}">
+                <span data-toggle="popover" class="confirmed volunteer" data-user-name="{{fullName}}">{{fullName}}</span>
+                <div class="popover-content hide">
+                  <div>
+                    <p><img class="info-photo" src="{{photo}}"/></p>
+                    <p><a href="mailto:{{email}}">{{email}}</a></p>
+                    <p>Phone: {{phone}}</p>
+                  </div>
+                </div>
+              </p>
               {{/each}}
               {{#each backedOut}}
-              <p class="backed-out" data-volunteer-id="{{userId}}">{{fullName}}</p>
+              <p data-user-id="{{userId}}">
+                <span data-toggle="popover" class="backed-out volunteer" data-user-name="{{fullName}}">{{fullName}}</span>
+                <div class="popover-content hide">
+                  <div>
+                    <p><img class="info-photo" src="{{photo}}"/></p>
+                    <p><a href="mailto:{{email}}">{{email}}</a></p>
+                    <p>Phone: {{phone}}</p>
+                  </div>
+                </div>
+              </p>
               {{/each}}
               {{#each keen}}
-              <p class="keen" data-volunteer-id="{{userId}}">{{fullName}}</p>
+              <p data-user-id="{{userId}}">
+                <span data-toggle="popover" class="keen volunteer" data-user-name="{{fullName}}">{{fullName}}</span>
+                <div class="popover-content hide">
+                  <div>
+                    <p><img class="info-photo" src="{{photo}}"/></p>
+                    <p><a href="mailto:{{email}}">{{email}}</a></p>
+                    <p>Phone: {{phone}}</p>
+                  </div>
+                </div>
+              </p>
               {{/each}}
             </td>
             {{/each}}
@@ -123,7 +150,7 @@
     {{/if}}
 
     {{#if showingOneShift}}
-    <div class="one-shift span8">
+    <div class="one-shift span8 scheduling">
       <h2 class="column-header"><small>{{activeTeamName}} Shift for {{activeDate}} {{activeShiftTimes}}</small></h2>
       <h2 class="column-header"><small>Target: {{activeShiftCount}}</small></h2>
       <p></p>
@@ -133,19 +160,40 @@
             {{#each confirmed}}
             <p data-user-id="{{userId}}" data-action="remove">
               <i class="action icon-remove" title="Remove"></i>
-              <span class="confirmed">{{fullName}}</span>
+              <span class="confirmed volunteer" data-toggle="popover" data-user-name="{{fullName}}">{{fullName}}</span>
+              <div class="popover-content hide">
+                <div>
+                  <p><img class="info-photo" src="{{photo}}"/></p>
+                  <p><a href="mailto:{{email}}">{{email}}</a></p>
+                  <p>Phone: {{phone}}</p>
+                </div>
+              </div>
             </p>
             {{/each}}
             {{#each backedOut}}
             <p data-user-id="{{userId}}" data-action="confirmRemove">
               <i class="action icon-ok" title="Confirm"></i>
-              <span class="backed-out">{{fullName}}</span>
+              <span class="backed-out volunteer" data-toggle="popover" data-user-name="{{fullName}}">{{fullName}}</span>
+              <div class="popover-content hide">
+                <div>
+                  <p><img class="info-photo" src="{{photo}}"/></p>
+                  <p><a href="mailto:{{email}}">{{email}}</a></p>
+                  <p>Phone: {{phone}}</p>
+                </div>
+              </div>
             </p>
             {{/each}}
             {{#each keen}}
             <p data-user-id="{{userId}}" data-action="confirmAdd">
               <i class="action icon-ok" title="Confirm"></i>
-              <span class="keen">{{fullName}}</span>
+              <span class="keen volunteer" data-toggle="popover" data-user-name="{{fullName}}">{{fullName}}</span>
+              <div class="popover-content hide">
+                <div>
+                  <p><img class="info-photo" src="{{photo}}"/></p>
+                  <p><a href="mailto:{{email}}">{{email}}</a></p>
+                  <p>Phone: {{phone}}</p>
+                </div>
+              </div>
             </p>
             {{/each}}
           {{/each}}
