@@ -239,6 +239,7 @@ Template.accreditation.events =
     anchor = $(evnt.currentTarget)
     setActiveUser anchor.data 'user-id'
     setActiveTournament anchor.data 'tournament-id'
+    Session.set 'active-registration', null
     Session.set 'active-role', null
     Session.set 'active-team', null
     Session.set 'active-tab', 'addEdit'
@@ -276,6 +277,7 @@ Template.accreditation.events =
     Session.set 'active-registration', null
     Session.set 'active-user', null
     Session.set 'active-tab', 'find'
+    emptySearchResults()
 
   'click .add-edit-tab': (evnt, template) ->
     Session.set 'active-registration', null
@@ -299,6 +301,7 @@ Template.accreditation.events =
         associateUserWithTournament userDetails
     else
       addNewRegistrant template
+    emptySearchResults()
 
   'click #pickPhoto': (evnt, template) ->
     photoHelper.processPhoto()

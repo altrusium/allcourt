@@ -18,6 +18,6 @@ service-configuration
 alanning:roles
 email
 amr:parsley.js
-mike:mocha
 iron:router@0.9.4
-
+meteorhacks:fast-render
+meteorhacks:kadira

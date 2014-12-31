@@ -57,7 +57,7 @@ Router.map ->
     path: '/'
 
   this.route 'resetPassword',
-    path: '/resetPassword/:token',
+    path: '/resetPassword/:token'
     template: 'home'
     onBeforeAction: ->
       Session.set 'active-home-tab', 'reset'
